@@ -7,7 +7,7 @@ Dolaing v3.0新增rest api服务,提供对接服务端接口的支持,并利用j
 
 ### Dolaing v4.1更新内容
 
-> * dolaing-admin提供rest api服务，并以jwt方式鉴权，所有以`/dolaingApi`开头的接口走这种鉴权方式，其他接口仍为shiro鉴权
+> * dolaing-admin提供rest api服务，并以jwt方式鉴权，所有以`/dolaing`开头的接口走这种鉴权方式，其他接口仍为shiro鉴权
 
 ### Dolaing v4.0更新内容
 

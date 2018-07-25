@@ -14,6 +14,9 @@ public interface JwtConstants {
 
     Long EXPIRATION = 604800L;
 
-    String AUTH_PATH = "/dolaingApi/auth";
+    /**
+     * 白名单 不需要鉴权
+     */
+    String AUTH_PATH = "/dolaing/auth";
 
 }
