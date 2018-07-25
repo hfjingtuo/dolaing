@@ -1,0 +1,6 @@
+# AutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.dolaing.core.base.controller.GlobalController,\
+com.dolaing.core.config.DefaultFastjsonConfig,\
+com.dolaing.core.config.DefaultProperties,\
+com.dolaing.core.config.DefaultWebConfig
