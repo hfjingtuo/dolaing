@@ -73,7 +73,6 @@ public class LoginApiController extends BaseController {
      */
     @RequestMapping(value = "/test", method = RequestMethod.POST)
     public Object test() {
-        System.out.println("//////////////////////////////////");
         return SUCCESS_TIP;
     }
 
