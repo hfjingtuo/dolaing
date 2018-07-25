@@ -27,8 +27,8 @@ import java.util.HashMap;
  * @Date 2018/7/20 23:39
  */
 @RestController
-@RequestMapping("/dolaingApi")
-public class ApiController extends BaseController {
+@RequestMapping("/dolaing")
+public class LoginApiController extends BaseController {
 
     @Autowired
     private UserMapper userMapper;
@@ -73,6 +73,7 @@ public class ApiController extends BaseController {
      */
     @RequestMapping(value = "/test", method = RequestMethod.POST)
     public Object test() {
+        System.out.println("//////////////////////////////////");
         return SUCCESS_TIP;
     }
 

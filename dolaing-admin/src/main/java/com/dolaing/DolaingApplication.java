@@ -18,6 +18,6 @@ public class DolaingApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(DolaingApplication.class, args);
-        logger.info("DolaingApplication is success!");
+        logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DolaingApplication is success!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     }
 }
