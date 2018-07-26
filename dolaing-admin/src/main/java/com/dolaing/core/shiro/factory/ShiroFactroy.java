@@ -58,11 +58,9 @@ public class ShiroFactroy implements IShiro {
 
         shiroUser.setId(user.getId());
         shiroUser.setAccount(user.getAccount());
-        shiroUser.setDeptId(user.getDeptid());
-        shiroUser.setDeptName(ConstantFactory.me().getDeptName(user.getDeptid()));
         shiroUser.setName(user.getName());
 
-        Integer[] roleArray = Convert.toIntArray(user.getRoleid());
+        Integer[] roleArray = Convert.toIntArray(user.getRoleId());
         List<Integer> roleList = new ArrayList<Integer>();
         List<String> roleNameList = new ArrayList<String>();
         for (int roleId : roleArray) {

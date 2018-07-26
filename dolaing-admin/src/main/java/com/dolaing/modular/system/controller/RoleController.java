@@ -79,7 +79,6 @@ public class RoleController extends BaseController {
         Role role = this.roleService.selectById(roleId);
         model.addAttribute(role);
         model.addAttribute("pName", ConstantFactory.me().getSingleRoleName(role.getPid()));
-        model.addAttribute("deptName", ConstantFactory.me().getDeptName(role.getDeptid()));
         LogObjectHolder.me().set(role);
         return PREFIX + "/role_edit.html";
     }
@@ -216,7 +215,7 @@ public class RoleController extends BaseController {
     @ResponseBody
     public List<ZTreeNode> roleTreeListByUserId(@PathVariable Integer userId) {
         User theUser = this.userService.selectById(userId);
-        String roleid = theUser.getRoleid();
+        String roleid = theUser.getRoleId();
         if (ToolUtil.isEmpty(roleid)) {
             List<ZTreeNode> roleTreeList = this.roleService.roleTreeList();
             return roleTreeList;

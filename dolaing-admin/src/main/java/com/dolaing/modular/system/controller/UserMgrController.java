@@ -100,8 +100,7 @@ public class UserMgrController extends BaseController {
         assertAuth(userId);
         User user = this.userService.selectById(userId);
         model.addAttribute(user);
-        model.addAttribute("roleName", ConstantFactory.me().getRoleName(user.getRoleid()));
-        model.addAttribute("deptName", ConstantFactory.me().getDeptName(user.getDeptid()));
+        model.addAttribute("roleName", ConstantFactory.me().getRoleName(user.getRoleId()));
         LogObjectHolder.me().set(user);
         return PREFIX + "user_edit.html";
     }
@@ -117,8 +116,7 @@ public class UserMgrController extends BaseController {
         }
         User user = this.userService.selectById(userId);
         model.addAttribute(user);
-        model.addAttribute("roleName", ConstantFactory.me().getRoleName(user.getRoleid()));
-        model.addAttribute("deptName", ConstantFactory.me().getDeptName(user.getDeptid()));
+        model.addAttribute("roleName", ConstantFactory.me().getRoleName(user.getRoleId()));
         LogObjectHolder.me().set(user);
         return PREFIX + "user_view.html";
     }
@@ -164,7 +162,7 @@ public class UserMgrController extends BaseController {
             List<Map<String, Object>> users = userService.selectUsers(null, name, beginTime, endTime, deptid);
             return new UserWarpper(users).warp();
         } else {
-            DataScope dataScope = new DataScope(ShiroKit.getDeptDataScope());
+            DataScope dataScope = new DataScope(null);
             List<Map<String, Object>> users = userService.selectUsers(dataScope, name, beginTime, endTime, deptid);
             return new UserWarpper(users).warp();
         }
@@ -192,7 +190,7 @@ public class UserMgrController extends BaseController {
         user.setSalt(ShiroKit.getRandomSalt(5));
         user.setPassword(ShiroKit.md5(user.getPassword(), user.getSalt()));
         user.setStatus(ManagerStatus.OK.getCode());
-        user.setCreatetime(new Date());
+        user.setCreateTime(new Date());
 
         this.userService.insert(UserFactory.createUser(user));
         return SUCCESS_TIP;
@@ -357,17 +355,6 @@ public class UserMgrController extends BaseController {
      * 判断当前登录的用户是否有操作这个用户的权限
      */
     private void assertAuth(Integer userId) {
-        if (ShiroKit.isAdmin()) {
-            return;
-        }
-        List<Integer> deptDataScope = ShiroKit.getDeptDataScope();
-        User user = this.userService.selectById(userId);
-        Integer deptid = user.getDeptid();
-        if (deptDataScope.contains(deptid)) {
-            return;
-        } else {
-            throw new DolaingException(BizExceptionEnum.NO_PERMITION);
-        }
-
+       return;
     }
 }

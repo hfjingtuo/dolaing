@@ -263,15 +263,15 @@ public class ShiroKit {
         return "";
     }
 
-    /**
-     * 获取当前用户的部门数据范围的集合
-     */
-    public static List<Integer> getDeptDataScope() {
-        Integer deptId = getUser().getDeptId();
-        List<Integer> subDeptIds = ConstantFactory.me().getSubDeptId(deptId);
-        subDeptIds.add(deptId);
-        return subDeptIds;
-    }
+//    /**
+//     * 获取当前用户的部门数据范围的集合
+//     */
+//    public static List<Integer> getDeptDataScope() {
+//        Integer deptId = getUser().getDeptId();
+//        List<Integer> subDeptIds = ConstantFactory.me().getSubDeptId(deptId);
+//        subDeptIds.add(deptId);
+//        return subDeptIds;
+//    }
 
     /**
      * 判断当前用户是否是超级管理员

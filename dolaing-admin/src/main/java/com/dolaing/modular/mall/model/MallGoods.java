@@ -3,7 +3,6 @@ package com.dolaing.modular.mall.model;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.dolaing.core.base.controller.BaseController;
 import com.dolaing.core.base.model.BaseModel;
-import com.dolaing.modular.system.model.Dept;
 import lombok.Data;
 
 /**
