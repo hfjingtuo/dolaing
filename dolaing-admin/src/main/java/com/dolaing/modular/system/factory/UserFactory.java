@@ -36,9 +36,7 @@ public class UserFactory {
             if (ToolUtil.isNotEmpty(newUser.getBirthday())) {
                 oldUser.setBirthday(newUser.getBirthday());
             }
-            if (ToolUtil.isNotEmpty(newUser.getDeptid())) {
-                oldUser.setDeptid(newUser.getDeptid());
-            }
+
             if (ToolUtil.isNotEmpty(newUser.getSex())) {
                 oldUser.setSex(newUser.getSex());
             }

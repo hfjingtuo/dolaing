@@ -31,7 +31,6 @@ import java.util.List;
 public class ConstantFactory implements IConstantFactory {
 
     private RoleMapper roleMapper = SpringContextHolder.getBean(RoleMapper.class);
-    private DeptMapper deptMapper = SpringContextHolder.getBean(DeptMapper.class);
     private DictMapper dictMapper = SpringContextHolder.getBean(DictMapper.class);
     private UserMapper userMapper = SpringContextHolder.getBean(UserMapper.class);
     private MenuMapper menuMapper = SpringContextHolder.getBean(MenuMapper.class);
@@ -122,18 +121,6 @@ public class ConstantFactory implements IConstantFactory {
         return "";
     }
 
-    /**
-     * 获取部门名称
-     */
-    @Override
-    @Cacheable(value = Cache.CONSTANT, key = "'" + CacheKey.DEPT_NAME + "'+#deptId")
-    public String getDeptName(Integer deptId) {
-        Dept dept = deptMapper.selectById(deptId);
-        if (ToolUtil.isNotEmpty(dept) && ToolUtil.isNotEmpty(dept.getFullname())) {
-            return dept.getFullname();
-        }
-        return "";
-    }
 
     /**
      * 获取菜单的名称们(多个)
@@ -292,41 +279,6 @@ public class ConstantFactory implements IConstantFactory {
     @Override
     public String getCacheObject(String para) {
         return LogObjectHolder.me().get().toString();
-    }
-
-    /**
-     * 获取子部门id
-     */
-    @Override
-    public List<Integer> getSubDeptId(Integer deptid) {
-        Wrapper<Dept> wrapper = new EntityWrapper<>();
-        wrapper = wrapper.like("pids", "%[" + deptid + "]%");
-        List<Dept> depts = this.deptMapper.selectList(wrapper);
-
-        ArrayList<Integer> deptids = new ArrayList<>();
-
-        if(depts != null && depts.size() > 0){
-            for (Dept dept : depts) {
-                deptids.add(dept.getId());
-            }
-        }
-
-        return deptids;
-    }
-
-    /**
-     * 获取所有父部门id
-     */
-    @Override
-    public List<Integer> getParentDeptIds(Integer deptid) {
-        Dept dept = deptMapper.selectById(deptid);
-        String pids = dept.getPids();
-        String[] split = pids.split(",");
-        ArrayList<Integer> parentDeptIds = new ArrayList<>();
-        for (String s : split) {
-            parentDeptIds.add(Integer.valueOf(StrKit.removeSuffix(StrKit.removePrefix(s, "["), "]")));
-        }
-        return parentDeptIds;
     }
 
 

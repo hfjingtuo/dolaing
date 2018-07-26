@@ -43,10 +43,6 @@ public interface IConstantFactory {
      */
     String getSingleRoleTip(Integer roleId);
 
-    /**
-     * 获取部门名称
-     */
-    String getDeptName(Integer deptId);
 
     /**
      * 获取菜单的名称们(多个)
@@ -103,14 +99,6 @@ public interface IConstantFactory {
      */
     String getCacheObject(String para);
 
-    /**
-     * 获取子部门id
-     */
-    List<Integer> getSubDeptId(Integer deptid);
 
-    /**
-     * 获取所有父部门id
-     */
-    List<Integer> getParentDeptIds(Integer deptid);
 
 }
