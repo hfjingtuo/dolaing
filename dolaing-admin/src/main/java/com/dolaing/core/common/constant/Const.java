@@ -33,4 +33,21 @@ public interface Const {
      */
     String API_MENU_NAME = "接口文档";
 
+    /**********系统管理员*******/
+    String USERT_TYPE_ADMIN = "0";
+
+    /***********买家************/
+    String USERT_TYPE_MEMBER = "1";
+
+    /**********卖家**********/
+    String USERT_TYPE_MERCHANT = "2";
+
+    /**********农户**********/
+    String USERT_TYPE_FARMER = "3";
+
+    /**
+     * 短信验证码KEY
+     */
+    String MSG_CODE_SESSION_KEY = "MSG_CODE_SESSION_KEY";
+
 }

@@ -94,4 +94,16 @@
 		from sys_user where account = #{account} and status != 3
 	</select>
 
+	<!--通过帐号、手机号获取为启用的用户【用于登录、找回密码、校验手机号是否已被使用】-->
+	<select id="getUserByUserName" resultType="user">
+		select
+		<include refid="Base_Column_List_With_Pwd"/>
+		from sys_user
+		<where>
+			<if test="condition != null and condition != ''">
+				and (account = #{condition} or phone = #{condition})
+			</if>
+		</where>
+	</select>
+
 </mapper>

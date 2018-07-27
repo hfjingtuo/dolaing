@@ -43,4 +43,9 @@ public interface IUserService extends IService<User> {
      */
     User getByAccount(@Param("account") String account);
 
+    /**
+     * 通过帐号、邮箱、手机号获取为启用的用户
+     * 【用于登录、找回密码、校验手机号或邮箱是否已被使用】
+     */
+    User getUserByUserName(@Param("condition") String condition);
 }
