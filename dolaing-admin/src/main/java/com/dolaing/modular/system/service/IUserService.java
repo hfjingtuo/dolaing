@@ -13,7 +13,7 @@ import java.util.Map;
  * 管理员表 服务类
  * </p>
  *
- * @author stylefeng123
+ * @author zx
  * @since 2018-02-22
  */
 public interface IUserService extends IService<User> {

@@ -1,12 +1,5 @@
 package com.dolaing.core.intercept;
 
-import com.dolaing.core.base.tips.ErrorTip;
-import com.dolaing.core.common.constant.JwtConstants;
-import com.dolaing.core.common.exception.BizExceptionEnum;
-import com.dolaing.core.util.JwtTokenUtil;
-import com.dolaing.core.util.RenderUtil;
-import io.jsonwebtoken.JwtException;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,16 +15,21 @@ import javax.servlet.http.HttpServletResponse;
 public class RestApiInteceptor extends HandlerInterceptorAdapter {
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Access-Control-Allow-Methods", "*");
+        response.addHeader("Access-Control-Max-Age", "100");
+        response.addHeader("Access-Control-Allow-Credentials", "false");
+        response.addHeader("Access-Control-Allow-Headers", "Authorization,Origin, X-Requested-With, Content-Type, Accept");
         if (handler instanceof org.springframework.web.servlet.resource.ResourceHttpRequestHandler) {
             return true;
         }
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        return check(request, response, handlerMethod);
+        return check(request, response);
     }
 
-    private boolean check(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
-        if (request.getServletPath().equals(JwtConstants.AUTH_PATH)) {
+    //TODO
+    private boolean check(HttpServletRequest request, HttpServletResponse response) {
+        /*if (request.getServletPath().equals(JwtConstants.AUTH_PATH)) {
             return true;
         }
         final String requestHeader = request.getHeader(JwtConstants.AUTH_HEADER);
@@ -55,7 +53,7 @@ public class RestApiInteceptor extends HandlerInterceptorAdapter {
             //header没有带Bearer字段
             RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_ERROR.getCode(), BizExceptionEnum.TOKEN_ERROR.getMessage()));
             return false;
-        }
+        }*/
         return true;
     }
 

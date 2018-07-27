@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dolaing.modular.mall.dao.MallGoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dolaing.modular.mall.model.MallGoods">
+        <id column="id" property="id"/>
+        <result column="goods_sn" property="goodsSn"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="shop_price" property="shopPrice"/>
+        <result column="goods_brief" property="goodsBrief"/>
+        <result column="goods_desc" property="goodsDesc"/>
+        <result column="goods_master_imgs" property="goodsMasterImgs"/>
+        <result column="is_free_shipping" property="isFreeShipping"/>
+        <result column="start_subscribe_time" property="startSubscribeTime"/>
+        <result column="end_subscribe_time" property="endSubscribeTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		id, goods_sn goodsSn, goods_name goodsName, shop_price shopPrice, goods_brief goodsBrief, goods_desc goodsDesc, goods_master_imgs goodsMasterImgs,
+		is_free_shipping isFreeShipping,start_subscribe_time startSubscribeTime, end_subscribe_time endSubscribeTime
+	</sql>
+
+    <select id="getGoodsList" resultType="com.dolaing.modular.mall.vo.MallGoodsVo">
+        select
+        <include refid="Base_Column_List"/>
+        from mall_goods
+        where is_on_sale = 1 and start_subscribe_time  <![CDATA[ <= ]]> NOW() and end_subscribe_time <![CDATA[ >= ]]> NOW()
+    </select>
+
+</mapper>

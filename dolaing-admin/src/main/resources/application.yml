@@ -27,7 +27,11 @@ spring:
       max-file-size: 100MB
 
 mybatis-plus:
+  mapper-locations: classpath*:com/dolaing/**/mapping/*.xml
   typeAliasesPackage: com.dolaing.modular.system.model
+  global-config:
+    id-type: 0  #0:数据库ID自增   1:用户输入id  2:全局唯一id(IdWorker)  3:全局唯一ID(uuid)
+    db-column-underline: true  #驼峰式写法
 
 log:
   path: dolaing-logs

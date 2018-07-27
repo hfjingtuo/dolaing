@@ -8,7 +8,7 @@ import com.dolaing.modular.system.model.Relation;
  * 角色和菜单关联表 服务类
  * </p>
  *
- * @author stylefeng123
+ * @author zx
  * @since 2018-02-22
  */
 public interface IRelationService extends IService<Relation> {

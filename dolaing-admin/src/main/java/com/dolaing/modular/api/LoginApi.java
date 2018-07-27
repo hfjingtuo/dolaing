@@ -14,7 +14,6 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +27,7 @@ import java.util.HashMap;
  */
 @RestController
 @RequestMapping("/dolaing")
-public class LoginApiController extends BaseController {
+public class LoginApi extends BaseController {
 
     @Autowired
     private UserMapper userMapper;
@@ -36,9 +35,8 @@ public class LoginApiController extends BaseController {
     /**
      * api登录接口，通过账号密码获取token
      */
-    @RequestMapping("/auth")
-    public Object auth(@RequestParam("username") String username,
-                       @RequestParam("password") String password) {
+    @RequestMapping("/login")
+    public Object auth(@RequestParam("username") String username,@RequestParam("password") String password) {
 
         //封装请求账号密码为shiro可验证的token
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password.toCharArray());
@@ -64,16 +62,8 @@ public class LoginApiController extends BaseController {
             result.put("token", JwtTokenUtil.generateToken(String.valueOf(user.getId())));
             return result;
         } else {
-            return new ErrorTip(500, "账号密码错误！");
+            return new ErrorTip(500, "账号或密码错误");
         }
-    }
-
-    /**
-     * 测试接口是否走鉴权
-     */
-    @RequestMapping(value = "/test", method = RequestMethod.POST)
-    public Object test() {
-        return SUCCESS_TIP;
     }
 
 }
