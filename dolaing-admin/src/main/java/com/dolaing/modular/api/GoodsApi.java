@@ -24,7 +24,6 @@ public class GoodsApi extends BaseController {
     /**
      * 商品详情
      */
-    @ResponseBody
     @GetMapping("/goods/detail/{goodsId}")
     public Object detail(@PathVariable Integer goodsId) {
         HashMap<String, Object> result = new HashMap<>();

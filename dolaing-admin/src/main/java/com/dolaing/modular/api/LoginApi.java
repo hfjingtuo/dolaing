@@ -63,6 +63,7 @@ public class LoginApi extends BaseController {
             if (passwordTrueFlag) {
                 HashMap<String, Object> result = new HashMap<>();
                 result.put("token", JwtTokenUtil.generateToken(String.valueOf(user.getId())));
+                System.out.println("登录成功>>>>>" + JwtTokenUtil.generateToken(String.valueOf(user.getId())));
                 return result;
             }
         }

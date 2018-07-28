@@ -34,7 +34,7 @@ public class RegisterCodeApi extends BaseController {
      */
     @ResponseBody
     @PostMapping("/msgCode")
-    public Object sendMsgCode(HttpServletRequest request) {
+    public Object sendMsgCode() {
         String phone = super.getPara("phone");
         if (ToolUtil.isNotEmpty(phone)) {
             String code = RegisterCodeUtil.randomCode();
@@ -49,6 +49,7 @@ public class RegisterCodeApi extends BaseController {
                     return new ErrorTip(60 - difftime.intValue(), "60s内不允许重复发送验证码");
                 }
             }
+            //TODO
             //Boolean isSuccess = RegisterCodeUtil.sendMsg(phone);
             Boolean isSuccess = true;
             if (isSuccess) {
@@ -63,7 +64,7 @@ public class RegisterCodeApi extends BaseController {
                 captcha.insert();
                 setAttr(Const.MSG_CODE_SESSION_KEY, code);
                 System.out.println("短信验证码：" + code);
-                return new SuccessTip();
+                return SUCCESS_TIP;
             }
         }
         return new ErrorTip(502, "短信验证码发送异常,请稍候重试");

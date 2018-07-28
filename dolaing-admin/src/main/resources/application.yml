@@ -8,6 +8,11 @@ dolaing:
   spring-session-open: false      #是否开启spring session,如果是多机环境需要开启(true/false)
   session-invalidate-time: 1800     #session失效时间(只在单机环境下生效，多机环境在SpringSessionConfig类中配置) 单位：秒
   session-validation-interval: 900  #多久检测一次失效的session(只在单机环境下生效) 单位：秒
+  sms:
+    access-key-id:  #短信平台的账户
+    access-key-secret:  #短信平台的密码
+    sign-name: 梦想都来应 #短信平台的签名
+    template-code: SMS_139840164
 
 spring:
   profiles:

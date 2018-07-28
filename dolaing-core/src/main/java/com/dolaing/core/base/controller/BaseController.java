@@ -47,6 +47,10 @@ public class BaseController {
         return HttpKit.getRequest().getParameter(name);
     }
 
+    protected String getHeader(String name) {
+        return HttpKit.getRequest().getHeader(name);
+    }
+
     protected void setAttr(String name, Object value) {
         HttpKit.getRequest().setAttribute(name, value);
     }

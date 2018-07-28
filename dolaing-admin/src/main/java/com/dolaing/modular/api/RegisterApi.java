@@ -45,7 +45,7 @@ public class RegisterApi extends BaseController {
         String password = super.getPara("password");
         String msgCode = super.getPara("msgCode");
 
-        if (ToolUtil.isEmpty(userName) || ToolUtil.isEmpty(password) || ToolUtil.isEmpty(msgCode)) {
+        if (ToolUtil.isOneEmpty(userName, password, msgCode)) {
             return new ErrorTip(500, "参数有空值");
         }
 
@@ -81,12 +81,13 @@ public class RegisterApi extends BaseController {
         user.setPassword(ShiroKit.md5(password, salt));
         user.setSalt(salt);
         user.setStatus(ManagerStatus.OK.getCode());
-        user.setCreateTime(new Date());
         user.setType(Const.USERT_TYPE_MEMBER);
         user.setPhone(userName);
+        user.setCreateTime(new Date());
+        user.setRegTime(new Date());
         user.setCreateBy(userName);
         this.userService.insert(user);
-        return new SuccessTip();
+        return SUCCESS_TIP;
     }
 
     /**
@@ -101,7 +102,7 @@ public class RegisterApi extends BaseController {
                 return new ErrorTip(501, "该手机号已被注册");
             }
         }
-        return new SuccessTip();
+        return SUCCESS_TIP;
     }
 
 }

@@ -17,6 +17,6 @@ public interface JwtConstants {
     /**
      * 白名单 不需要鉴权
      */
-    String AUTH_PATH = "/dolaing/auth";
+    String AUTH_PATH = "/dolaing/login";
 
 }
