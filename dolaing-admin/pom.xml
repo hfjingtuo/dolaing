@@ -25,6 +25,11 @@
             <groupId>com.dolaing</groupId>
             <artifactId>dolaing-generator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.dolaing</groupId>
+            <artifactId>dolaing-pay</artifactId>
+            <version>0.0.1</version>
+        </dependency>
 
         <!--spring boot依赖-->
         <dependency>
@@ -130,6 +135,10 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
 
     </dependencies>
