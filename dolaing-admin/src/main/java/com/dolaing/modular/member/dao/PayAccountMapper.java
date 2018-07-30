@@ -1,4 +1,4 @@
-package com.dolaing.modular.system.dao;
+package com.dolaing.modular.member.dao;
 
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
