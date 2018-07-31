@@ -1,13 +1,13 @@
 package com.dolaing.modular.api;
 
-import com.dolaing.core.base.controller.BaseController;
 import com.dolaing.core.base.tips.ErrorTip;
+import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.MallGoods;
 import com.dolaing.modular.mall.model.MallShop;
-import com.dolaing.modular.mall.service.MallGoodsService;
-import com.dolaing.modular.mall.vo.MallGoodsVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 
@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 @RestController
 @RequestMapping("/dolaing")
-public class GoodsApi extends BaseController {
+public class GoodsApi extends BaseApi {
 
     /**
      * 商品详情

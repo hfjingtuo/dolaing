@@ -2,24 +2,20 @@ package com.dolaing.modular.api;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.dolaing.core.base.controller.BaseController;
 import com.dolaing.core.base.tips.ErrorTip;
-import com.dolaing.core.base.tips.SuccessTip;
 import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.state.ManagerStatus;
 import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.util.ToolUtil;
+import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.Captcha;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/dolaing")
-public class RegisterApi extends BaseController {
+public class RegisterApi extends BaseApi {
 
     @Autowired
     private IUserService userService;

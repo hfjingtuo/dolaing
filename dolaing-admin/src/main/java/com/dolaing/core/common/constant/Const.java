@@ -33,6 +33,11 @@ public interface Const {
      */
     String API_MENU_NAME = "接口文档";
 
+    /**
+	 * 广告图片存放地址
+	 */
+    String GOODS_IMG = "/images/goods/";
+
     /**********系统管理员*******/
     String USERT_TYPE_ADMIN = "0";
 

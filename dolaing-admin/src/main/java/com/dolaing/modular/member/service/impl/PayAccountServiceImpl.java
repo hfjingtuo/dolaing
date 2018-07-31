@@ -1,11 +1,10 @@
 package com.dolaing.modular.member.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dolaing.modular.member.model.UserPayAccount;
-import com.dolaing.modular.system.dao.DictMapper;
-import com.dolaing.modular.system.dao.PayAccountMapper;
-import com.dolaing.modular.member.service.IPayAccountService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.dolaing.modular.member.dao.PayAccountMapper;
+import com.dolaing.modular.member.model.UserPayAccount;
+import com.dolaing.modular.member.service.IPayAccountService;
 import com.dolaing.pay.client.constants.Global;
 import com.dolaing.pay.client.entity.zlian.Common208Result;
 import com.dolaing.pay.client.entity.zlian.MarginRegisterDTO;
@@ -14,13 +13,10 @@ import com.dolaing.pay.client.enums.PaymentEnum;
 import com.dolaing.pay.client.enums.zlian.SmsTradeTypeEnum;
 import com.dolaing.pay.client.utils.HttpUtil;
 import com.dolaing.pay.client.utils.IdUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.Map;
 
 /**

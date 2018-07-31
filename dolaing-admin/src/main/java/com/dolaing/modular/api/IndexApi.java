@@ -1,12 +1,12 @@
 package com.dolaing.modular.api;
 
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.dolaing.core.base.controller.BaseController;
-import com.dolaing.modular.mall.model.MallGoods;
+import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.service.MallGoodsService;
 import com.dolaing.modular.mall.vo.MallGoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/dolaing")
-public class IndexApi extends BaseController {
+public class IndexApi extends BaseApi {
 
     @Autowired
     private MallGoodsService mallGoodsService;
@@ -27,7 +27,6 @@ public class IndexApi extends BaseController {
     /**
      * 首页接口
      */
-    @ResponseBody
     @PostMapping("/index")
     public Map index(@RequestParam Integer pageNo, @RequestParam Integer pageSize){
         Map<String, Object> map = new HashMap<>();
