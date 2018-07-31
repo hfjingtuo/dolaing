@@ -2,9 +2,7 @@ package com.dolaing.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
 import java.io.File;
-
 import static com.dolaing.core.util.ToolUtil.getTempPath;
 import static com.dolaing.core.util.ToolUtil.isEmpty;
 
@@ -26,6 +24,8 @@ public class DolaingProperties {
 
     private String fileUploadPath;
 
+    private String fileUploadMapping;
+
     private Boolean haveCreatePath = false;
 
     private Boolean springSessionOpen = false;
@@ -45,10 +45,6 @@ public class DolaingProperties {
         if (isEmpty(fileUploadPath)) {
             return getTempPath();
         } else {
-            //判断有没有结尾符,没有得加上
-            if (!fileUploadPath.endsWith(File.separator)) {
-                fileUploadPath = fileUploadPath + File.separator;
-            }
             //判断目录存不存在,不存在得加上
             if (!haveCreatePath) {
                 File file = new File(fileUploadPath);
@@ -101,5 +97,21 @@ public class DolaingProperties {
 
     public void setSessionValidationInterval(Integer sessionValidationInterval) {
         this.sessionValidationInterval = sessionValidationInterval;
+    }
+
+    public String getFileUploadMapping() {
+        return fileUploadMapping;
+    }
+
+    public void setFileUploadMapping(String fileUploadMapping) {
+        this.fileUploadMapping = fileUploadMapping;
+    }
+
+    public Boolean getHaveCreatePath() {
+        return haveCreatePath;
+    }
+
+    public void setHaveCreatePath(Boolean haveCreatePath) {
+        this.haveCreatePath = haveCreatePath;
     }
 }

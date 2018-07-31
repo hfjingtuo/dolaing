@@ -13,6 +13,7 @@
         <module>dolaing-core</module>
         <module>dolaing-rest</module>
         <module>dolaing-generator</module>
+        <module>dolaing-pay</module>
     </modules>
 
     <parent>

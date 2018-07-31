@@ -1,12 +1,12 @@
 package com.dolaing.modular.api;
 
-import com.dolaing.core.base.controller.BaseController;
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.state.ManagerStatus;
 import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.shiro.ShiroUser;
 import com.dolaing.core.util.JwtTokenUtil;
+import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
@@ -30,7 +30,7 @@ import java.util.HashMap;
  */
 @RestController
 @RequestMapping("/dolaing")
-public class LoginApi extends BaseController {
+public class LoginApi extends BaseApi {
 
     @Autowired
     private IUserService userService;

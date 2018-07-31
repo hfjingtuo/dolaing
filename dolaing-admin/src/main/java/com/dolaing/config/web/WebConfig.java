@@ -5,12 +5,12 @@ import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 import com.alibaba.druid.support.spring.stat.BeanTypeAutoProxyCreator;
 import com.alibaba.druid.support.spring.stat.DruidStatInterceptor;
-import com.google.code.kaptcha.impl.DefaultKaptcha;
-import com.google.code.kaptcha.util.Config;
 import com.dolaing.config.properties.DolaingProperties;
 import com.dolaing.core.intercept.RestApiInteceptor;
 import com.dolaing.core.listener.ConfigListener;
 import com.dolaing.core.xss.XssFilter;
+import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.google.code.kaptcha.util.Config;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.JdkRegexpMethodPointcut;
@@ -48,6 +48,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         if (dolaingProperties.getSwaggerOpen()) {
             registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
             registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+            registry.addResourceHandler(dolaingProperties.getFileUploadMapping() + "**").addResourceLocations("file:" + dolaingProperties.getFileUploadPath());
         }
     }
 

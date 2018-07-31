@@ -2,19 +2,15 @@ package com.dolaing.modular.api;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.dolaing.core.base.controller.BaseController;
 import com.dolaing.core.base.tips.ErrorTip;
-import com.dolaing.core.base.tips.SuccessTip;
-import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.util.RegisterCodeUtil;
 import com.dolaing.core.util.ToolUtil;
+import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.Captcha;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -25,14 +21,13 @@ import java.util.List;
  * Copyright: Copyright (c) 2018
  * Description： 短信验证码和邮件验证码获取
  */
-@Controller
+@RestController
 @RequestMapping(value = "/dolaing/code")
-public class RegisterCodeApi extends BaseController {
+public class RegisterCodeApi extends BaseApi {
 
     /**
      * 发送手机验证码
      */
-    @ResponseBody
     @PostMapping("/msgCode")
     public Object sendMsgCode() {
         String phone = super.getPara("phone");
@@ -62,7 +57,6 @@ public class RegisterCodeApi extends BaseController {
                 captcha.setCreateTime(new Date());
                 captcha.setCreateBy(phone);
                 captcha.insert();
-                setAttr(Const.MSG_CODE_SESSION_KEY, code);
                 System.out.println("短信验证码：" + code);
                 return SUCCESS_TIP;
             }
