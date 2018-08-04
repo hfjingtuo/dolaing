@@ -36,6 +36,11 @@ public class UserAccountRecord  extends BaseModel<UserAccountRecord> {
     @TableField("source_id")
     private String sourceId;
     /**
+     * 交易状态
+     */
+    @TableField("status")
+    private String status;
+    /**
      * 用户id
      */
     @TableField("user_id")
@@ -60,7 +65,7 @@ public class UserAccountRecord  extends BaseModel<UserAccountRecord> {
     private String payment;
 
     @TableField("remarks")
-    private Date remarks;
+    private String remarks;
 
 
 }
