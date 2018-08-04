@@ -28,11 +28,11 @@ public class IndexApi extends BaseApi {
      * 首页接口
      */
     @PostMapping("/index")
-    public Map index(@RequestParam Integer pageNo, @RequestParam Integer pageSize){
+    public Map index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
         Map<String, Object> map = new HashMap<>();
         Pagination page = new Pagination(pageNo, pageSize);
-        List<MallGoodsVo> list = mallGoodsService.getGoodsList(page);
-        map.put("list",list);
+        List<MallGoodsVo> list = mallGoodsService.getGoodsList(page, null);
+        map.put("list", list);
         System.out.println(map);
         return map;
     }

@@ -1,5 +1,6 @@
 package com.dolaing.modular.api;
 
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.dolaing.config.properties.DolaingProperties;
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.base.tips.SuccessTip;
@@ -9,15 +10,17 @@ import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.MallGoods;
+import com.dolaing.modular.mall.model.MallShop;
+import com.dolaing.modular.mall.service.MallGoodsService;
+import com.dolaing.modular.mall.vo.MallGoodsVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Author: zx
@@ -31,6 +34,8 @@ public class PublishGoodsApi extends BaseApi {
 
     @Autowired
     private DolaingProperties dolaingPropertie;
+    @Autowired
+    private MallGoodsService mallGoodsService;
 
     /**
      * 发布商品
@@ -49,6 +54,67 @@ public class PublishGoodsApi extends BaseApi {
         mallGoods.setCreateTime(new Date());
         mallGoods.insert();
         return SUCCESS_TIP;
+    }
+
+    /**
+     * 已发布商品列表
+     */
+    @GetMapping("/publishGoods/list")
+    public Map index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
+        String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
+        String userName = "";
+        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
+            userName = JwtTokenUtil.getUsernameFromToken(requestHeader.substring(7));
+        }
+        Map<String, Object> map = new HashMap<>();
+        Pagination page = new Pagination(pageNo, pageSize);
+        List<MallGoodsVo> list = mallGoodsService.getGoodsList(page, StringUtils.isBlank(userName) ? "2" : userName);
+        map.put("list", list);
+        System.out.println(map);
+        return map;
+    }
+
+    /**
+     * 修改商品
+     */
+    @PostMapping("/updateGoods")
+    public Object update(@RequestBody MallGoods mallGoods) {
+        MallGoods old = new MallGoods().selectById(mallGoods.getId());
+        if (ToolUtil.isOneEmpty(mallGoods.getGoodsName(), mallGoods.getShopPrice())) {
+            return new ErrorTip(500, "产品发布失败，参数有空值");
+        }
+        old.setGoodsName(mallGoods.getGoodsName());
+        //old.setBrandId(mallGoods.getGoodsName());
+        old.setBrandName(mallGoods.getBrandName());
+        old.setBreeds(mallGoods.getBreeds());
+        old.setCatId(mallGoods.getCatId());
+        old.setDepositRatio(mallGoods.getDepositRatio());
+        old.setExpectPartOutput(mallGoods.getExpectPartOutput());
+        old.setShopPrice(mallGoods.getShopPrice());
+        old.setStartSubscribeTime(mallGoods.getStartSubscribeTime());
+        old.setEndSubscribeTime(mallGoods.getEndSubscribeTime());
+        old.setPlantime(mallGoods.getGoodsName());
+        old.setGoodsMasterImgs(mallGoods.getGoodsName());
+        old.setLandAddress(mallGoods.getGoodsName());
+        old.setLandPartArea(mallGoods.getGoodsName());
+        old.setLandSn(mallGoods.getGoodsName());
+        old.setLangImgs(mallGoods.getGoodsName());
+        old.setGoodsDesc(mallGoods.getGoodsName());
+        old.setGoodsDescImgs(mallGoods.getGoodsDescImgs());
+        old.updateById();
+        return SUCCESS_TIP;
+    }
+
+    /**
+     * 删除商品
+     */
+    @PostMapping("/deleteGoods")
+    public Object delete(@RequestParam Integer goodsId) {
+        if (ToolUtil.isEmpty(goodsId)) {
+            return new ErrorTip(500, "商品不存在");
+        }
+        new MallGoods().deleteById(goodsId);
+        return new SuccessTip(200, "删除成功");
     }
 
     /**

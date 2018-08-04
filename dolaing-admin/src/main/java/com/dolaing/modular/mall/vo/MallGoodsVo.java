@@ -26,6 +26,18 @@ public class MallGoodsVo extends BaseModel<MallGoodsVo> {
     private String brandName;// 品牌名
     private String catId;//品类
     private String breeds;//品种
+    private String expectPartOutput;//预计单位产量
+    private String expectPartOutputUnit;//预计单位产量单位(默认KG)
+    private String expectTotalOutput;//预计总产量
+    private String expectTotalOutputUnit;//预计总产量单位(默认KG)
+    private Date expectDeliverTime;//预计发货时间
+    private String landSn;//土地编号
+    private String langImgs;//土地图片([xx]分隔)
+    private String landAddress;//土地所在地
+    private String landPartArea;//每单位面积
+    private String landPartAreaUnit;//每单位面积单位(默认亩)
+    private String landTotalArea;//土地总面积
+    private String landTotalAreaUnit;//土地总面积单位(默认亩)
     private Date startSubscribeTime;//开始认购时限
     private Date endSubscribeTime;//结束认购时限
     private String shopId;//所属店铺id
