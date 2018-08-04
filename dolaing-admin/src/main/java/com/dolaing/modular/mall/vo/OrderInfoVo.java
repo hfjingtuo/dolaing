@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -180,4 +181,22 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
      */
     private Date completedTime;
 
+
+    /**
+     * 店铺id
+     */
+    private Integer shopId;
+    /**
+     * 店铺名称
+     */
+    private String shopName;
+    /**
+     * 卖家账号
+     */
+    private String seller;
+
+    /**
+     * 商品明细
+     */
+    private List<OrderGoodsVo> orderGoodsRecordVos;
 }

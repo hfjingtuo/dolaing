@@ -1,10 +1,15 @@
 package com.dolaing.modular.mall.service.impl;
 
+import com.dolaing.modular.mall.dao.OrderInfoMapper;
 import com.dolaing.modular.mall.model.OrderGoods;
 import com.dolaing.modular.mall.dao.OrderGoodsMapper;
 import com.dolaing.modular.mall.service.IOrderGoodsService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.dolaing.modular.mall.vo.OrderGoodsVo;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -16,5 +21,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OrderGoodsServiceImpl extends ServiceImpl<OrderGoodsMapper, OrderGoods> implements IOrderGoodsService {
+    @Resource
+    private OrderGoodsMapper orderGoodsMapper;
 
+    @Override
+    public List<OrderGoodsVo> queryOrderGoodsByOrderId(String orderId) {
+        return orderGoodsMapper.queryOrderGoodsByOrderId(orderId);
+    }
 }

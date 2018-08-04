@@ -181,4 +181,9 @@ public class OrderInfo extends BaseModel<OrderInfo> {
      */
     private Date completedTime;
 
+    /**
+     * 店铺id
+     */
+    private Integer shopId;
+
 }

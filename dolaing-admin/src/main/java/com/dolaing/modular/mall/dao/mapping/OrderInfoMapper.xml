@@ -41,11 +41,32 @@
         <result column="delivered_time" property="deliveredTime" />
         <result column="received_time" property="receivedTime" />
         <result column="completed_time" property="completedTime" />
+        <result column="shop_id" property="shopId" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_sn, user_id, order_status, shipping_status, pay_status, consignee, country, province, city, district, address, zipcode, tel, mobile, email, postscript, pay_id, pay_name, goods_amount, buyer_money_paid, buyer_order_amount, seller_receive_status, seller_money_received, seller_receivable_amount, farmer_receive_status, farmer_money_received, farmer_receivable_amount, remarks, create_by, create_time, update_by, update_time, paid_time, delivered_time, received_time, completed_time
+        id, order_sn, user_id, order_status, shipping_status, pay_status, consignee, country, province, city, district, address, zipcode, tel, mobile, email, postscript, pay_id, pay_name, goods_amount, buyer_money_paid, buyer_order_amount, seller_receive_status, seller_money_received, seller_receivable_amount, farmer_receive_status, farmer_money_received, farmer_receivable_amount, remarks, create_by, create_time, update_by, update_time, paid_time, delivered_time, received_time, completed_time ,shop_id
     </sql>
+
+    <select id="queryOrdersByUser" resultMap="BaseResultMap" parameterType="com.dolaing.modular.system.model.User">
+        SELECT moi.* FROM mall_order_info moi
+        LEFT JOIN mall_shop ms
+        ON moi.`shop_id` = ms.id
+        <where>
+            <if test="type != null and type =='0'">
+                moi.user_id = #{account}
+            </if>
+            <if test="type != null and type =='1'">
+                moi.user_id = #{account}
+            </if>
+            <if test="type != null and type =='2'">
+                ms.user_id = #{account}
+            </if>
+            <if test="type != null and type =='3'">
+                ms.user_id  = #{parentAccount}
+            </if>
+        </where>
+    </select>
 
 </mapper>
