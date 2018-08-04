@@ -21,6 +21,10 @@ public class User extends BaseModel<User> {
 
     private static final long serialVersionUID = 1L;
     /**
+     * 上级
+     */
+    private String parentAccount;
+    /**
      * 头像
      */
     private String avatar;
