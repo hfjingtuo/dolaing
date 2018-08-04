@@ -93,14 +93,7 @@ public class UserPayAccount extends BaseModel<UserPayAccount> {
      */
     @TableField("account_psw")
     private String accountPsw;
-    @TableField("create_by")
-    private String createBy;
-    @TableField("create_date")
-    private Date createDate;
-    @TableField("update_by")
-    private String updateBy;
-    @TableField("update_date")
-    private Date updateDate;
+
     @TableField("del_flag")
     private String delFlag;
 }
