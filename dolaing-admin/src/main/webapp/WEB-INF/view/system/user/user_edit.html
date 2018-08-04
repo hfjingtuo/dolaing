@@ -5,7 +5,7 @@
 
 			<input type="hidden" id="id" value="${user.id}">
 			<input type="hidden" id="sexValue" value="${user.sex}">
-
+			<input type="hidden" id="typeValue" value="${user.type}">
 			<div class="row">
 				<div class="col-sm-6 b-r">
 					<#input id="account" name="账户" underline="true" value="${user.account}"/>
@@ -26,10 +26,13 @@
 						<#input id="birthday" name="出生日期" underline="true" type="text"
 						value="${user.birthday}"/>
 
-						<#input id="citySel" name="部门" underline="true" readonly="readonly" hidden="deptid" hiddenValue="${user.deptid}" value="${deptName}"
-						clickFun="UserInfoDlg.showDeptSelectTree(); return false;"
-						style="background-color: #ffffff !important;"/>
-
+						<#select id="type" name="类型" underline="true">
+							<option value="0">管理员</option>
+							<option value="1">买家</option>
+							<option value="2">卖家</option>
+							<option value="3">农户</option>
+					    </#select>
+					    <#input id="parentAccount" name="归属商家" value="${user.parentAccount}"/>
 						<#input id="phone" name="电话" value="${user.phone}"/>
 					</div>
 				</div>

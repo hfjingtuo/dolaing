@@ -281,5 +281,19 @@ public class ConstantFactory implements IConstantFactory {
         return LogObjectHolder.me().get().toString();
     }
 
+    @Override
+    public String getUserTypeName(String type) {
+        if(null == type){
 
+        }else if(type.equals("0")){
+           return "管理员";
+        }else if(type.equals("1")){
+           return "买家";
+        }else if(type.equals("2")){
+           return "卖家";
+        }else if(type.equals("3")){
+           return "农户";
+        }
+        return null ;
+    }
 }

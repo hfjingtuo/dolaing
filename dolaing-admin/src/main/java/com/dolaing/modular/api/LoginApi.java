@@ -7,8 +7,10 @@ import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.shiro.ShiroUser;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
+import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
+import com.dolaing.modular.system.vo.UserCacheVo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -63,6 +65,12 @@ public class LoginApi extends BaseApi {
             if (passwordTrueFlag) {
                 HashMap<String, Object> result = new HashMap<>();
                 result.put("token", JwtTokenUtil.generateToken(String.valueOf(user.getId())));
+                //清除敏感数据 将用户数据存入到缓存中
+                result.put("user",new UserCacheVo(user));
+                UserPayAccount userPayAccount =  new UserPayAccount().selectOne("user_id = {0}",user.getAccount());
+                if(userPayAccount !=null ){
+                    result.put("accountBankCode",userPayAccount.getBankCode());
+                }
                 System.out.println("登录成功>>>>>" + JwtTokenUtil.generateToken(String.valueOf(user.getId())));
                 return result;
             }

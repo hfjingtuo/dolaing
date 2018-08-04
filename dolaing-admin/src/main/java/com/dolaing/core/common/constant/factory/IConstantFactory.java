@@ -32,6 +32,10 @@ public interface IConstantFactory {
      * 通过角色ids获取角色名称
      */
     String getRoleName(String roleIds);
+    /**
+     * 通过用户类型名称
+     */
+    String getUserTypeName(String type);
 
     /**
      * 通过角色id获取角色名称
