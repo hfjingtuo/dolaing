@@ -12,6 +12,7 @@
         <module>dolaing-admin</module>
         <module>dolaing-core</module>
         <module>dolaing-rest</module>
+        <module>dolaing-pay</module>
         <module>dolaing-generator</module>
         <module>dolaing-pay</module>
     </modules>
