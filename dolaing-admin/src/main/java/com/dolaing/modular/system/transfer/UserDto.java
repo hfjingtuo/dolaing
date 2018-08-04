@@ -15,11 +15,12 @@ import java.util.Date;
 public class UserDto{
 
 	private Integer id;
+	private String parentAccount;
 	private String account;
 	private String password;
 	private String salt;
 	private String name;
-
+	private String type;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date birthday;
 	private Integer sex;

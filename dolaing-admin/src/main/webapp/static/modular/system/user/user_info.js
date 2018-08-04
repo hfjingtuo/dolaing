@@ -18,10 +18,10 @@ var UserInfoDlg = {
                 }
             }
         },
-        citySel: {
+        type: {
             validators: {
                 notEmpty: {
-                    message: '部门不能为空'
+                    message: '类型不能为空'
                 }
             }
         },
@@ -110,65 +110,13 @@ UserInfoDlg.close = function () {
     parent.layer.close(window.parent.MgrUser.layerIndex);
 };
 
-/**
- * 点击部门input框时
- *
- * @param e
- * @param treeId
- * @param treeNode
- * @returns
- */
-UserInfoDlg.onClickDept = function (e, treeId, treeNode) {
-    $("#citySel").attr("value", instance.getSelectedVal());
-    $("#deptid").attr("value", treeNode.id);
-};
-
-/**
- * 显示部门选择的树
- *
- * @returns
- */
-UserInfoDlg.showDeptSelectTree = function () {
-    var cityObj = $("#citySel");
-    var cityOffset = $("#citySel").offset();
-    $("#menuContent").css({
-        left: cityOffset.left + "px",
-        top: cityOffset.top + cityObj.outerHeight() + "px"
-    }).slideDown("fast");
-
-    $("body").bind("mousedown", onBodyDown);
-};
-
-/**
- * 显示用户详情部门选择的树
- *
- * @returns
- */
-UserInfoDlg.showInfoDeptSelectTree = function () {
-    var cityObj = $("#citySel");
-    var cityPosition = $("#citySel").position();
-    $("#menuContent").css({
-        left: cityPosition.left + "px",
-        top: cityPosition.top + cityObj.outerHeight() + "px"
-    }).slideDown("fast");
-
-    $("body").bind("mousedown", onBodyDown);
-};
-
-/**
- * 隐藏部门选择的树
- */
-UserInfoDlg.hideDeptSelectTree = function () {
-    $("#menuContent").fadeOut("fast");
-    $("body").unbind("mousedown", onBodyDown);// mousedown当鼠标按下就可以触发，不用弹起
-};
 
 /**
  * 收集数据
  */
 UserInfoDlg.collectData = function () {
     this.set('id').set('account').set('sex').set('password').set('avatar')
-        .set('email').set('name').set('birthday').set('rePassword').set('deptid').set('phone');
+        .set('email').set('name').set('birthday').set('rePassword').set('type').set('phone').set('parentAccount');
 };
 
 /**
@@ -273,15 +221,9 @@ function onBodyDown(event) {
 
 $(function () {
     Feng.initValidator("userInfoForm", UserInfoDlg.validateFields);
-
     //初始化性别选项
     $("#sex").val($("#sexValue").val());
-
-    var ztree = new $ZTree("treeDemo", "/dept/tree");
-    ztree.bindOnClick(UserInfoDlg.onClickDept);
-    ztree.init();
-    instance = ztree;
-
+    $("#type").val($("#typeValue").val());
     // 初始化头像上传
     var avatarUp = new $WebUpload("avatar");
     avatarUp.setUploadBarId("progressBar");

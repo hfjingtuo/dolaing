@@ -46,6 +46,12 @@ public class UserFactory {
             if (ToolUtil.isNotEmpty(newUser.getPhone())) {
                 oldUser.setPhone(newUser.getPhone());
             }
+            if (ToolUtil.isNotEmpty(newUser.getType())) {
+                oldUser.setType(newUser.getType());
+            }
+            if (ToolUtil.isNotEmpty(newUser.getParentAccount())) {
+                oldUser.setParentAccount(newUser.getParentAccount());
+            }
             return oldUser;
         }
     }
