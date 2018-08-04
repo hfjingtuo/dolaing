@@ -20,6 +20,6 @@ public interface MallGoodsService extends IService<MallGoods> {
     /**
      * 查询已上架且在认购期的所有商品
      */
-    List<MallGoodsVo> getGoodsList(Pagination page);
+    List<MallGoodsVo> getGoodsList(Pagination page, String createBy);
 
 }

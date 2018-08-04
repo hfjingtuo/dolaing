@@ -35,8 +35,6 @@ public class MallGoods extends BaseModel<MallGoods> {
     private String plantingCycle;//种植周期
     private String plantingCycleUnit;//种植周期单位(默认天)
     private String plantime;//种植开始结束时间
-    //private Date startPlantime;//种植开始时间
-    //private Date endPlantime;//种植完成时间
     private String expectPartOutput;//预计单位产量
     private String expectPartOutputUnit;//预计单位产量单位(默认KG)
     private String expectTotalOutput;//预计总产量

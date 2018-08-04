@@ -12,20 +12,29 @@
         <result column="goods_desc" property="goodsDesc"/>
         <result column="goods_master_imgs" property="goodsMasterImgs"/>
         <result column="is_free_shipping" property="isFreeShipping"/>
+        <result column="deposit_ratio" property="depositRatio"/>
         <result column="start_subscribe_time" property="startSubscribeTime"/>
         <result column="end_subscribe_time" property="endSubscribeTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-		id, goods_sn goodsSn, goods_name goodsName, shop_price shopPrice, goods_brief goodsBrief, goods_desc goodsDesc, goods_master_imgs goodsMasterImgs,
-		is_free_shipping isFreeShipping,start_subscribe_time startSubscribeTime, end_subscribe_time endSubscribeTime
+		id, goods_sn goodsSn, goods_name goodsName, shop_price shopPrice,deposit_ratio depositRatio, goods_brief goodsBrief, goods_desc goodsDesc, goods_master_imgs goodsMasterImgs,
+		is_free_shipping isFreeShipping,expect_part_output expectPartOutput,expect_total_output expectTotalOutput,start_subscribe_time startSubscribeTime, end_subscribe_time endSubscribeTime,create_time createTime
 	</sql>
 
     <select id="getGoodsList" resultType="com.dolaing.modular.mall.vo.MallGoodsVo">
         select
         <include refid="Base_Column_List"/>
         from mall_goods
-        where is_on_sale = 1 and start_subscribe_time  <![CDATA[ <= ]]> NOW() and end_subscribe_time <![CDATA[ >= ]]> NOW()
+        where is_on_sale = 1 and start_subscribe_time  <![CDATA[ <= ]]> NOW() and end_subscribe_time <![CDATA[ >= ]]>
+        NOW()
+        <if test="createBy != null and createBy != ''">
+            AND create_by = #{createBy}
+        </if>
     </select>
 
 </mapper>

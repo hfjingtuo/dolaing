@@ -22,7 +22,7 @@ import java.util.Map;
 public class MallGoodsServiceImpl extends ServiceImpl<MallGoodsMapper, MallGoods> implements MallGoodsService {
 
     @Override
-    public List<MallGoodsVo> getGoodsList(Pagination page) {
-        return this.baseMapper.getGoodsList(page);
+    public List<MallGoodsVo> getGoodsList(Pagination page, String createBy) {
+        return this.baseMapper.getGoodsList(page, createBy);
     }
 }
