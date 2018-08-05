@@ -145,4 +145,20 @@
         order by moi.create_time desc
     </select>
 
+    <update id="batchDeliver"  parameterType="Map">
+        update mall_order_info
+        set
+        shipping_status = 1 ,
+        update_by = #{account} ,
+        delivered_time = now(),
+        update_time = now()
+        where
+        shipping_status = 0
+        and order_status = 1
+        and pay_status = 1
+        and id in (${ids})
+    </update>
+
+
+
 </mapper>

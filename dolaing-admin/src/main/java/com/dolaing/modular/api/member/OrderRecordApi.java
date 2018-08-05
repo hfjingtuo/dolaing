@@ -2,6 +2,8 @@ package com.dolaing.modular.api.member;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.dolaing.core.common.constant.JwtConstants;
+import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.mall.model.OrderInfo;
@@ -51,4 +53,19 @@ public class OrderRecordApi extends BaseApi {
         }
         return render(page);
     }
+
+
+    @ApiOperation(value = "批量发货")
+    @RequestMapping("/batchDeliver")
+    public Result batchDeliver(@RequestParam String ids){
+        String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
+        String account = "";
+        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
+            account = JwtTokenUtil.getUsernameFromToken(requestHeader.substring(7));
+        }
+        orderInfoService.batchDeliver(account ,ids) ;
+        return render(true);
+    }
+
+
 }
