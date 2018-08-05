@@ -31,6 +31,10 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
      */
     private String userId;
 
+    private Integer goodsId;//商品ID
+
+    private Integer goodsNum;//商品数量
+
     /**
      * 订单的状态;0未确认,1确认,2已取消,3无效,4退货
      */
@@ -180,7 +184,6 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
      * 完成时间
      */
     private Date completedTime;
-
 
     /**
      * 店铺id

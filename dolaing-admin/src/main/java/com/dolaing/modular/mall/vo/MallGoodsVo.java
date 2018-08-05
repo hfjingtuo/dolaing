@@ -26,9 +26,9 @@ public class MallGoodsVo extends BaseModel<MallGoodsVo> {
     private String brandName;// 品牌名
     private String catId;//品类
     private String breeds;//品种
-    private String expectPartOutput;//预计单位产量
+    private BigDecimal expectPartOutput;//预计单位产量
     private String expectPartOutputUnit;//预计单位产量单位(默认KG)
-    private String expectTotalOutput;//预计总产量
+    private BigDecimal expectTotalOutput;//预计总产量
     private String expectTotalOutputUnit;//预计总产量单位(默认KG)
     private Date expectDeliverTime;//预计发货时间
     private String landSn;//土地编号

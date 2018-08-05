@@ -84,7 +84,7 @@ public class PublishGoodsApi extends BaseApi {
             return new ErrorTip(500, "产品发布失败，参数有空值");
         }
         old.setGoodsName(mallGoods.getGoodsName());
-        //old.setBrandId(mallGoods.getGoodsName());
+//        old.setBrandId(mallGoods.getBrandId());
         old.setBrandName(mallGoods.getBrandName());
         old.setBreeds(mallGoods.getBreeds());
         old.setCatId(mallGoods.getCatId());
@@ -93,13 +93,13 @@ public class PublishGoodsApi extends BaseApi {
         old.setShopPrice(mallGoods.getShopPrice());
         old.setStartSubscribeTime(mallGoods.getStartSubscribeTime());
         old.setEndSubscribeTime(mallGoods.getEndSubscribeTime());
-        old.setPlantime(mallGoods.getGoodsName());
-        old.setGoodsMasterImgs(mallGoods.getGoodsName());
-        old.setLandAddress(mallGoods.getGoodsName());
-        old.setLandPartArea(mallGoods.getGoodsName());
-        old.setLandSn(mallGoods.getGoodsName());
-        old.setLangImgs(mallGoods.getGoodsName());
-        old.setGoodsDesc(mallGoods.getGoodsName());
+        old.setPlantime(mallGoods.getPlantime());
+        old.setGoodsMasterImgs(mallGoods.getGoodsMasterImgs());
+        old.setLandAddress(mallGoods.getLandAddress());
+        old.setLandPartArea(mallGoods.getLandPartArea());
+        old.setLandSn(mallGoods.getLandSn());
+        old.setLangImgs(mallGoods.getLangImgs());
+        old.setGoodsDesc(mallGoods.getGoodsDesc());
         old.setGoodsDescImgs(mallGoods.getGoodsDescImgs());
         old.updateById();
         return SUCCESS_TIP;
