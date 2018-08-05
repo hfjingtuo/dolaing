@@ -61,7 +61,7 @@ public class OrderRecordApi extends BaseApi {
         String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
         String account = "";
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            account = JwtTokenUtil.getUsernameFromToken(requestHeader.substring(7));
+            account = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
         }
         orderInfoService.batchDeliver(account ,ids) ;
         return render(true);
