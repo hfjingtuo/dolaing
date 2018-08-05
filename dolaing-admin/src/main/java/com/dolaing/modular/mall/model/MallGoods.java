@@ -49,7 +49,7 @@ public class MallGoods extends BaseModel<MallGoods> {
     private String landTotalAreaUnit;//土地总面积单位(默认亩)
     private Date startSubscribeTime;//开始认购时限
     private Date endSubscribeTime;//结束认购时限
-    private String shopId;//所属店铺id
+    private Integer shopId;//所属店铺id
     private String farmerId;//农户id
 
 }

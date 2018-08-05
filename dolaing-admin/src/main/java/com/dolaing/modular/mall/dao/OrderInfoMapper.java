@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author zx
@@ -18,5 +18,8 @@ import java.util.Map;
  */
 public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
     List<OrderInfoVo> queryOrdersByUser(Map map);
+
     Integer queryOrdersCountByUser(User user);
+
+    Integer saveOrderInfo(OrderInfo orderInfo);
 }

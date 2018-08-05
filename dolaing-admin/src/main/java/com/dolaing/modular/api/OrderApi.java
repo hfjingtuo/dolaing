@@ -1,22 +1,24 @@
 package com.dolaing.modular.api;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.dolaing.core.base.tips.ErrorTip;
+import com.dolaing.core.base.tips.SuccessTip;
 import com.dolaing.core.common.constant.JwtConstants;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.api.base.BaseApi;
-import com.dolaing.modular.mall.model.MallGoods;
-import com.dolaing.modular.mall.model.OrderGoods;
-import com.dolaing.modular.mall.model.OrderInfo;
+import com.dolaing.modular.mall.model.*;
 import com.dolaing.modular.mall.service.IOrderInfoService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Author: zx
@@ -25,7 +27,7 @@ import java.util.Date;
  * Description： 订单
  */
 @RestController
-@RequestMapping("/dolaing")
+@RequestMapping("/dolaing/order")
 public class OrderApi extends BaseApi {
 
     @Autowired
@@ -34,23 +36,22 @@ public class OrderApi extends BaseApi {
     /**
      * 生成订单
      */
-    @PostMapping("/order/generateOrder")
+    @PostMapping("/generateOrder")
     public Object publish(@RequestBody OrderInfoVo orderInfoVo) {
         String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
         String userName = "";
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
             userName = JwtTokenUtil.getUsernameFromToken(requestHeader.substring(7));
         }
+        System.out.println("userName" + userName);
         if (ToolUtil.isOneEmpty(orderInfoVo.getGoodsId(), orderInfoVo.getMobile(), orderInfoVo.getConsignee(), orderInfoVo.getAddress())) {
             return new ErrorTip(500, "订单生成失败，参数有空值");
         }
+        Integer goodsId = orderInfoVo.getGoodsId();
+        MallGoods mallGoods = new MallGoods().selectById(goodsId);
+
         OrderInfo orderInfo = new OrderInfo();
-        OrderGoods orderGoods = new OrderGoods();
-
-        orderGoods.setGoodsId(orderInfoVo.getGoodsId());
-        orderGoods.setGoodsNumber(orderInfoVo.getGoodsNum());
-        orderGoods.insert();
-
+        orderInfo.setOrderSn(getOrderSn());
         orderInfo.setConsignee(orderInfoVo.getConsignee());
         orderInfo.setMobile(orderInfoVo.getMobile());
         orderInfo.setProvince(orderInfoVo.getProvince());
@@ -58,9 +59,60 @@ public class OrderApi extends BaseApi {
         orderInfo.setAddress(orderInfoVo.getAddress());
         orderInfo.setRemarks(orderInfoVo.getRemarks());
         orderInfo.setBuyerOrderAmount(orderInfoVo.getBuyerOrderAmount());
+        orderInfo.setOrderStatus(1);
+        orderInfo.setShippingStatus(0);
+        orderInfo.setPayStatus(0);
+        orderInfo.setShopId(mallGoods.getShopId());
+        orderInfo.setUserId(userName);
         orderInfo.setCreateBy(userName);
         orderInfo.setCreateTime(new Date());
-        orderInfo.insert();
-        return SUCCESS_TIP;
+        orderInfoService.saveOrderInfo(orderInfo);
+        Integer orderId = orderInfo.getId();
+        System.out.println("orderId==" + orderId);
+
+        OrderGoods orderGoods = new OrderGoods();
+        orderGoods.setOrderId(orderId);
+        orderGoods.setGoodsName(mallGoods.getGoodsName());
+        orderGoods.setGoodsSn(goodsId + "");
+        orderGoods.setGoodsPrice(mallGoods.getShopPrice());
+        orderGoods.setGoodsId(goodsId);
+        orderGoods.setGoodsNumber(orderInfoVo.getGoodsNum());
+        orderGoods.insert();
+        return new SuccessTip(200, orderId + "");
     }
+
+    /**
+     * 订单详情
+     */
+    @GetMapping("/detail/{orderId}")
+    public Object detail(@PathVariable Integer orderId) {
+        HashMap<String, Object> result = new HashMap<>();
+        OrderInfo orderInfo = orderInfoService.selectById(orderId);
+        if (orderInfo != null) {
+            result.put("orderInfo", orderInfo);
+            return result;
+        }
+        return new ErrorTip(500, "订单不存在");
+    }
+
+    /**
+     * 生成订单号
+     *
+     * @return orderSn
+     */
+    public static String getOrderSn() {
+        String orderSn;
+        String maxOrderSn = "DLY00000001";
+        Wrapper<Captcha> wrapper = new EntityWrapper<>();
+        wrapper.orderBy("order_sn", false);
+        List<OrderInfo> list = new OrderInfo().selectList(wrapper);
+        if (!list.isEmpty() && list.size() != 0) {
+            maxOrderSn = list.get(0).getOrderSn();
+        }
+        maxOrderSn = maxOrderSn.substring(3, 11);
+        Integer temp = Integer.valueOf(maxOrderSn);
+        orderSn = "DLY" + String.format("%0" + 8 + "d", temp + 1);
+        return orderSn;
+    }
+
 }

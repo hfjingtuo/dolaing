@@ -18,4 +18,6 @@ import java.util.List;
  */
 public interface IOrderInfoService extends IService<OrderInfo> {
     Page queryOrdersByUser(Page page , User user);
+
+    Integer saveOrderInfo(OrderInfo orderInfo);
 }

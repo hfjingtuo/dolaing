@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zx
@@ -31,21 +31,27 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     /**
      * 根据用户查询订单-分页查询
+     *
      * @param user
      * @return
      */
-    public Page queryOrdersByUser(Page page ,User user){
+    public Page queryOrdersByUser(Page page, User user) {
         Map map = new HashMap();
-        map.put("page",page);
-        map.put("user",user);
-        Integer count = orderInfoMapper.queryOrdersCountByUser(user) ;
-        if(count <=0){
+        map.put("page", page);
+        map.put("user", user);
+        Integer count = orderInfoMapper.queryOrdersCountByUser(user);
+        if (count <= 0) {
             page.setRecords(Collections.emptyList());
         }
         List<OrderInfoVo> orderInfoVos = orderInfoMapper.queryOrdersByUser(map);
         page.setTotal(count);
         page.setRecords(orderInfoVos);
-        return page ;
+        return page;
+    }
+
+    @Override
+    public Integer saveOrderInfo(OrderInfo orderInfo) {
+        return orderInfoMapper.saveOrderInfo(orderInfo);
     }
 
 }

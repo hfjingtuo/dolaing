@@ -64,14 +64,15 @@ public class LoginApi extends BaseApi {
             boolean passwordTrueFlag = md5CredentialsMatcher.doCredentialsMatch(usernamePasswordToken, simpleAuthenticationInfo);
             if (passwordTrueFlag) {
                 HashMap<String, Object> result = new HashMap<>();
-                result.put("token", JwtTokenUtil.generateToken(String.valueOf(user.getId())));
+                String token = JwtTokenUtil.generateToken(String.valueOf(user.getName()));
+                result.put("token", token);
                 //清除敏感数据 将用户数据存入到缓存中
-                result.put("user",new UserCacheVo(user));
-                UserPayAccount userPayAccount =  new UserPayAccount().selectOne("user_id = {0}",user.getAccount());
-                if(userPayAccount !=null ){
-                    result.put("accountBankCode",userPayAccount.getBankCode());
+                result.put("user", new UserCacheVo(user));
+                UserPayAccount userPayAccount = new UserPayAccount().selectOne("user_id = {0}", user.getAccount());
+                if (userPayAccount != null) {
+                    result.put("accountBankCode", userPayAccount.getBankCode());
                 }
-                System.out.println("登录成功>>>>>" + JwtTokenUtil.generateToken(String.valueOf(user.getId())));
+                System.out.println("登录成功>>>>>" + token);
                 return result;
             }
         }

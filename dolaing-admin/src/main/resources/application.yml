@@ -31,6 +31,9 @@ spring:
     multipart:
       max-request-size: 100MB
       max-file-size: 100MB
+  jackson:
+      date-format: yyyy-MM-dd HH:mm:ss
+      time-zone: GMT+8
 
 mybatis-plus:
   mapper-locations: classpath*:com/dolaing/**/mapping/*.xml

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.dolaing.core.base.model.BaseModel;
 import lombok.Data;
 
+import java.beans.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 
