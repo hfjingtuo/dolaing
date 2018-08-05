@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dolaing.modular.system.dao.AreaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dolaing.modular.system.model.Area">
+        <id column="id" property="id"/>
+        <result column="en_name" property="enName"/>
+        <result column="ch_name" property="chName"/>
+        <result column="code" property="code"/>
+        <result column="parent_id" property="parentId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, en_name AS enName, ch_name AS chName, parent_id AS parentId
+    </sql>
+
+    <select id="selectParentIds" resultType="String">
+        SELECT id FROM sys_area WHERE parent_id ='45';
+    </select>
+
+    <select id="findByParentId" resultType="com.dolaing.modular.system.model.Area">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_area
+        <if test="parentId != null and parentId != ''">
+            where parent_id=#{parentId}
+        </if>
+    </select>
+
+</mapper>

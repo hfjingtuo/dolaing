@@ -32,7 +32,7 @@ public class MallGoods extends BaseModel<MallGoods> {
     private String brandName;// 品牌名
     private Integer catId;//品类
     private String breeds;//品种
-    private BigDecimal plantingCycle;//种植周期
+    private Integer plantingCycle;//种植周期
     private String plantingCycleUnit;//种植周期单位(默认天)
     private String plantime;//种植开始结束时间
     private BigDecimal expectPartOutput;//预计单位产量

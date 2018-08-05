@@ -55,4 +55,10 @@ public interface Const {
      */
     String MSG_CODE_SESSION_KEY = "MSG_CODE_SESSION_KEY";
 
+    /**
+     * 国家
+     */
+    String CHINA_ID = "45";
+    String PARENT_COUNTRY_ID = "0";
+
 }

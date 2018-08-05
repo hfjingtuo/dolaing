@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.base.tips.SuccessTip;
+import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.core.common.constant.JwtConstants;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.core.util.ToolUtil;
@@ -27,7 +28,7 @@ import java.util.Random;
  * Description： 订单
  */
 @RestController
-@RequestMapping("/dolaing/order")
+@RequestMapping("/dolaing")
 public class OrderApi extends BaseApi {
 
     @Autowired
@@ -36,7 +37,7 @@ public class OrderApi extends BaseApi {
     /**
      * 生成订单
      */
-    @PostMapping("/generateOrder")
+    @PostMapping("/order/generateOrder")
     public Object publish(@RequestBody OrderInfoVo orderInfoVo) {
         String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
         String userName = "";
@@ -84,7 +85,7 @@ public class OrderApi extends BaseApi {
     /**
      * 订单详情
      */
-    @GetMapping("/detail/{orderId}")
+    @GetMapping("/order/detail/{orderId}")
     public Object detail(@PathVariable Integer orderId) {
         HashMap<String, Object> result = new HashMap<>();
         OrderInfo orderInfo = orderInfoService.selectById(orderId);
@@ -115,4 +116,11 @@ public class OrderApi extends BaseApi {
         return orderSn;
     }
 
+    /**
+     * 根据parentId查找下级区域
+     */
+    @GetMapping("/changeArea/{parentId}")
+    public Object getAreaList(@PathVariable String parentId) {
+        return GlobalData.AREAS.get(parentId);
+    }
 }

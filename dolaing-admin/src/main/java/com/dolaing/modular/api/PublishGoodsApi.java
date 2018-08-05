@@ -6,6 +6,7 @@ import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.base.tips.SuccessTip;
 import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.JwtConstants;
+import com.dolaing.core.util.DateUtil;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.api.base.BaseApi;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -94,6 +96,7 @@ public class PublishGoodsApi extends BaseApi {
         old.setStartSubscribeTime(mallGoods.getStartSubscribeTime());
         old.setEndSubscribeTime(mallGoods.getEndSubscribeTime());
         old.setPlantime(mallGoods.getPlantime());
+        old.setPlantingCycle(mallGoods.getPlantingCycle());
         old.setGoodsMasterImgs(mallGoods.getGoodsMasterImgs());
         old.setLandAddress(mallGoods.getLandAddress());
         old.setLandPartArea(mallGoods.getLandPartArea());
@@ -101,6 +104,8 @@ public class PublishGoodsApi extends BaseApi {
         old.setLangImgs(mallGoods.getLangImgs());
         old.setGoodsDesc(mallGoods.getGoodsDesc());
         old.setGoodsDescImgs(mallGoods.getGoodsDescImgs());
+        //预计发货时间=认购结束时间+生长周期
+        old.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));
         old.updateById();
         return SUCCESS_TIP;
     }
