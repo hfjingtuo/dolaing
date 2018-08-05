@@ -26,26 +26,26 @@ public class MallGoods extends BaseModel<MallGoods> {
     private String goodsMasterImgs;//产品主图([xx]号分隔)
     private String goodsDescImgs;//产品详情图([xx]号分隔)
     private Integer isOnSale;// 是否上架(0不上架 1上架)
-    private String depositRatio;// 定金比例
+    private BigDecimal depositRatio;// 定金比例
     private Integer isFreeShipping;//是否包邮(0不包邮 1包邮)
-    private String brandId;// 品牌
+    private Integer brandId;// 品牌
     private String brandName;// 品牌名
-    private String catId;//品类
+    private Integer catId;//品类
     private String breeds;//品种
-    private String plantingCycle;//种植周期
+    private BigDecimal plantingCycle;//种植周期
     private String plantingCycleUnit;//种植周期单位(默认天)
     private String plantime;//种植开始结束时间
-    private String expectPartOutput;//预计单位产量
+    private BigDecimal expectPartOutput;//预计单位产量
     private String expectPartOutputUnit;//预计单位产量单位(默认KG)
-    private String expectTotalOutput;//预计总产量
+    private BigDecimal expectTotalOutput;//预计总产量
     private String expectTotalOutputUnit;//预计总产量单位(默认KG)
     private Date expectDeliverTime;//预计发货时间
     private String landSn;//土地编号
     private String langImgs;//土地图片([xx]分隔)
     private String landAddress;//土地所在地
-    private String landPartArea;//每单位面积
+    private BigDecimal landPartArea;//每单位面积
     private String landPartAreaUnit;//每单位面积单位(默认亩)
-    private String landTotalArea;//土地总面积
+    private BigDecimal landTotalArea;//土地总面积
     private String landTotalAreaUnit;//土地总面积单位(默认亩)
     private Date startSubscribeTime;//开始认购时限
     private Date endSubscribeTime;//结束认购时限
