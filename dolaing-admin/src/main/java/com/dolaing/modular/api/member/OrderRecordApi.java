@@ -42,11 +42,10 @@ public class OrderRecordApi extends BaseApi {
         User user = new User().selectOne("account = {0}" , userId);
         Page<OrderInfoVo> page = new Page(pageNo,pageSize) ;
         if(user != null ){
-            //todo 判断农户、商家还是买家      * 0 系统管理员  1 买家 2 卖家 3 农户 （暂定四种）
             page = orderInfoService.queryOrdersByUser(page,user);
             if(page.getRecords() != null ){
                 for(OrderInfoVo orderRecordVo : page.getRecords()){
-                    orderRecordVo.setOrderGoodsRecordVos(orderGoodsService.queryOrderGoodsByOrderId(orderRecordVo.getId()));
+                    orderRecordVo.setOrderGoodsVos(orderGoodsService.queryOrderGoodsByOrderId(orderRecordVo.getId()));
                 }
             }
         }

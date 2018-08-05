@@ -2,6 +2,7 @@ package com.dolaing.modular.mall.vo;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.dolaing.core.base.model.BaseModel;
+import com.dolaing.modular.api.enums.OrderStatusEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -46,7 +47,7 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
     private Integer shippingStatus;
 
     /**
-     * 支付状态;0未付款;1付款中;2已付款
+     * 支付状态;0 未付款;1 已付款
      */
     private Integer payStatus;
 
@@ -146,7 +147,7 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
     private BigDecimal sellerReceivableAmount;
 
     /**
-     * 农户收款状态
+     * 农户收款状态 0 未收款  1 定金收款中 2 定金已到账  3 尾款收款中  4尾款已到账
      */
     private Integer farmerReceiveStatus;
 
@@ -201,5 +202,84 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
     /**
      * 商品明细
      */
-    private List<OrderGoodsVo> orderGoodsRecordVos;
+    private List<OrderGoodsVo> orderGoodsVos;
+
+    /**
+     * 订单完整状态
+     */
+    private String orderStatusFullName ;
+    /**
+     * 订单完整状态编号
+     */
+    private String orderStatusFullCode ;
+
+    /**
+     * 农户收款状态 0 未收款  1 定金收款中 2 定金已到账  3 尾款收款中  4尾款已到账
+     */
+    private String farmerReceiveStatusLabel;
+
+    /**
+     * 卖家收款状态 0 未收款  1 定金收款中 2 定金已到账  3 尾款收款中  4尾款已到账
+     */
+    private String sellerReceiveStatusLabel;
+
+    public String getOrderStatusFullName() {
+        if(this.orderStatus == 0){
+           orderStatusFullName = OrderStatusEnum.UN_CONFIRMED.getMessage();
+        }else if(this.orderStatus == 1 && this.payStatus == 0){
+            orderStatusFullName = OrderStatusEnum.PENDING_PAYMENT.getMessage();
+        }else if(this.shippingStatus == 0 && this.payStatus == 1 ){
+            orderStatusFullName = OrderStatusEnum.PRODUCTION.getMessage();
+        }else if(this.shippingStatus == 1 ){
+            orderStatusFullName = OrderStatusEnum.WAIT_FOR_RECEPTION.getMessage();
+        }else if(this.shippingStatus == 2 ){
+            orderStatusFullName = OrderStatusEnum.COMPLETED.getMessage();
+        }
+        return orderStatusFullName;
+    }
+
+    public String getOrderStatusFullCode() {
+        if(this.orderStatus == 0){
+            orderStatusFullCode = OrderStatusEnum.UN_CONFIRMED.getCode();
+        }else if(this.orderStatus == 1 && this.payStatus == 0){
+            orderStatusFullCode = OrderStatusEnum.PENDING_PAYMENT.getCode();
+        }else if(this.shippingStatus == 0 && this.payStatus == 1 ){
+            orderStatusFullCode = OrderStatusEnum.PRODUCTION.getCode();
+        }else if(this.shippingStatus == 1 ){
+            orderStatusFullCode = OrderStatusEnum.WAIT_FOR_RECEPTION.getCode();
+        }else if(this.shippingStatus == 2 ){
+            orderStatusFullCode = OrderStatusEnum.COMPLETED.getCode();
+        }
+        return orderStatusFullCode;
+    }
+
+    public String getFarmerReceiveStatusLabel() {
+        if(this.farmerReceiveStatus == 0){
+            this.farmerReceiveStatusLabel = "未收款";
+        }else if(this.farmerReceiveStatus == 1){
+            this.farmerReceiveStatusLabel = "定金收款中";
+        }else if(this.farmerReceiveStatus == 2){
+            this.farmerReceiveStatusLabel = "定金已到账";
+        }else if(this.farmerReceiveStatus == 3){
+            this.farmerReceiveStatusLabel = "尾款收款中";
+        }else if(this.farmerReceiveStatus == 4){
+            this.farmerReceiveStatusLabel = "尾款已到账";
+        }
+        return farmerReceiveStatusLabel;
+    }
+
+    public String getSellerReceiveStatusLabel() {
+        if(this.sellerReceiveStatus == 0){
+            this.sellerReceiveStatusLabel = "未收款";
+        }else if(this.sellerReceiveStatus == 1){
+            this.sellerReceiveStatusLabel = "定金收款中";
+        }else if(this.sellerReceiveStatus == 2){
+            this.sellerReceiveStatusLabel = "定金已到账";
+        }else if(this.sellerReceiveStatus == 3){
+            this.sellerReceiveStatusLabel = "尾款收款中";
+        }else if(this.sellerReceiveStatus == 4){
+            this.sellerReceiveStatusLabel = "尾款已到账";
+        }
+        return sellerReceiveStatusLabel;
+    }
 }
