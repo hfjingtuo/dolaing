@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 /**
  * @Author:张立华
@@ -51,9 +52,6 @@ public class OrderGoodsVo {
      * 品牌名
      */
     private String brandName ;
-
-
-
     /**
      * 土地编号
      */
@@ -66,7 +64,6 @@ public class OrderGoodsVo {
      * 预计发货时间
      */
     private String expectDeliverTime ;
-
     /**
      * 定金比例
      */
@@ -82,13 +79,22 @@ public class OrderGoodsVo {
     private BigDecimal goodsAmount ;  //商品总金额
     private String goodsMasterImg;//产品主图第一张
     private BigDecimal buyLandArea;//认购面积
-
+    private String landPartAreaUnitName ; //单位面积名称
+    private String expectPartOutputUnitName;//预计单位产量单位(默认KG)
+    private String depositRatioLabel ; //显示百分比的方式
+    private BigDecimal expectPartOutputOrder ;  //此单预计产量
+    private BigDecimal depositPayment ;// 定金
+    private BigDecimal balancePayment ;// 尾款
 
     public BigDecimal getBuyLandArea() {
         this.buyLandArea = this.landPartArea.multiply(new BigDecimal(this.goodsNumber));
         return buyLandArea;
     }
 
+    public BigDecimal getExpectPartOutputOrder() {
+        this.expectPartOutputOrder = this.expectPartOutput.multiply(new BigDecimal(this.goodsNumber));
+        return expectPartOutputOrder;
+    }
 
     public BigDecimal getGoodsAmount() {
         this.goodsAmount = this.goodsPrice.multiply(new BigDecimal(this.goodsNumber));
@@ -100,5 +106,27 @@ public class OrderGoodsVo {
             this.goodsMasterImg = this.goodsMasterImgs.split(",")[0];
         }
         return goodsMasterImg;
+    }
+
+    public String getLandPartAreaUnitName() {
+        return "亩"; //暂时写死
+    }
+
+    public String getExpectPartOutputUnitName() {
+        return "kg"; //暂时写死
+    }
+
+    public String getDepositRatioLabel() {
+        return  new DecimalFormat("0.00%").format(this.depositRatio);
+    }
+
+    public BigDecimal getDepositPayment() {
+        this.depositPayment  = this.goodsPrice.multiply(new BigDecimal(this.goodsNumber)).multiply(this.depositRatio);
+        return depositPayment;
+    }
+
+    public BigDecimal getBalancePayment() {
+        this.balancePayment  = this.goodsPrice.multiply(new BigDecimal(this.goodsNumber)).multiply(new BigDecimal("1").subtract(this.depositRatio));
+        return balancePayment;
     }
 }

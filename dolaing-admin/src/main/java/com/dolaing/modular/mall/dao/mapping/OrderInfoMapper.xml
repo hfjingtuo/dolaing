@@ -100,16 +100,16 @@
         LEFT JOIN mall_shop ms
         ON moi.`shop_id` = ms.id
         <where>
-            <if test="type != null and type =='0'">
+            <if test='user.type != null and user.type == "0"'>
                 moi.user_id = #{user.account}
             </if>
-            <if test="type != null and type =='1'">
+            <if test='user.type != null and user.type == "1"'>
                 moi.user_id = #{user.account}
             </if>
-            <if test="type != null and type =='2'">
+            <if test='user.type != null and user.type == "2"'>
                 ms.user_id = #{user.account}
             </if>
-            <if test="type != null and type =='3'">
+            <if test='user.type != null and user.type == "3"'>
                 ms.user_id  = #{user.parentAccount}
             </if>
         </where>
@@ -119,22 +119,22 @@
         </if>
     </select>
 
-    <select id="queryOrdersCountByUser"  resultType="Integer" parameterType="Map">
+    <select id="queryOrdersCountByUser"  resultType="Integer" parameterType="com.dolaing.modular.system.model.User">
         SELECT count(moi.id) FROM mall_order_info moi
         LEFT JOIN mall_shop ms
         ON moi.`shop_id` = ms.id
         <where>
-            <if test="type != null and type =='0'">
-                moi.user_id = #{user.account}
+            <if test='type != null and type == "0"'>
+               and moi.user_id = #{account}
             </if>
-            <if test="type != null and type =='1'">
-                moi.user_id = #{user.account}
+            <if test='type != null and type == "1"'>
+               and moi.user_id = #{account}
             </if>
-            <if test="type != null and type =='2'">
-                ms.user_id = #{user.account}
+            <if test='type != null and type == "2"'>
+               and ms.user_id = #{account}
             </if>
-            <if test="type != null and type =='3'">
-                ms.user_id  = #{user.parentAccount}
+            <if test='type != null and type == "3"'>
+               and ms.user_id  = #{parentAccount}
             </if>
         </where>
         order by moi.create_time desc
