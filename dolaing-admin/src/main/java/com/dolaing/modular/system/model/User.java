@@ -30,7 +30,7 @@ public class User extends BaseModel<User> {
     private String avatar;
 
     /**
-     * 账号
+     * 账号 农户DF0001 合作社DA0001 买家DU0001
      */
     private String account;
 

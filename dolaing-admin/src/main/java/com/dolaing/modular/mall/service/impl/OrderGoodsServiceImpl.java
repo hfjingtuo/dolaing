@@ -25,7 +25,7 @@ public class OrderGoodsServiceImpl extends ServiceImpl<OrderGoodsMapper, OrderGo
     private OrderGoodsMapper orderGoodsMapper;
 
     @Override
-    public List<OrderGoodsVo> queryOrderGoodsByOrderId(String orderId) {
+    public List<OrderGoodsVo> queryOrderGoodsByOrderId(Integer orderId) {
         return orderGoodsMapper.queryOrderGoodsByOrderId(orderId);
     }
 }

@@ -44,29 +44,100 @@
         <result column="shop_id" property="shopId" />
     </resultMap>
 
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="OrderVoMap" type="com.dolaing.modular.mall.vo.OrderInfoVo">
+        <id column="id" property="id" />
+        <result column="order_sn" property="orderSn" />
+        <result column="user_id" property="userId" />
+        <result column="order_status" property="orderStatus" />
+        <result column="shipping_status" property="shippingStatus" />
+        <result column="pay_status" property="payStatus" />
+        <result column="consignee" property="consignee" />
+        <result column="country" property="country" />
+        <result column="province" property="province" />
+        <result column="city" property="city" />
+        <result column="district" property="district" />
+        <result column="address" property="address" />
+        <result column="zipcode" property="zipcode" />
+        <result column="tel" property="tel" />
+        <result column="mobile" property="mobile" />
+        <result column="email" property="email" />
+        <result column="postscript" property="postscript" />
+        <result column="pay_id" property="payId" />
+        <result column="pay_name" property="payName" />
+        <result column="goods_amount" property="goodsAmount" />
+        <result column="buyer_money_paid" property="buyerMoneyPaid" />
+        <result column="buyer_order_amount" property="buyerOrderAmount" />
+        <result column="seller_receive_status" property="sellerReceiveStatus" />
+        <result column="seller_money_received" property="sellerMoneyReceived" />
+        <result column="seller_receivable_amount" property="sellerReceivableAmount" />
+        <result column="farmer_receive_status" property="farmerReceiveStatus" />
+        <result column="farmer_money_received" property="farmerMoneyReceived" />
+        <result column="farmer_receivable_amount" property="farmerReceivableAmount" />
+        <result column="remarks" property="remarks" />
+        <result column="create_by" property="createBy" />
+        <result column="create_time" property="createTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="paid_time" property="paidTime" />
+        <result column="delivered_time" property="deliveredTime" />
+        <result column="received_time" property="receivedTime" />
+        <result column="completed_time" property="completedTime" />
+        <result column="shop_id" property="shopId" />
+        <result column="shop_name" property="shopName" />
+        <result column="seller" property="seller" />
+
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, order_sn, user_id, order_status, shipping_status, pay_status, consignee, country, province, city, district, address, zipcode, tel, mobile, email, postscript, pay_id, pay_name, goods_amount, buyer_money_paid, buyer_order_amount, seller_receive_status, seller_money_received, seller_receivable_amount, farmer_receive_status, farmer_money_received, farmer_receivable_amount, remarks, create_by, create_time, update_by, update_time, paid_time, delivered_time, received_time, completed_time ,shop_id
     </sql>
 
-    <select id="queryOrdersByUser" resultMap="BaseResultMap" parameterType="com.dolaing.modular.system.model.User">
-        SELECT moi.* FROM mall_order_info moi
+    <select id="queryOrdersByUser" resultMap="OrderVoMap" parameterType="Map">
+        SELECT moi.*,ms.shop_name,ms.user_id as seller FROM mall_order_info moi
         LEFT JOIN mall_shop ms
         ON moi.`shop_id` = ms.id
         <where>
             <if test="type != null and type =='0'">
-                moi.user_id = #{account}
+                moi.user_id = #{user.account}
             </if>
             <if test="type != null and type =='1'">
-                moi.user_id = #{account}
+                moi.user_id = #{user.account}
             </if>
             <if test="type != null and type =='2'">
-                ms.user_id = #{account}
+                ms.user_id = #{user.account}
             </if>
             <if test="type != null and type =='3'">
-                ms.user_id  = #{parentAccount}
+                ms.user_id  = #{user.parentAccount}
             </if>
         </where>
+        order by moi.create_time desc
+        <if test="page != null ">
+            limit ${(page.current-1)*page.size}, ${page.size}
+        </if>
+    </select>
+
+    <select id="queryOrdersCountByUser"  resultType="Integer" parameterType="Map">
+        SELECT count(moi.id) FROM mall_order_info moi
+        LEFT JOIN mall_shop ms
+        ON moi.`shop_id` = ms.id
+        <where>
+            <if test="type != null and type =='0'">
+                moi.user_id = #{user.account}
+            </if>
+            <if test="type != null and type =='1'">
+                moi.user_id = #{user.account}
+            </if>
+            <if test="type != null and type =='2'">
+                ms.user_id = #{user.account}
+            </if>
+            <if test="type != null and type =='3'">
+                ms.user_id  = #{user.parentAccount}
+            </if>
+        </where>
+        order by moi.create_time desc
     </select>
 
 </mapper>

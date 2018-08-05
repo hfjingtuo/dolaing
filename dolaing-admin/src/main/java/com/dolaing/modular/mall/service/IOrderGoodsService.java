@@ -17,5 +17,5 @@ import java.util.List;
  * @since 2018-08-04
  */
 public interface IOrderGoodsService extends IService<OrderGoods> {
-    List<OrderGoodsVo> queryOrderGoodsByOrderId(String orderId);
+    List<OrderGoodsVo> queryOrderGoodsByOrderId(Integer orderId);
 }

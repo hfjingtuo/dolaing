@@ -46,10 +46,9 @@ public class OrderRecordApi extends BaseApi {
             page = orderInfoService.queryOrdersByUser(page,user);
             if(page.getRecords() != null ){
                 for(OrderInfoVo orderRecordVo : page.getRecords()){
-                    orderRecordVo.setOrderGoodsRecordVos(orderGoodsService.queryOrderGoodsByOrderId(orderRecordVo.getOrderSn()));
+                    orderRecordVo.setOrderGoodsRecordVos(orderGoodsService.queryOrderGoodsByOrderId(orderRecordVo.getId()));
                 }
             }
-
         }
         return render(page);
     }
