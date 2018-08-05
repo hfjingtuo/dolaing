@@ -42,11 +42,11 @@ public class EditPasswordApi extends BaseController {
             return new ErrorTip(500, "参数有空值");
         }
         String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
-        String userId = "";
+        String account = "";
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            userId = JwtTokenUtil.getUsernameFromToken(requestHeader.substring(7));
+            account = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
         }
-        User user = userService.selectById(Integer.valueOf(userId));
+        User user = userService.getByAccount(account);
         String oldMd5 = ShiroKit.md5(oldPwd, user.getSalt());
         if (!user.getPassword().equals(oldMd5)) {
             return new ErrorTip(501, "原密码不正确");

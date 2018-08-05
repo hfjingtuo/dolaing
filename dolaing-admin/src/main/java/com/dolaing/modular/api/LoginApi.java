@@ -64,7 +64,7 @@ public class LoginApi extends BaseApi {
             boolean passwordTrueFlag = md5CredentialsMatcher.doCredentialsMatch(usernamePasswordToken, simpleAuthenticationInfo);
             if (passwordTrueFlag) {
                 HashMap<String, Object> result = new HashMap<>();
-                String token = JwtTokenUtil.generateToken(String.valueOf(user.getName()));
+                String token = JwtTokenUtil.generateToken(String.valueOf(user.getAccount()));
                 result.put("token", token);
                 //清除敏感数据 将用户数据存入到缓存中
                 result.put("user", new UserCacheVo(user));

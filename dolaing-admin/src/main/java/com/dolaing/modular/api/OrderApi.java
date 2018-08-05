@@ -40,11 +40,10 @@ public class OrderApi extends BaseApi {
     @PostMapping("/order/generateOrder")
     public Object publish(@RequestBody OrderInfoVo orderInfoVo) {
         String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
-        String userName = "";
+        String account = "";
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            userName = JwtTokenUtil.getUsernameFromToken(requestHeader.substring(7));
+            account = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
         }
-        System.out.println("userName" + userName);
         if (ToolUtil.isOneEmpty(orderInfoVo.getGoodsId(), orderInfoVo.getMobile(), orderInfoVo.getConsignee(), orderInfoVo.getAddress())) {
             return new ErrorTip(500, "订单生成失败，参数有空值");
         }
@@ -64,8 +63,8 @@ public class OrderApi extends BaseApi {
         orderInfo.setShippingStatus(0);
         orderInfo.setPayStatus(0);
         orderInfo.setShopId(mallGoods.getShopId());
-        orderInfo.setUserId(userName);
-        orderInfo.setCreateBy(userName);
+        orderInfo.setUserId(account);
+        orderInfo.setCreateBy(account);
         orderInfo.setCreateTime(new Date());
         orderInfoService.saveOrderInfo(orderInfo);
         Integer orderId = orderInfo.getId();

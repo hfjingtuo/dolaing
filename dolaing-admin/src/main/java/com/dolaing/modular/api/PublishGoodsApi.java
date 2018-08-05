@@ -45,14 +45,14 @@ public class PublishGoodsApi extends BaseApi {
     @PostMapping("/publishGoods")
     public Object publish(@RequestBody MallGoods mallGoods) {
         String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
-        String userName = "";
+        String account = "";
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            userName = JwtTokenUtil.getUsernameFromToken(requestHeader.substring(7));
+            account = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
         }
         if (ToolUtil.isOneEmpty(mallGoods.getGoodsName(), mallGoods.getShopPrice())) {
             return new ErrorTip(500, "产品发布失败，参数有空值");
         }
-        mallGoods.setCreateBy(userName);
+        mallGoods.setCreateBy(account);
         mallGoods.setCreateTime(new Date());
         mallGoods.insert();
         return SUCCESS_TIP;
@@ -66,7 +66,7 @@ public class PublishGoodsApi extends BaseApi {
         String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
         String userName = "";
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            userName = JwtTokenUtil.getUsernameFromToken(requestHeader.substring(7));
+            userName = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
         }
         Map<String, Object> map = new HashMap<>();
         Pagination page = new Pagination(pageNo, pageSize);
