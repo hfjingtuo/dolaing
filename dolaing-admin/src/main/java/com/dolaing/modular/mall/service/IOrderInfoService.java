@@ -1,9 +1,11 @@
 package com.dolaing.modular.mall.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.dolaing.modular.api.base.IResult;
 import com.dolaing.modular.mall.model.OrderInfo;
 import com.baomidou.mybatisplus.service.IService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
+import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.system.model.User;
 
 import java.util.List;
@@ -19,5 +21,9 @@ import java.util.List;
 public interface IOrderInfoService extends IService<OrderInfo> {
     Page queryOrdersByUser(Page page , User user);
 
+    Boolean batchDeliver(String account , String ids);
+
     Integer saveOrderInfo(OrderInfo orderInfo);
+
+    IResult payOrder(UserPayAccount userPayAccount , String orderId );
 }

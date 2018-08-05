@@ -18,4 +18,5 @@ import java.util.List;
  */
 public interface IOrderGoodsService extends IService<OrderGoods> {
     List<OrderGoodsVo> queryOrderGoodsByOrderId(Integer orderId);
+
 }

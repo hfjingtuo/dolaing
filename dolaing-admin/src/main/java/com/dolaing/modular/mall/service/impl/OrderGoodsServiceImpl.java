@@ -28,4 +28,7 @@ public class OrderGoodsServiceImpl extends ServiceImpl<OrderGoodsMapper, OrderGo
     public List<OrderGoodsVo> queryOrderGoodsByOrderId(Integer orderId) {
         return orderGoodsMapper.queryOrderGoodsByOrderId(orderId);
     }
+
+
+
 }

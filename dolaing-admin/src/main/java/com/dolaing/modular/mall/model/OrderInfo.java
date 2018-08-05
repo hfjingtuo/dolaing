@@ -2,6 +2,7 @@ package com.dolaing.modular.mall.model;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.dolaing.core.base.model.BaseModel;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.beans.Transient;
@@ -43,7 +44,7 @@ public class OrderInfo extends BaseModel<OrderInfo> {
     private Integer shippingStatus;
 
     /**
-     * 支付状态;0未付款;1付款中;2已付款
+     * 支付状态;0未付款;1已付款
      */
     private Integer payStatus;
 
@@ -187,4 +188,10 @@ public class OrderInfo extends BaseModel<OrderInfo> {
      */
     private Integer shopId;
 
+    public OrderInfo() {
+    }
+
+    public OrderInfo(Integer id) {
+        this.id = id;
+    }
 }

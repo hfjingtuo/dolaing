@@ -1,6 +1,8 @@
 package com.dolaing.modular.member.model;
 
 import com.baomidou.mybatisplus.enums.IdType;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableField;
@@ -39,7 +41,7 @@ public class UserAccountRecord  extends BaseModel<UserAccountRecord> {
      * 交易状态
      */
     @TableField("status")
-    private String status;
+    private Integer status;
     /**
      * 用户id
      */
@@ -53,12 +55,12 @@ public class UserAccountRecord  extends BaseModel<UserAccountRecord> {
     /**
      * 资金的数目，正数为增加，负数为减少
      */
-    private String amount;
+    private BigDecimal amount;
     /**
-     * 操作类型，1，转入；2，预付费
+     * 操作类型，1，转入；2，支付
      */
     @TableField("process_type")
-    private String processType;
+    private Integer processType;
     /**
      * 支付渠道1 证联支付
      */
@@ -66,6 +68,9 @@ public class UserAccountRecord  extends BaseModel<UserAccountRecord> {
 
     @TableField("remarks")
     private String remarks;
+
+    @TableField("seq_id")
+    private String seqId;
 
 
 }

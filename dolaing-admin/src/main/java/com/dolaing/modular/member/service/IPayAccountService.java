@@ -18,6 +18,7 @@ import java.util.Map;
 public interface IPayAccountService extends IService<UserPayAccount> {
     //查询开户信息
     UserPayAccount getUserPayAccountByUserId(UserPayAccount userPayAccount);
-    Map marginRegister(MarginRegisterDTO marginRegisterDTO);
+    Map marginRegister(String account ,MarginRegisterDTO marginRegisterDTO);
+    Map marginRegisterDemo(String account ,MarginRegisterDTO marginRegisterDTO);
     Map marginRegisterSms(MarginSmsDTO marginSmsDTO);
 }

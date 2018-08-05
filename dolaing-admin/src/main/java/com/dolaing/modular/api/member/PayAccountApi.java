@@ -1,5 +1,7 @@
 package com.dolaing.modular.api.member;
 
+import com.dolaing.core.common.constant.JwtConstants;
+import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.member.model.UserAccountRecord;
@@ -14,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,12 +35,18 @@ public class PayAccountApi extends BaseApi {
     @ApiOperation(value = "注册开户")
     @RequestMapping("/marginRegister")
     public Result marginRegister(@RequestBody MarginRegisterDTO marginRegisterDTO) {
+        String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
+        String account = "";
+        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
+            account = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
+        }
         //  2018-05-23  证联开户接口
         System.out.println("开户数据---->"+marginRegisterDTO.toDtoString());
         //演示数据
-//        Map map = payAccountService.marginRegister(marginRegisterDTO);
+        Map map = payAccountService.marginRegisterDemo(account,marginRegisterDTO);
+//        Map map = payAccountService.marginRegister(account,marginRegisterDTO);
         //return render(map);
-        return render(null);
+        return render(map);
     }
 
     @ApiOperation(value = "查询开户信息")
@@ -70,8 +79,8 @@ public class PayAccountApi extends BaseApi {
         marginSmsDTO.setMerchantSeqId(IdUtil.randomBase62(32));
         System.out.println("开户短信数据---->"+marginSmsDTO.toDtoString());
         //todo 演示模式
-        Map map = payAccountService.marginRegisterSms(marginSmsDTO);
-//        return render(map) ;
-        return render(null);
+//        Map map = payAccountService.marginRegisterSms(marginSmsDTO);
+        Map map = new HashMap();
+        return render(map) ;
     }
 }

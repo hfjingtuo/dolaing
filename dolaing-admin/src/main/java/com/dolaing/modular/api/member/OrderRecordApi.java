@@ -3,15 +3,18 @@ package com.dolaing.modular.api.member;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.dolaing.core.common.constant.JwtConstants;
+import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
+import com.dolaing.modular.api.enums.PayEnum;
 import com.dolaing.modular.mall.model.OrderInfo;
 import com.dolaing.modular.mall.service.IOrderGoodsService;
 import com.dolaing.modular.mall.service.IOrderInfoService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
 import com.dolaing.modular.mall.vo.OrderRecordVo;
 import com.dolaing.modular.member.model.UserAccountRecord;
+import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.member.service.IAccountRecordService;
 import com.dolaing.modular.system.model.User;
 import io.swagger.annotations.ApiOperation;
@@ -64,6 +67,29 @@ public class OrderRecordApi extends BaseApi {
             account = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
         }
         orderInfoService.batchDeliver(account ,ids) ;
+        return render(true);
+    }
+
+    @ApiOperation(value = "订单支付")
+    @RequestMapping("/pay")
+    public Result pay(@RequestParam String orderId ,@RequestParam String payPassword){
+        String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
+        String account = "";
+        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
+            account = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
+        }
+
+        User user = new User().selectOne("account = {0}" , account);
+        UserPayAccount userPayAccount = new UserPayAccount().selectOne("user_id = {0}" , account);
+        if(null == userPayAccount){
+           return render(null,PayEnum.NO_PAY_ACCOUNT);
+        }
+
+        String payPasswordMd5 = ShiroKit.md5(payPassword, String.valueOf(user.getId()));
+        if(!user.getPayPassword().equals(payPasswordMd5)){
+            render(null,PayEnum.PAY_PASSWORD_ERR);
+        }
+        orderInfoService.payOrder(userPayAccount ,orderId) ;
         return render(true);
     }
 
