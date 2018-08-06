@@ -1,7 +1,10 @@
 package com.dolaing;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.GlobalData;
+import com.dolaing.modular.mall.model.OrderInfo;
 import com.dolaing.modular.system.model.Area;
 import com.dolaing.modular.system.service.IAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,7 @@ import java.util.List;
 @Order(value = 1)
 public class StartupRunner implements CommandLineRunner {
 
-//    @Autowired
+    //    @Autowired
 //    private IDictionaryService dictionaryService;
     @Autowired
     private IAreaService areaService;
@@ -60,10 +63,11 @@ public class StartupRunner implements CommandLineRunner {
      * 初始化行政区域
      */
     private void initAreas() {
-        List<String> list = areaService.selectParentIds();
-        GlobalData.AREAS.put(Const.CHINA_ID, areaService.findByParentId(Const.CHINA_ID));
-        for (String pId : list) {
-            GlobalData.AREAS.put(pId, areaService.findByParentId(pId));
+        Wrapper<Area> wrapper = new EntityWrapper<>();
+        List<Area> list = areaService.selectList(wrapper);
+
+        for (Area area : list) {
+            GlobalData.AREAS.put(area.getId(), area);
         }
         System.out.println(">>>>>>>>>>>>>>>行政区域初始化完成<<<<<<<<<<<<<");
     }

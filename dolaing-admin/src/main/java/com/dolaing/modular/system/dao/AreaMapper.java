@@ -17,11 +17,6 @@ import java.util.List;
 public interface AreaMapper extends BaseMapper<Area> {
 
     /**
-     * 查询所有parentID为0和45的子级ID
-     */
-    List<String> selectParentIds();
-
-    /**
      * 根据 parentId 查询子级区域
      * @param parentId
      * @return

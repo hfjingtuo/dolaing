@@ -34,8 +34,8 @@ public interface Const {
     String API_MENU_NAME = "接口文档";
 
     /**
-	 * 广告图片存放地址
-	 */
+     * 广告图片存放地址
+     */
     String GOODS_IMG = "/images/goods/";
 
     /**********系统管理员*******/
@@ -58,7 +58,6 @@ public interface Const {
     /**
      * 国家
      */
-    String CHINA_ID = "45";
-    String PARENT_COUNTRY_ID = "0";
+    Integer CHINA_ID = 45;
 
 }

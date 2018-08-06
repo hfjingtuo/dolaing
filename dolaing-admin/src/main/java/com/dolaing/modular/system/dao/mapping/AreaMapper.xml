@@ -16,10 +16,6 @@
         id, en_name AS enName, ch_name AS chName, parent_id AS parentId
     </sql>
 
-    <select id="selectParentIds" resultType="String">
-        SELECT id FROM sys_area WHERE parent_id ='45';
-    </select>
-
     <select id="findByParentId" resultType="com.dolaing.modular.system.model.Area">
         select
         <include refid="Base_Column_List"/>

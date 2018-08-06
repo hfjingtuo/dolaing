@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.base.tips.SuccessTip;
+import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.core.common.constant.JwtConstants;
 import com.dolaing.core.util.JwtTokenUtil;
@@ -12,6 +13,7 @@ import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.*;
 import com.dolaing.modular.mall.service.IOrderInfoService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
+import com.dolaing.modular.system.service.IAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +35,8 @@ public class OrderApi extends BaseApi {
 
     @Autowired
     private IOrderInfoService orderInfoService;
+    @Autowired
+    private IAreaService areaService;
 
     /**
      * 生成订单
@@ -54,8 +58,10 @@ public class OrderApi extends BaseApi {
         orderInfo.setOrderSn(getOrderSn());
         orderInfo.setConsignee(orderInfoVo.getConsignee());
         orderInfo.setMobile(orderInfoVo.getMobile());
+        orderInfo.setCountry(Const.CHINA_ID);
         orderInfo.setProvince(orderInfoVo.getProvince());
         orderInfo.setCity(orderInfoVo.getCity());
+        orderInfo.setDistrict(orderInfoVo.getDistrict());
         orderInfo.setAddress(orderInfoVo.getAddress());
         orderInfo.setRemarks(orderInfoVo.getRemarks());
         orderInfo.setBuyerOrderAmount(orderInfoVo.getBuyerOrderAmount());
@@ -68,7 +74,6 @@ public class OrderApi extends BaseApi {
         orderInfo.setCreateTime(new Date());
         orderInfoService.saveOrderInfo(orderInfo);
         Integer orderId = orderInfo.getId();
-        System.out.println("orderId==" + orderId);
 
         OrderGoods orderGoods = new OrderGoods();
         orderGoods.setOrderId(orderId);
@@ -89,6 +94,10 @@ public class OrderApi extends BaseApi {
         HashMap<String, Object> result = new HashMap<>();
         OrderInfo orderInfo = orderInfoService.selectById(orderId);
         if (orderInfo != null) {
+            String province = GlobalData.AREAS.get(orderInfo.getProvince()).getChName();
+            String city = GlobalData.AREAS.get(orderInfo.getCity()).getChName();
+            String area = GlobalData.AREAS.get(orderInfo.getDistrict()).getChName();
+            orderInfo.setAddress(province + city + area + orderInfo.getAddress());
             result.put("orderInfo", orderInfo);
             return result;
         }
@@ -103,7 +112,7 @@ public class OrderApi extends BaseApi {
     public static String getOrderSn() {
         String orderSn;
         String maxOrderSn = "DLY00000001";
-        Wrapper<Captcha> wrapper = new EntityWrapper<>();
+        Wrapper<OrderInfo> wrapper = new EntityWrapper<>();
         wrapper.orderBy("order_sn", false);
         List<OrderInfo> list = new OrderInfo().selectList(wrapper);
         if (!list.isEmpty() && list.size() != 0) {
@@ -120,6 +129,6 @@ public class OrderApi extends BaseApi {
      */
     @GetMapping("/changeArea/{parentId}")
     public Object getAreaList(@PathVariable String parentId) {
-        return GlobalData.AREAS.get(parentId);
+        return areaService.findByParentId(parentId);
     }
 }

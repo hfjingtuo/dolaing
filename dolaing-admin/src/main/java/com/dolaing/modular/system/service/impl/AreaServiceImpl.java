@@ -20,11 +20,6 @@ import java.util.List;
 public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements IAreaService {
 
     @Override
-    public List<String> selectParentIds() {
-        return this.baseMapper.selectParentIds();
-    }
-
-    @Override
     public List<Area> findByParentId(String parentId) {
         return this.baseMapper.findByParentId(parentId);
     }

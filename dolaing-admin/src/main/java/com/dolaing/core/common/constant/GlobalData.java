@@ -1,5 +1,7 @@
 package com.dolaing.core.common.constant;
 
+import com.dolaing.modular.system.model.Area;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +22,7 @@ public class GlobalData {
     /**
      * 保存行政区域
      */
-    public static Map<String, Object> AREAS = new HashMap<>();
+    public static Map<Integer, Area> AREAS = new HashMap<>();
     /**
      * 保存系统配置字典值 key为dictname ,value 为 dict集合
      */

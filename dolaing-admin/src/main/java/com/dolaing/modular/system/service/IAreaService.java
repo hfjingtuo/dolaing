@@ -17,11 +17,6 @@ import java.util.List;
 public interface IAreaService extends IService<Area> {
 
     /**
-     * 查询所有parentID为中国的子级ID
-     */
-    List<String> selectParentIds();
-
-    /**
      * 根据 parentId 查询子级区域
      * @param parentId
      * @return
