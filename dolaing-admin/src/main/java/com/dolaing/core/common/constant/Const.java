@@ -51,13 +51,20 @@ public interface Const {
     String USERT_TYPE_FARMER = "3";
 
     /**
-     * 短信验证码KEY
-     */
-    String MSG_CODE_SESSION_KEY = "MSG_CODE_SESSION_KEY";
-
-    /**
      * 国家
      */
     Integer CHINA_ID = 45;
+
+    String REDIRECT_URL = "redirectUrl";
+
+    /**
+     * Redis配置
+     */
+    /***************************START******************************/
+    //token请求头 标识
+    String AUTH_HEADER = "Authorization";
+    //过期时间,默认30分钟
+    Long TOKEN_EXPIRED = 30L;
+    /***************************END******************************/
 
 }

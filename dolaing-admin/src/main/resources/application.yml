@@ -31,9 +31,11 @@ spring:
     multipart:
       max-request-size: 100MB
       max-file-size: 100MB
-  jackson:
-      date-format: yyyy-MM-dd HH:mm:ss
-      time-zone: GMT+8
+  redis:  #Redis配置
+    host: 39.104.123.195
+    password: zx1234
+    port: 9000
+    database: 5
 
 mybatis-plus:
   mapper-locations: classpath*:com/dolaing/**/mapping/*.xml

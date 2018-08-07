@@ -8,6 +8,8 @@ import com.dolaing.core.shiro.ShiroUser;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.member.model.UserPayAccount;
+import com.dolaing.modular.redis.model.TokenModel;
+import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import com.dolaing.modular.system.vo.UserCacheVo;
@@ -36,6 +38,8 @@ public class LoginApi extends BaseApi {
 
     @Autowired
     private IUserService userService;
+    @Autowired
+    private RedisTokenService redisTokenService;
 
     /**
      * api登录接口
@@ -64,7 +68,9 @@ public class LoginApi extends BaseApi {
             boolean passwordTrueFlag = md5CredentialsMatcher.doCredentialsMatch(usernamePasswordToken, simpleAuthenticationInfo);
             if (passwordTrueFlag) {
                 HashMap<String, Object> result = new HashMap<>();
-                String token = JwtTokenUtil.generateToken(String.valueOf(user.getAccount()));
+                //登录成功 生成token 保存用户登录状态
+                TokenModel model = redisTokenService.createTokenByAccount(user.getAccount());
+                String token = model.getToken();
                 result.put("token", token);
                 //清除敏感数据 将用户数据存入到缓存中
                 result.put("user", new UserCacheVo(user));

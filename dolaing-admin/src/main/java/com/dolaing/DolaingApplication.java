@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
+
 /**
  * SpringBoot方式启动类
  *
@@ -15,6 +18,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class DolaingApplication {
 
     private final static Logger logger = LoggerFactory.getLogger(DolaingApplication.class);
+
+    @PostConstruct
+    void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(DolaingApplication.class, args);
