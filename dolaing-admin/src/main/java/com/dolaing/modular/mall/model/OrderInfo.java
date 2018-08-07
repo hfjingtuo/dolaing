@@ -106,12 +106,12 @@ public class OrderInfo extends BaseModel<OrderInfo> {
     /**
      * 支付方式
      */
-    private Integer payId;
+    private Integer paymentId;
 
     /**
      * 用户选择的支付方式名称
      */
-    private String payName;
+    private String paymentName;
 
     /**
      * 商品的总金额(单位为元)

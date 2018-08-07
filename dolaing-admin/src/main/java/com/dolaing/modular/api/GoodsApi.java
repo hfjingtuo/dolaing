@@ -1,5 +1,7 @@
 package com.dolaing.modular.api;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.dolaing.config.properties.DolaingProperties;
 import com.dolaing.core.base.tips.ErrorTip;
@@ -14,7 +16,9 @@ import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.MallGoods;
 import com.dolaing.modular.mall.model.MallShop;
 import com.dolaing.modular.mall.service.MallGoodsService;
+import com.dolaing.modular.mall.service.MallShopService;
 import com.dolaing.modular.mall.vo.MallGoodsVo;
+import com.dolaing.modular.system.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +42,8 @@ public class GoodsApi extends BaseApi {
     private DolaingProperties dolaingPropertie;
     @Autowired
     private MallGoodsService mallGoodsService;
+    @Autowired
+    private MallShopService mallShopService;
 
     /**
      * 商品详情
@@ -65,6 +71,11 @@ public class GoodsApi extends BaseApi {
         if (ToolUtil.isOneEmpty(mallGoods.getGoodsName(), mallGoods.getShopPrice())) {
             return new ErrorTip(500, "产品发布失败，参数有空值");
         }
+        Wrapper<MallShop> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", account);
+        MallShop mallShop = mallShopService.selectOne(wrapper);
+        mallGoods.setBrandId(mallShop.getBrandId());
+        mallGoods.setBrandName(mallGoods.getBrandName());
         mallGoods.setCreateBy(account);
         mallGoods.setCreateTime(new Date());
         mallGoods.insert();
@@ -95,8 +106,6 @@ public class GoodsApi extends BaseApi {
             return new ErrorTip(500, "产品发布失败，参数有空值");
         }
         old.setGoodsName(mallGoods.getGoodsName());
-        //old.setBrandId(mallGoods.getBrandId());
-        //old.setBrandName(mallGoods.getBrandName());
         old.setBreeds(mallGoods.getBreeds());
         old.setCatId(mallGoods.getCatId());
         old.setDepositRatio(mallGoods.getDepositRatio());

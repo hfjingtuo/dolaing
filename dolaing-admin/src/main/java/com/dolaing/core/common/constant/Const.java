@@ -50,6 +50,11 @@ public interface Const {
     /**********农户**********/
     String USERT_TYPE_FARMER = "3";
 
+    /**********订单的状态:1 未确认*************/
+    Integer ORDER_STATUS_UNCONFIRMED = 1;
+    /********订单的状态:3 无效****************/
+    Integer ORDER_STATUS_EXPIRE = 3;
+
     /**
      * 国家
      */

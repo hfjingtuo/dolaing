@@ -15,7 +15,6 @@ import com.dolaing.modular.mall.model.OrderGoods;
 import com.dolaing.modular.mall.model.OrderInfo;
 import com.dolaing.modular.mall.service.IOrderInfoService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
-import com.dolaing.modular.system.service.IAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +34,6 @@ public class OrderApi extends BaseApi {
 
     @Autowired
     private IOrderInfoService orderInfoService;
-    @Autowired
-    private IAreaService areaService;
 
     /**
      * 生成订单
@@ -84,13 +81,13 @@ public class OrderApi extends BaseApi {
     }
 
     /**
-     * 订单详情
+     * 订单详情：未确认状态下
      */
     @GetMapping("/order/detail/{orderId}")
     public Object detail(@PathVariable Integer orderId) {
         HashMap<String, Object> result = new HashMap<>();
         OrderInfo orderInfo = orderInfoService.selectById(orderId);
-        if (orderInfo != null) {
+        if (orderInfo != null && Const.ORDER_STATUS_UNCONFIRMED == orderInfo.getOrderStatus()) {
             String province = GlobalData.AREAS.get(orderInfo.getProvince()).getChName();
             String city = GlobalData.AREAS.get(orderInfo.getCity()).getChName();
             String area = GlobalData.AREAS.get(orderInfo.getDistrict()).getChName();
