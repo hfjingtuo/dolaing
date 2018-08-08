@@ -1,12 +1,10 @@
 package com.dolaing.modular.api.member;
 
-import com.dolaing.core.common.constant.JwtConstants;
+import com.dolaing.core.support.HttpKit;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
-import com.dolaing.modular.member.model.UserAccountRecord;
 import com.dolaing.modular.member.model.UserPayAccount;
-import com.dolaing.modular.member.service.IAccountRecordService;
 import com.dolaing.modular.member.service.IPayAccountService;
 import com.dolaing.pay.client.entity.zlian.MarginRegisterDTO;
 import com.dolaing.pay.client.entity.zlian.MarginSmsDTO;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,11 +32,8 @@ public class PayAccountApi extends BaseApi {
     @ApiOperation(value = "注册开户")
     @RequestMapping("/marginRegister")
     public Result marginRegister(@RequestBody MarginRegisterDTO marginRegisterDTO) {
-        String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
-        String account = "";
-        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            account = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
-        }
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
         //  2018-05-23  证联开户接口
         System.out.println("开户数据---->"+marginRegisterDTO.toDtoString());
         //演示数据

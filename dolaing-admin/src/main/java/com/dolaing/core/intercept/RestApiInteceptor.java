@@ -1,10 +1,22 @@
 package com.dolaing.core.intercept;
 
+import com.dolaing.core.base.tips.ErrorTip;
+import com.dolaing.core.common.annotion.AuthAccess;
+import com.dolaing.core.common.constant.Const;
+import com.dolaing.core.common.exception.BizExceptionEnum;
+import com.dolaing.core.common.exception.NoTokenException;
+import com.dolaing.core.util.JwtTokenUtil;
+import com.dolaing.core.util.RenderUtil;
+import com.dolaing.modular.redis.model.TokenModel;
+import com.dolaing.modular.redis.service.RedisTokenService;
+import com.dolaing.modular.system.model.User;
+import com.dolaing.modular.system.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.lang.reflect.Method;
 
 /**
  * Rest Api接口鉴权
@@ -14,46 +26,53 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class RestApiInteceptor extends HandlerInterceptorAdapter {
 
+    @Autowired
+    private RedisTokenService manager;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
         response.addHeader("Access-Control-Allow-Methods", "*");
-        response.addHeader("Access-Control-Max-Age", "100");
-        response.addHeader("Access-Control-Allow-Credentials", "false");
+        response.addHeader("Access-Control-Max-Age", "100");//缓存的最长时间，单位是秒
+        response.addHeader("Access-Control-Allow-Credentials", "true");
         response.addHeader("Access-Control-Allow-Headers", "Authorization,Origin, X-Requested-With, Content-Type, Accept");
         if (handler instanceof org.springframework.web.servlet.resource.ResourceHttpRequestHandler) {
             return true;
         }
-        return check(request, response);
+        return check(request, response, handler);
     }
 
     //TODO
-    private boolean check(HttpServletRequest request, HttpServletResponse response) {
-        /*if (request.getServletPath().equals(JwtConstants.AUTH_PATH)) {
+    private boolean check(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        //如果不是映射到方法直接通过
+        if (!(handler instanceof HandlerMethod)) {
             return true;
         }
-        final String requestHeader = request.getHeader(JwtConstants.AUTH_HEADER);
-        String authToken;
-        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            authToken = requestHeader.substring(7);
-
-            //验证token是否过期,包含了验证jwt是否正确
-            try {
-                boolean flag = JwtTokenUtil.isTokenExpired(authToken);
-                if (flag) {
-                    RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_EXPIRED.getCode(), BizExceptionEnum.TOKEN_EXPIRED.getMessage()));
-                    return false;
-                }
-            } catch (JwtException e) {
-                //有异常就是token解析失败
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+        // 判断接口是否需要登录
+        AuthAccess methodAnnotation = method.getAnnotation(AuthAccess.class);
+        // 有 @AuthAccess 注解，需要认证
+        if (methodAnnotation != null) {
+            //从http 请求头header中得到token
+            String authToken = JwtTokenUtil.getToken(request);
+            if (authToken == null) {
                 RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_ERROR.getCode(), BizExceptionEnum.TOKEN_ERROR.getMessage()));
                 return false;
             }
-        } else {
-            //header没有带Bearer字段
-            RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_ERROR.getCode(), BizExceptionEnum.TOKEN_ERROR.getMessage()));
-            return false;
-        }*/
+            //验证token
+            if (manager.checkToken(authToken)) {
+                User user = manager.getUserByToken(authToken);
+                if (user == null) {
+                    RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_EXPIRED.getCode(), BizExceptionEnum.TOKEN_EXPIRED.getMessage()));
+                    return false;
+                }
+                return true;
+            } else {
+                RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_ERROR.getCode(), BizExceptionEnum.TOKEN_ERROR.getMessage()));
+                return false;
+            }
+        }
         return true;
     }
 

@@ -58,6 +58,8 @@ public class RegisterCodeApi extends BaseApi {
                 captcha.setCreateBy(phone);
                 captcha.insert();
                 System.out.println("短信验证码：" + code);
+                getSession().setAttribute("code",code);
+                System.out.println("code==="+getSession().getAttribute("code"));
                 return SUCCESS_TIP;
             }
         }

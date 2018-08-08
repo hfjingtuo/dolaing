@@ -1,31 +1,22 @@
 package com.dolaing.modular.api.member;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.dolaing.core.common.constant.JwtConstants;
 import com.dolaing.core.shiro.ShiroKit;
+import com.dolaing.core.support.HttpKit;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.api.enums.PayEnum;
-import com.dolaing.modular.mall.model.OrderInfo;
 import com.dolaing.modular.mall.service.IOrderGoodsService;
 import com.dolaing.modular.mall.service.IOrderInfoService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
-import com.dolaing.modular.mall.vo.OrderRecordVo;
-import com.dolaing.modular.member.model.UserAccountRecord;
 import com.dolaing.modular.member.model.UserPayAccount;
-import com.dolaing.modular.member.service.IAccountRecordService;
 import com.dolaing.modular.system.model.User;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author:张立华
@@ -43,13 +34,13 @@ public class OrderRecordApi extends BaseApi {
 
     @ApiOperation(value = "订单查询")
     @RequestMapping("/queryRecordsByUser")
-    public Result queryRecordsByUser(@RequestParam String userId,@RequestParam Integer pageSize, @RequestParam Integer pageNo){
-        User user = new User().selectOne("account = {0}" , userId);
-        Page<OrderInfoVo> page = new Page(pageNo,pageSize) ;
-        if(user != null ){
-            page = orderInfoService.queryOrdersByUser(page,user);
-            if(page.getRecords() != null ){
-                for(OrderInfoVo orderRecordVo : page.getRecords()){
+    public Result queryRecordsByUser(@RequestParam String userId, @RequestParam Integer pageSize, @RequestParam Integer pageNo) {
+        User user = new User().selectOne("account = {0}", userId);
+        Page<OrderInfoVo> page = new Page(pageNo, pageSize);
+        if (user != null) {
+            page = orderInfoService.queryOrdersByUser(page, user);
+            if (page.getRecords() != null) {
+                for (OrderInfoVo orderRecordVo : page.getRecords()) {
                     orderRecordVo.setOrderGoodsVos(orderGoodsService.queryOrderGoodsByOrderId(orderRecordVo.getId()));
                 }
             }
@@ -60,36 +51,29 @@ public class OrderRecordApi extends BaseApi {
 
     @ApiOperation(value = "批量发货")
     @RequestMapping("/batchDeliver")
-    public Result batchDeliver(@RequestParam String ids){
-        String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
-        String account = "";
-        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            account = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
-        }
-        orderInfoService.batchDeliver(account ,ids) ;
+    public Result batchDeliver(@RequestParam String ids) {
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
+        orderInfoService.batchDeliver(account, ids);
         return render(true);
     }
 
     @ApiOperation(value = "订单支付")
     @RequestMapping("/pay")
-    public Result pay(@RequestParam String orderId ,@RequestParam String payPassword){
-        String requestHeader = getHeader(JwtConstants.AUTH_HEADER);
-        String account = "";
-        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            account = JwtTokenUtil.getAccountFromToken(requestHeader.substring(7));
-        }
-
-        User user = new User().selectOne("account = {0}" , account);
-        UserPayAccount userPayAccount = new UserPayAccount().selectOne("user_id = {0}" , account);
-        if(null == userPayAccount){
-           return render(null,PayEnum.NO_PAY_ACCOUNT);
+    public Result pay(@RequestParam String orderId, @RequestParam String payPassword) {
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
+        User user = new User().selectOne("account = {0}", account);
+        UserPayAccount userPayAccount = new UserPayAccount().selectOne("user_id = {0}", account);
+        if (null == userPayAccount) {
+            return render(null, PayEnum.NO_PAY_ACCOUNT);
         }
 
         String payPasswordMd5 = ShiroKit.md5(payPassword, String.valueOf(user.getId()));
-        if(!user.getPayPassword().equals(payPasswordMd5)){
-            render(null,PayEnum.PAY_PASSWORD_ERR);
+        if (!user.getPayPassword().equals(payPasswordMd5)) {
+            render(null, PayEnum.PAY_PASSWORD_ERR);
         }
-        orderInfoService.payOrder(userPayAccount ,orderId) ;
+        orderInfoService.payOrder(userPayAccount, orderId);
         return render(true);
     }
 

@@ -9,6 +9,7 @@ import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.Captcha;
+import com.dolaing.modular.mall.model.OrderInfo;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class RegisterApi extends BaseApi {
     private IUserService userService;
 
     /**
-     * 买家注册
+     * 注册：买家
      */
     @PostMapping("/register")
     public Object register() {
@@ -72,7 +73,7 @@ public class RegisterApi extends BaseApi {
         }
 
         User user = new User();
-        user.setAccount(userName);
+        user.setAccount(getAccount());
         String salt = ShiroKit.getRandomSalt(5);
         user.setPassword(ShiroKit.md5(password, salt));
         user.setSalt(salt);
@@ -101,4 +102,25 @@ public class RegisterApi extends BaseApi {
         return SUCCESS_TIP;
     }
 
+    /**
+     * 生成用户名
+     *
+     * @return account
+     */
+    public static String getAccount() {
+        String account;
+        String maxAccount = "DU9999";
+        Wrapper<User> wrapper = new EntityWrapper<>();
+        wrapper.eq("type", Const.USERT_TYPE_MEMBER);
+        wrapper.orderBy("account", false);
+        List<User> list = new User().selectList(wrapper);
+        if (!list.isEmpty() && list.size() != 0) {
+            maxAccount = list.get(0).getAccount();
+        }
+        maxAccount = maxAccount.substring(2, 6);
+        System.out.println("maxAccount=" + maxAccount);
+        Integer temp = Integer.valueOf(maxAccount);
+        account = "DU" + String.format("%04d", temp + 1);
+        return account;
+    }
 }

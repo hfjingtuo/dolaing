@@ -21,8 +21,8 @@
         <result column="mobile" property="mobile" />
         <result column="email" property="email" />
         <result column="postscript" property="postscript" />
-        <result column="pay_id" property="payId" />
-        <result column="pay_name" property="payName" />
+        <result column="payment_id" property="paymentId" />
+        <result column="payment_name" property="paymentName" />
         <result column="goods_amount" property="goodsAmount" />
         <result column="buyer_money_paid" property="buyerMoneyPaid" />
         <result column="buyer_order_amount" property="buyerOrderAmount" />
@@ -63,8 +63,8 @@
         <result column="mobile" property="mobile" />
         <result column="email" property="email" />
         <result column="postscript" property="postscript" />
-        <result column="pay_id" property="payId" />
-        <result column="pay_name" property="payName" />
+        <result column="payment_id" property="paymentId" />
+        <result column="payment_name" property="paymentName" />
         <result column="goods_amount" property="goodsAmount" />
         <result column="buyer_money_paid" property="buyerMoneyPaid" />
         <result column="buyer_order_amount" property="buyerOrderAmount" />
@@ -91,12 +91,12 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_sn, user_id, order_status, shipping_status, pay_status, consignee, country, province, city, district, address, zipcode, tel, mobile, email, postscript, pay_id, pay_name, goods_amount, buyer_money_paid, buyer_order_amount, seller_receive_status, seller_money_received, seller_receivable_amount, farmer_receive_status, farmer_money_received, farmer_receivable_amount, remarks, create_by, create_time, update_by, update_time, paid_time, delivered_time, received_time, completed_time ,shop_id
+        id, order_sn, user_id, order_status, shipping_status, pay_status, consignee, country, province, city, district, address, zipcode, tel, mobile, email, postscript, payment_id, payment_name, goods_amount, buyer_money_paid, buyer_order_amount, seller_receive_status, seller_money_received, seller_receivable_amount, farmer_receive_status, farmer_money_received, farmer_receivable_amount, remarks, create_by, create_time, update_by, update_time, paid_time, delivered_time, received_time, completed_time ,shop_id
     </sql>
 
     <insert id="saveOrderInfo" parameterType="com.dolaing.modular.mall.model.OrderInfo" useGeneratedKeys="true" keyProperty="id">
-        insert mall_order_info(id, order_sn, user_id, order_status, shipping_status, pay_status, consignee, country, province, city, district, address, zipcode, tel, mobile, email, postscript, pay_id, pay_name, goods_amount, buyer_money_paid, buyer_order_amount, seller_receive_status, seller_money_received, seller_receivable_amount, farmer_receive_status, farmer_money_received, farmer_receivable_amount, remarks, create_by, create_time, paid_time, delivered_time, received_time, completed_time ,shop_id)
-        values (#{id},#{orderSn},#{userId},#{orderStatus},#{shippingStatus},#{payStatus},#{consignee},#{country},#{province},#{city},#{district},#{address},#{zipcode},#{tel},#{mobile},#{email},#{postscript},#{payId},#{payName},#{goodsAmount},#{buyerMoneyPaid},#{buyerOrderAmount},#{sellerReceiveStatus},#{sellerMoneyReceived},#{sellerReceivableAmount},#{farmerReceiveStatus},#{farmerMoneyReceived},#{farmerReceivableAmount},#{remarks},#{createBy},#{createTime},#{paidTime},#{deliveredTime},#{receivedTime},#{completedTime},#{shopId})
+        insert mall_order_info(id, order_sn, user_id, order_status, shipping_status, pay_status, consignee, country, province, city, district, address, zipcode, tel, mobile, email, postscript, payment_id, payment_name, goods_amount, buyer_money_paid, buyer_order_amount, seller_receive_status, seller_money_received, seller_receivable_amount, farmer_receive_status, farmer_money_received, farmer_receivable_amount, remarks, create_by, create_time, paid_time, delivered_time, received_time, completed_time ,shop_id)
+        values (#{id},#{orderSn},#{userId},#{orderStatus},#{shippingStatus},#{payStatus},#{consignee},#{country},#{province},#{city},#{district},#{address},#{zipcode},#{tel},#{mobile},#{email},#{postscript},#{paymentId},#{paymentName},#{goodsAmount},#{buyerMoneyPaid},#{buyerOrderAmount},#{sellerReceiveStatus},#{sellerMoneyReceived},#{sellerReceivableAmount},#{farmerReceiveStatus},#{farmerMoneyReceived},#{farmerReceivableAmount},#{remarks},#{createBy},#{createTime},#{paidTime},#{deliveredTime},#{receivedTime},#{completedTime},#{shopId})
     </insert>
 
 

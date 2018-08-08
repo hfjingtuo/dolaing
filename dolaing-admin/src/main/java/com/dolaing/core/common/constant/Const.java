@@ -50,14 +50,26 @@ public interface Const {
     /**********农户**********/
     String USERT_TYPE_FARMER = "3";
 
-    /**
-     * 短信验证码KEY
-     */
-    String MSG_CODE_SESSION_KEY = "MSG_CODE_SESSION_KEY";
+    /**********订单的状态:1 未确认*************/
+    Integer ORDER_STATUS_UNCONFIRMED = 1;
+    /********订单的状态:3 无效****************/
+    Integer ORDER_STATUS_EXPIRE = 3;
 
     /**
      * 国家
      */
     Integer CHINA_ID = 45;
+
+    String REDIRECT_URL = "redirectUrl";
+
+    /**
+     * Redis配置
+     */
+    /***************************START******************************/
+    //token请求头 标识
+    String AUTH_HEADER = "Authorization";
+    //过期时间,默认30分钟
+    Long TOKEN_EXPIRED = 30L;
+    /***************************END******************************/
 
 }

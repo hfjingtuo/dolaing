@@ -2,17 +2,21 @@ package com.dolaing.modular.api;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.dolaing.core.base.controller.BaseController;
 import com.dolaing.core.base.tips.ErrorTip;
-import com.dolaing.core.common.constant.Const;
-import com.dolaing.core.common.constant.state.ManagerStatus;
+import com.dolaing.core.common.constant.JwtConstants;
 import com.dolaing.core.shiro.ShiroKit;
+import com.dolaing.core.support.HttpKit;
+import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.core.util.ToolUtil;
+import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.Captcha;
+import com.dolaing.modular.mall.vo.EditPasswordVo;
+import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,21 +24,50 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 忘记密码
+ * 修改密码、重置密码
  *
  * @Author 王柳
- * @Date 2018/7/31 17:36
+ * @Date 2018/8/2 16:17
  */
 @RestController
 @RequestMapping("/dolaing")
-public class ForgetPasswordApi  extends BaseController {
+public class PasswordApi extends BaseApi {
 
     @Autowired
     private IUserService userService;
 
     /**
-     * 确认提交
-     * @return
+     * 修改密码
+     */
+    @PostMapping("/confirmSubmitEditPwd")
+    public Object confirmSubmitEditPwd(@RequestBody EditPasswordVo password) {
+        String oldPwd = password.getOldPwd();
+        String newPwd = password.getNewPwd();
+        String rePwd = password.getRePwd();
+        if (ToolUtil.isOneEmpty(oldPwd, newPwd, rePwd)) {
+            return new ErrorTip(500, "参数有空值");
+        }
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
+        User user = userService.getByAccount(account);
+        String oldMd5 = ShiroKit.md5(oldPwd, user.getSalt());
+        if (!user.getPassword().equals(oldMd5)) {
+            return new ErrorTip(501, "原密码不正确");
+        }
+        if (ToolUtil.isEmpty(newPwd) || newPwd.length() < 6 || newPwd.length() > 20) {
+            return new ErrorTip(502, "密码长度为6-20位");
+        }
+        if (!newPwd.equals(rePwd)) {
+            return new ErrorTip(503, "两次密码输入不一致");
+        }
+        String newMd5 = ShiroKit.md5(newPwd, user.getSalt());
+        user.setPassword(newMd5);
+        user.updateById();
+        return SUCCESS_TIP;
+    }
+
+    /**
+     * 忘记密码：重置密码
      */
     @PostMapping("/confirmSubmit")
     public Object confirmSubmit() {
@@ -71,7 +104,6 @@ public class ForgetPasswordApi  extends BaseController {
             captcha.setStatus("2");
             captcha.updateById();
         }
-
         User user = new User();
         user = user.selectOne("account = {0}", userName);
         String salt = ShiroKit.getRandomSalt(5);
@@ -97,5 +129,4 @@ public class ForgetPasswordApi  extends BaseController {
         }
         return SUCCESS_TIP;
     }
-
 }

@@ -1,9 +1,12 @@
 package com.dolaing.core.util;
 
+import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.JwtConstants;
+import com.dolaing.core.common.exception.NoTokenException;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +29,18 @@ import java.util.Map;
  */
 @Component
 public class JwtTokenUtil {
+
+    /**
+     * 根据Authorization获取token
+     */
+    public static String getToken(HttpServletRequest request) {
+        String requestHeader = request.getHeader(Const.AUTH_HEADER);
+        String authToken = null;
+        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
+            authToken = requestHeader.substring(7);
+        }
+        return authToken;
+    }
 
     /**
      * 获取用户名从token中
