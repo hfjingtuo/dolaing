@@ -59,7 +59,7 @@ public class OrderRecordApi extends BaseApi {
     }
 
     @ApiOperation(value = "批量收货")
-    @RequestMapping("/batchDeliver")
+    @RequestMapping("/batchReceive")
     public Result batchReceive(@RequestParam String ids) {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
