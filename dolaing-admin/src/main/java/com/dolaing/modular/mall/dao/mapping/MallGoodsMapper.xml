@@ -26,7 +26,7 @@
 		is_free_shipping isFreeShipping,expect_part_output expectPartOutput,expect_total_output expectTotalOutput,start_subscribe_time startSubscribeTime, end_subscribe_time endSubscribeTime,create_time createTime
 	</sql>
 
-    <select id="getGoodsList" resultType="com.dolaing.modular.mall.vo.MallGoodsVo">
+    <select id="getGoodsList" resultType="com.dolaing.modular.mall.vo.MallGoodsVo" parameterType="Map">
         select
         <include refid="Base_Column_List"/>
         from mall_goods
@@ -35,6 +35,34 @@
         <if test="createBy != null and createBy != ''">
             AND create_by = #{createBy}
         </if>
+        order by create_time desc
+        <if test="page != null ">
+            limit ${(page.current-1)*page.size}, ${page.size}
+        </if>
+    </select>
+
+    <select id="getGoodsList2" resultType="com.dolaing.modular.mall.vo.MallGoodsVo" >
+        select
+        <include refid="Base_Column_List"/>
+        from mall_goods
+        where is_on_sale = 1 and start_subscribe_time  <![CDATA[ <= ]]> NOW() and end_subscribe_time <![CDATA[ >= ]]>
+        NOW()
+        <if test="createBy != null and createBy != ''">
+            AND create_by = #{createBy}
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="queryGoodsCountByAccount" resultType="Integer">
+        select
+        count(id)
+        from mall_goods
+        where is_on_sale = 1 and start_subscribe_time  <![CDATA[ <= ]]> NOW() and end_subscribe_time <![CDATA[ >= ]]>
+        NOW()
+        <if test="createBy != null and createBy != ''">
+            AND create_by = #{createBy}
+        </if>
+        order by create_time desc
     </select>
 
 </mapper>

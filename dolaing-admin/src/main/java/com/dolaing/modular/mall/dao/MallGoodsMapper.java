@@ -7,6 +7,7 @@ import com.dolaing.modular.mall.vo.MallGoodsVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zx
@@ -17,5 +18,9 @@ public interface MallGoodsMapper extends BaseMapper<MallGoods> {
     /**
      * 查询已上架且在认购期的所有商品
      */
-    List<MallGoodsVo> getGoodsList(Pagination page, @Param("createBy")String createBy);
+    List<MallGoodsVo> getGoodsList(Map map);
+
+    List<MallGoodsVo> getGoodsList2(Pagination page, @Param("createBy")String createBy);
+
+    Integer queryGoodsCountByAccount(@Param("createBy") String createBy);
 }

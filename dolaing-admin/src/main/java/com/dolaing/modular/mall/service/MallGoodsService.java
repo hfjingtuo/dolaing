@@ -1,5 +1,6 @@
 package com.dolaing.modular.mall.service;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.service.IService;
 import com.dolaing.core.datascope.DataScope;
@@ -20,6 +21,9 @@ public interface MallGoodsService extends IService<MallGoods> {
     /**
      * 查询已上架且在认购期的所有商品
      */
-    List<MallGoodsVo> getGoodsList(Pagination page, String createBy);
+    Page getGoodsList(Page page , String createBy);
+
+    List<MallGoodsVo> getGoodsList2(Pagination page, @Param("createBy")String createBy);
+
 
 }

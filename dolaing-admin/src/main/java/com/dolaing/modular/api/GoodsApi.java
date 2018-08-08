@@ -2,6 +2,7 @@ package com.dolaing.modular.api;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.dolaing.config.properties.DolaingProperties;
 import com.dolaing.core.base.tips.ErrorTip;
@@ -13,6 +14,7 @@ import com.dolaing.core.util.DateUtil;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.api.base.BaseApi;
+import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.mall.model.MallGoods;
 import com.dolaing.modular.mall.model.MallShop;
 import com.dolaing.modular.mall.service.MallGoodsService;
@@ -86,14 +88,12 @@ public class GoodsApi extends BaseApi {
      * 已发布商品列表
      */
     @GetMapping("/publishGoods/list")
-    public Map index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
+    public Result index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
-        Map<String, Object> map = new HashMap<>();
-        Pagination page = new Pagination(pageNo, pageSize);
-        List<MallGoodsVo> list = mallGoodsService.getGoodsList(page, account);
-        map.put("list", list);
-        return map;
+        Page<MallGoodsVo> page = new Page(pageNo, pageSize);
+        page = mallGoodsService.getGoodsList(page, account);
+        return render(page);
     }
 
     /**
