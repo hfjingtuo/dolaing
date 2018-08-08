@@ -1,4 +1,4 @@
-package com.dolaing.modular.api;
+package com.dolaing.modular.api.quartz;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
