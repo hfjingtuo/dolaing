@@ -53,6 +53,6 @@ public class AccountRecordApi extends BaseApi {
             result.put("payDetailVo",userAccountRecordVo);
             return result;
         }
-        return new ErrorTip(500, "记录不存在");
+        return new ErrorTip(500, "支付记录不存在");
     }
 }
