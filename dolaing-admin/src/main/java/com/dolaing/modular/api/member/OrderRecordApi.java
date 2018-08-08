@@ -58,6 +58,15 @@ public class OrderRecordApi extends BaseApi {
         return render(true);
     }
 
+    @ApiOperation(value = "批量收货")
+    @RequestMapping("/batchDeliver")
+    public Result batchReceive(@RequestParam String ids) {
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
+        orderInfoService.batchReceive(account, ids);
+        return render(true);
+    }
+
     @ApiOperation(value = "订单支付")
     @RequestMapping("/pay")
     public Result pay(@RequestParam String orderId, @RequestParam String payPassword) {
