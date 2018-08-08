@@ -36,6 +36,8 @@
         <result column="deposit_ratio" property="depositRatio" />
         <result column="is_free_shipping" property="isFreeShipping" />
         <result column="goods_master_imgs" property="goodsMasterImgs" />
+        <result column="start_subscribe_time" property="startSubscribeTime" />
+        <result column="end_subscribe_time" property="endSubscribeTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -63,7 +65,9 @@
           mg.`expect_deliver_time`,
           mg.`deposit_ratio` ,
           mg.`is_free_shipping` ,
-          mg.`goods_master_imgs`
+          mg.`goods_master_imgs`,
+          mg.`start_subscribe_time`,
+          mg.`end_subscribe_time`
         FROM
           mall_order_goods mog
           LEFT JOIN mall_goods mg

@@ -177,6 +177,11 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         return ResultEnum.SUCCESS;
     }
 
+    @Override
+    public OrderInfoVo queryOrderById(Integer orderId) {
+        return orderInfoMapper.queryOrderById(orderId);
+    }
+
 
     /**
      * @Author: 张立华

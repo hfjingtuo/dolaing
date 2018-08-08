@@ -1,5 +1,6 @@
 package com.dolaing.modular.member.service.impl;
 
+import com.dolaing.modular.mall.vo.UserAccountRecordVo;
 import com.dolaing.modular.member.dao.PayAccountMapper;
 import com.dolaing.modular.member.model.UserAccountRecord;
 import com.dolaing.modular.member.dao.AccountRecordMapper;
@@ -26,6 +27,11 @@ public class AccountRecordServiceImpl extends ServiceImpl<AccountRecordMapper, U
     @Override
     public List<UserAccountRecord> queryRecordsByUser(UserAccountRecord userAccountRecord) {
         return accountRecordMapper.queryRecordsByUser(userAccountRecord);
+    }
+
+    @Override
+    public UserAccountRecordVo queryPayDetail(Integer orderId, String account, Integer processType) {
+        return accountRecordMapper.queryPayDetail(orderId,account,processType);
     }
 
 //    /**

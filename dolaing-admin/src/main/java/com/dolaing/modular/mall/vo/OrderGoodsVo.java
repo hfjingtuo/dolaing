@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.Date;
 
 /**
  * @Author:张立华
@@ -64,6 +65,17 @@ public class OrderGoodsVo {
      * 预计发货时间
      */
     private String expectDeliverTime ;
+
+    /**
+     * 开始认购时限
+     */
+    private Date startSubscribeTime;
+
+    /**
+     * 结束认购时限
+     */
+    private Date endSubscribeTime;
+
     /**
      * 定金比例
      */

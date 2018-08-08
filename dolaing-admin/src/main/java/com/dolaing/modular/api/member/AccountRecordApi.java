@@ -3,8 +3,10 @@ package com.dolaing.modular.api.member;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
+import com.dolaing.modular.mall.vo.UserAccountRecordVo;
 import com.dolaing.modular.member.model.UserAccountRecord;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.member.service.IAccountRecordService;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,5 +42,17 @@ public class AccountRecordApi extends BaseApi {
         Page page = new UserAccountRecord().selectPage(new Page<UserAccountRecord>(pageNo,pageSize),
                 new EntityWrapper<UserAccountRecord>().eq("user_id",userId).orderBy("id",false));
         return render(page);
+    }
+
+    @ApiOperation(value = "支付流水详情")
+    @GetMapping("/getPayDetail")
+    public Object getPayDetail(@RequestParam Integer orderId,@RequestParam String account,@RequestParam Integer processType){
+        HashMap<String, Object> result = new HashMap<>();
+        UserAccountRecordVo userAccountRecordVo = accountRecordService.queryPayDetail(orderId,account,processType);
+        if (userAccountRecordVo != null){
+            result.put("payDetailVo",userAccountRecordVo);
+            return result;
+        }
+        return new ErrorTip(500, "记录不存在");
     }
 }

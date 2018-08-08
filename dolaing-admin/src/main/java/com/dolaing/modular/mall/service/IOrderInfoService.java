@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.service.IService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.system.model.User;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -26,4 +27,11 @@ public interface IOrderInfoService extends IService<OrderInfo> {
     Integer saveOrderInfo(OrderInfo orderInfo);
 
     IResult payOrder(UserPayAccount userPayAccount , String orderId );
+
+    /**
+     * 根据订单id查询订单
+     * @param orderId
+     * @return
+     */
+    OrderInfoVo queryOrderById(@Param("orderId") Integer orderId);
 }

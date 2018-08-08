@@ -2,6 +2,7 @@ package com.dolaing.modular.mall.vo;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.dolaing.core.base.model.BaseModel;
+import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.modular.api.enums.OrderStatusEnum;
 import lombok.Data;
 
@@ -223,6 +224,11 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
      */
     private String sellerReceiveStatusLabel;
 
+    /**
+     * 全部地址
+     */
+    private String fullAddress;
+
     public String getOrderStatusFullName() {
         if(this.orderStatus == 0){
            orderStatusFullName = OrderStatusEnum.UN_CONFIRMED.getMessage();
@@ -281,5 +287,13 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
             this.sellerReceiveStatusLabel = "尾款已到账";
         }
         return sellerReceiveStatusLabel;
+    }
+
+    public String getFullAddress() {
+        String province = GlobalData.AREAS.get(this.province).getChName();
+        String city = GlobalData.AREAS.get(this.city).getChName();
+        String area = GlobalData.AREAS.get(this.district).getChName();
+        this.fullAddress = province + " " + city + " " + area + " " + this.address;
+        return fullAddress;
     }
 }

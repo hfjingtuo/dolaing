@@ -159,6 +159,15 @@
         and id in (${ids})
     </update>
 
+    <select id="queryOrderById" resultMap="OrderVoMap">
+        SELECT moi.*,ms.shop_name,ms.user_id as seller FROM mall_order_info moi
+        LEFT JOIN mall_shop ms
+        ON moi.`shop_id` = ms.id
+        <where>
+            moi.id = #{orderId}
+        </where>
+    </select>
+
 
 
 </mapper>

@@ -1,7 +1,9 @@
 package com.dolaing.modular.member.service;
 
+import com.dolaing.modular.mall.vo.UserAccountRecordVo;
 import com.dolaing.modular.member.model.UserAccountRecord;
 import com.baomidou.mybatisplus.service.IService;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -15,4 +17,12 @@ import java.util.List;
  */
 public interface IAccountRecordService extends IService<UserAccountRecord> {
     List<UserAccountRecord> queryRecordsByUser(UserAccountRecord userAccountRecord);
+
+    /**
+     * 查询支付流水详情
+     * @param orderId
+     * @return
+     */
+    UserAccountRecordVo queryPayDetail(@Param("orderId") Integer orderId, @Param("account") String account, @Param("processType") Integer processType);
+
 }

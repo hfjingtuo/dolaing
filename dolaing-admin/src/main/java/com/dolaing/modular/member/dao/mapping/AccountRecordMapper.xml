@@ -17,9 +17,25 @@
         <result column="update_date" property="updateDate" />
     </resultMap>
 
+    <resultMap id="UserAccountRecordVoMap" type="com.dolaing.modular.mall.vo.UserAccountRecordVo">
+        <id column="id" property="id" />
+        <result column="amount" property="amount" />
+        <result column="payment_id" property="paymentId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="seq_id" property="seqId" />
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, source_id, user_id, admin_user, amount, process_type, payment, create_by, create_date, update_by, update_date
     </sql>
+
+    <select id="queryPayDetail" resultMap="UserAccountRecordVoMap">
+        SELECT ur.amount,ur.payment_id,ur.create_time,ur.update_time,ur.seq_id
+        FROM user_account_record ur
+        LEFT JOIN mall_order_info oi ON oi.order_sn = ur.source_id
+        WHERE ur.`status` = '1' and ur.process_type = #{processType} and oi.id = #{orderId} and ur.user_id = #{account}
+    </select>
 
 </mapper>
