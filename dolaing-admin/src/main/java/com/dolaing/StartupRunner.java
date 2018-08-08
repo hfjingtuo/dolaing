@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +79,7 @@ public class StartupRunner implements CommandLineRunner {
      */
     public void flushDictionary() {
         GlobalData.DICTIONARYS.clear();
-        //initDictionarys();
+        initDictionarys();
         GlobalData.DICTIONARY_ARR.clear();
     }
 }

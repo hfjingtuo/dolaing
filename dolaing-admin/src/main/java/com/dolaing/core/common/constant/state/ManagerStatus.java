@@ -34,7 +34,7 @@ public enum ManagerStatus {
         this.message = message;
     }
 
-    public static String valueOf(Integer value) {
+    public static String labelOf(Integer value) {
         if (value == null) {
             return "";
         } else {

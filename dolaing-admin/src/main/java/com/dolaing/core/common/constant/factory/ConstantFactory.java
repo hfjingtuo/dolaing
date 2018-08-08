@@ -1,24 +1,25 @@
 package com.dolaing.core.common.constant.factory;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.dolaing.core.common.constant.cache.Cache;
 import com.dolaing.core.common.constant.cache.CacheKey;
 import com.dolaing.core.common.constant.state.ManagerStatus;
 import com.dolaing.core.common.constant.state.MenuStatus;
-import com.dolaing.modular.system.dao.*;
-import com.dolaing.modular.system.model.*;
 import com.dolaing.core.log.LogObjectHolder;
 import com.dolaing.core.support.StrKit;
 import com.dolaing.core.util.Convert;
 import com.dolaing.core.util.SpringContextHolder;
 import com.dolaing.core.util.ToolUtil;
+import com.dolaing.modular.system.dao.MenuMapper;
+import com.dolaing.modular.system.dao.NoticeMapper;
+import com.dolaing.modular.system.dao.RoleMapper;
+import com.dolaing.modular.system.dao.UserMapper;
+import com.dolaing.modular.system.model.Menu;
+import com.dolaing.modular.system.model.Notice;
+import com.dolaing.modular.system.model.Role;
+import com.dolaing.modular.system.model.User;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 常量的生产工厂
@@ -31,7 +32,6 @@ import java.util.List;
 public class ConstantFactory implements IConstantFactory {
 
     private RoleMapper roleMapper = SpringContextHolder.getBean(RoleMapper.class);
-    private DictMapper dictMapper = SpringContextHolder.getBean(DictMapper.class);
     private UserMapper userMapper = SpringContextHolder.getBean(UserMapper.class);
     private MenuMapper menuMapper = SpringContextHolder.getBean(MenuMapper.class);
     private NoticeMapper noticeMapper = SpringContextHolder.getBean(NoticeMapper.class);
@@ -121,23 +121,6 @@ public class ConstantFactory implements IConstantFactory {
         return "";
     }
 
-
-    /**
-     * 获取菜单的名称们(多个)
-     */
-    @Override
-    public String getMenuNames(String menuIds) {
-        Integer[] menus = Convert.toIntArray(menuIds);
-        StringBuilder sb = new StringBuilder();
-        for (int menu : menus) {
-            Menu menuObj = menuMapper.selectById(menu);
-            if (ToolUtil.isNotEmpty(menuObj) && ToolUtil.isNotEmpty(menuObj.getName())) {
-                sb.append(menuObj.getName()).append(",");
-            }
-        }
-        return StrKit.removeSuffix(sb.toString(), ",");
-    }
-
     /**
      * 获取菜单名称
      */
@@ -175,76 +158,11 @@ public class ConstantFactory implements IConstantFactory {
     }
 
     /**
-     * 获取字典名称
-     */
-    @Override
-    public String getDictName(Integer dictId) {
-        if (ToolUtil.isEmpty(dictId)) {
-            return "";
-        } else {
-            Dict dict = dictMapper.selectById(dictId);
-            if (dict == null) {
-                return "";
-            } else {
-                return dict.getName();
-            }
-        }
-    }
-
-    /**
-     * 获取通知标题
-     */
-    @Override
-    public String getNoticeTitle(Integer dictId) {
-        if (ToolUtil.isEmpty(dictId)) {
-            return "";
-        } else {
-            Notice notice = noticeMapper.selectById(dictId);
-            if (notice == null) {
-                return "";
-            } else {
-                return notice.getTitle();
-            }
-        }
-    }
-
-    /**
-     * 根据字典名称和字典中的值获取对应的名称
-     */
-    @Override
-    public String getDictsByName(String name, Integer val) {
-        Dict temp = new Dict();
-        temp.setName(name);
-        Dict dict = dictMapper.selectOne(temp);
-        if (dict == null) {
-            return "";
-        } else {
-            Wrapper<Dict> wrapper = new EntityWrapper<>();
-            wrapper = wrapper.eq("pid", dict.getId());
-            List<Dict> dicts = dictMapper.selectList(wrapper);
-            for (Dict item : dicts) {
-                if (item.getNum() != null && item.getNum().equals(val)) {
-                    return item.getName();
-                }
-            }
-            return "";
-        }
-    }
-
-    /**
-     * 获取性别名称
-     */
-    @Override
-    public String getSexName(Integer sex) {
-        return getDictsByName("性别", sex);
-    }
-
-    /**
      * 获取用户登录状态
      */
     @Override
     public String getStatusName(Integer status) {
-        return ManagerStatus.valueOf(status);
+        return ManagerStatus.labelOf(status);
     }
 
     /**
@@ -255,45 +173,19 @@ public class ConstantFactory implements IConstantFactory {
         return MenuStatus.valueOf(status);
     }
 
-    /**
-     * 查询字典
-     */
-    @Override
-    public List<Dict> findInDict(Integer id) {
-        if (ToolUtil.isEmpty(id)) {
-            return null;
-        } else {
-            EntityWrapper<Dict> wrapper = new EntityWrapper<>();
-            List<Dict> dicts = dictMapper.selectList(wrapper.eq("pid", id));
-            if (dicts == null || dicts.size() == 0) {
-                return null;
-            } else {
-                return dicts;
-            }
-        }
-    }
-
-    /**
-     * 获取被缓存的对象(用户删除业务)
-     */
-    @Override
-    public String getCacheObject(String para) {
-        return LogObjectHolder.me().get().toString();
-    }
-
     @Override
     public String getUserTypeName(String type) {
-        if(null == type){
+        if (null == type) {
 
-        }else if(type.equals("0")){
-           return "管理员";
-        }else if(type.equals("1")){
-           return "买家";
-        }else if(type.equals("2")){
-           return "卖家";
-        }else if(type.equals("3")){
-           return "农户";
+        } else if (type.equals("0")) {
+            return "管理员";
+        } else if (type.equals("1")) {
+            return "买家";
+        } else if (type.equals("2")) {
+            return "卖家";
+        } else if (type.equals("3")) {
+            return "农户";
         }
-        return null ;
+        return null;
     }
 }

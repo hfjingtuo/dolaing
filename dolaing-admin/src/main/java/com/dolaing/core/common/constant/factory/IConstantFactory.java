@@ -47,12 +47,6 @@ public interface IConstantFactory {
      */
     String getSingleRoleTip(Integer roleId);
 
-
-    /**
-     * 获取菜单的名称们(多个)
-     */
-    String getMenuNames(String menuIds);
-
     /**
      * 获取菜单名称
      */
@@ -64,26 +58,6 @@ public interface IConstantFactory {
     String getMenuNameByCode(String code);
 
     /**
-     * 获取字典名称
-     */
-    String getDictName(Integer dictId);
-
-    /**
-     * 获取通知标题
-     */
-    String getNoticeTitle(Integer dictId);
-
-    /**
-     * 根据字典名称和字典中的值获取对应的名称
-     */
-    String getDictsByName(String name, Integer val);
-
-    /**
-     * 获取性别名称
-     */
-    String getSexName(Integer sex);
-
-    /**
      * 获取用户登录状态
      */
     String getStatusName(Integer status);
@@ -92,17 +66,5 @@ public interface IConstantFactory {
      * 获取菜单状态
      */
     String getMenuStatusName(Integer status);
-
-    /**
-     * 查询字典
-     */
-    List<Dict> findInDict(Integer id);
-
-    /**
-     * 获取被缓存的对象(用户删除业务)
-     */
-    String getCacheObject(String para);
-
-
 
 }

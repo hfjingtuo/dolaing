@@ -1,5 +1,6 @@
 package com.dolaing.modular.system.warpper;
 
+import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.core.common.constant.factory.ConstantFactory;
 import com.dolaing.core.base.warpper.BaseControllerWarpper;
 
@@ -20,10 +21,11 @@ public class UserWarpper extends BaseControllerWarpper {
 
     @Override
     public void warpTheMap(Map<String, Object> map) {
-        map.put("sexName", ConstantFactory.me().getSexName((Integer) map.get("sex")));
-        map.put("roleName", ConstantFactory.me().getRoleName((String) map.get("roleid")));
         map.put("typeName", ConstantFactory.me().getUserTypeName((String) map.get("type")));
-        map.put("statusName", ConstantFactory.me().getStatusName((Integer) map.get("status")));
+        map.put("sexName", map.get("sex") != null ? GlobalData.DICTIONARYS.get("sex|" + map.get("sex")) : "");
+        map.put("roleName", map.get("role_id") != null ? ConstantFactory.me().getRoleName(map.get("role_id").toString()) : "");
+        map.put("statusName", map.get("status") != null ? ConstantFactory.me().getStatusName((Integer) map.get("status")) : "");
+
     }
 
 }
