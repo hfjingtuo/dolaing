@@ -24,6 +24,8 @@ public interface IOrderInfoService extends IService<OrderInfo> {
 
     Boolean batchDeliver(String account , String ids);
 
+    Boolean batchReceive(String account , String ids);
+
     Integer saveOrderInfo(OrderInfo orderInfo);
 
     IResult payOrder(UserPayAccount userPayAccount , String orderId );
@@ -34,4 +36,6 @@ public interface IOrderInfoService extends IService<OrderInfo> {
      * @return
      */
     OrderInfoVo queryOrderById(@Param("orderId") Integer orderId);
+
+    IResult payOrderBalance(String orderId ) ;
 }
