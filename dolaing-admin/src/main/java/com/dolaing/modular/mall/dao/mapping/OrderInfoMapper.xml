@@ -170,4 +170,18 @@
 
 
 
+    <!-- 批量收货 -->
+    <update id="batchReceive"  parameterType="Map">
+        update mall_order_info
+        set
+        shipping_status = 2 ,
+        update_by = #{account} ,
+        received_time = now(),
+        update_time = now()
+        where
+        shipping_status = 1
+        and order_status = 1
+        and pay_status = 1
+        and id in (${ids})
+    </update>
 </mapper>

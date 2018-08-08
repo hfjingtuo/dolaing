@@ -21,7 +21,7 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
     List<OrderInfoVo> queryOrdersByUser(Map map);
     Integer queryOrdersCountByUser(User user);
     Boolean batchDeliver(Map map);
-
+    Boolean batchReceive(Map map);
     Integer saveOrderInfo(OrderInfo orderInfo);
 
     /**

@@ -31,7 +31,7 @@ public class IndexApi extends BaseApi {
     public Map index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
         Map<String, Object> map = new HashMap<>();
         Pagination page = new Pagination(pageNo, pageSize);
-        List<MallGoodsVo> list = mallGoodsService.getGoodsList(page, null);
+        List<MallGoodsVo> list = mallGoodsService.getGoodsList2(page, null);
         map.put("list", list);
         System.out.println(map);
         return map;

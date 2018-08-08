@@ -57,14 +57,14 @@ public class UserAccountRecord  extends BaseModel<UserAccountRecord> {
      */
     private BigDecimal amount;
     /**
-     * 操作类型，1，转入；2，支付
+     * 操作类型，0 订单支付 1，定金转入；2，尾款转入
      */
     @TableField("process_type")
     private Integer processType;
     /**
-     * 支付渠道1 证联支付
+     * 支付渠道 0 证联支付
      */
-    private String payment;
+    private String paymentId;
 
     @TableField("remarks")
     private String remarks;
