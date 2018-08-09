@@ -64,7 +64,7 @@ public class OrderGoodsVo {
     /**
      * 预计发货时间
      */
-    private String expectDeliverTime ;
+    private Date expectDeliverTime ;
 
     /**
      * 开始认购时限
