@@ -47,6 +47,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
+    public List<User> getFarmerByParentAccount(String account) {
+        return this.baseMapper.getFarmerByParentAccount(account);
+    }
+
+    @Override
     public User getUserByUserName(String condition) {
         return this.baseMapper.getUserByUserName(condition);
     }

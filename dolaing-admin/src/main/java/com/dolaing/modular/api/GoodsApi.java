@@ -3,12 +3,11 @@ package com.dolaing.modular.api;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.dolaing.config.properties.DolaingProperties;
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.base.tips.SuccessTip;
+import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.common.constant.Const;
-import com.dolaing.core.common.constant.JwtConstants;
 import com.dolaing.core.support.HttpKit;
 import com.dolaing.core.util.DateUtil;
 import com.dolaing.core.util.JwtTokenUtil;
@@ -21,7 +20,7 @@ import com.dolaing.modular.mall.service.MallGoodsService;
 import com.dolaing.modular.mall.service.MallShopService;
 import com.dolaing.modular.mall.vo.MallGoodsVo;
 import com.dolaing.modular.system.model.User;
-import org.apache.commons.lang3.StringUtils;
+import com.dolaing.modular.system.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,6 +45,8 @@ public class GoodsApi extends BaseApi {
     private MallGoodsService mallGoodsService;
     @Autowired
     private MallShopService mallShopService;
+    @Autowired
+    private IUserService userService;
 
     /**
      * 商品详情
@@ -66,6 +67,7 @@ public class GoodsApi extends BaseApi {
     /**
      * 发布商品
      */
+    @AuthAccess
     @PostMapping("/publishGoods")
     public Object publish(@RequestBody MallGoods mallGoods) {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
@@ -87,6 +89,7 @@ public class GoodsApi extends BaseApi {
     /**
      * 已发布商品列表
      */
+    @AuthAccess
     @GetMapping("/publishGoods/list")
     public Result index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
@@ -99,6 +102,7 @@ public class GoodsApi extends BaseApi {
     /**
      * 修改商品
      */
+    @AuthAccess
     @PostMapping("/updateGoods")
     public Object update(@RequestBody MallGoods mallGoods) {
         MallGoods old = new MallGoods().selectById(mallGoods.getId());
@@ -131,6 +135,7 @@ public class GoodsApi extends BaseApi {
     /**
      * 删除商品
      */
+    @AuthAccess
     @PostMapping("/deleteGoods")
     public Object delete(@RequestParam Integer goodsId) {
         if (ToolUtil.isEmpty(goodsId)) {
@@ -138,6 +143,21 @@ public class GoodsApi extends BaseApi {
         }
         new MallGoods().deleteById(goodsId);
         return new SuccessTip(200, "删除成功");
+    }
+
+    /**
+     * 根据卖家查找所属农户
+     */
+    @AuthAccess
+    @PostMapping("/getAllFarmer")
+    public Object getAllFarmer() {
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
+        List<User> list = userService.getFarmerByParentAccount(account);
+        if (list != null) {
+            return render(list);
+        }
+        return new ErrorTip(500, "没找到所属农户");
     }
 
     /**

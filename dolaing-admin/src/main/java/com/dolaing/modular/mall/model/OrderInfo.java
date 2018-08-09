@@ -129,7 +129,7 @@ public class OrderInfo extends BaseModel<OrderInfo> {
     private BigDecimal buyerOrderAmount;
 
     /**
-     * 卖家收款状态
+     * 卖家收款状态0 未收款  1 定金收款中 2 定金已到账  3 尾款收款中  4尾款已到账
      */
     private Integer sellerReceiveStatus;
 

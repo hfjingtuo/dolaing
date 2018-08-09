@@ -2,15 +2,11 @@ package com.dolaing.core.intercept;
 
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.common.annotion.AuthAccess;
-import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.exception.BizExceptionEnum;
-import com.dolaing.core.common.exception.NoTokenException;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.core.util.RenderUtil;
-import com.dolaing.modular.redis.model.TokenModel;
 import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
-import com.dolaing.modular.system.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -48,7 +44,7 @@ public class RestApiInteceptor extends HandlerInterceptorAdapter {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        /*HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
         // 判断接口是否需要登录
         AuthAccess methodAnnotation = method.getAnnotation(AuthAccess.class);
@@ -72,7 +68,7 @@ public class RestApiInteceptor extends HandlerInterceptorAdapter {
                 RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_ERROR.getCode(), BizExceptionEnum.TOKEN_ERROR.getMessage()));
                 return false;
             }
-        }
+        }*/
         return true;
     }
 
