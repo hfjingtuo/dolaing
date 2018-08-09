@@ -296,4 +296,53 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
         this.fullAddress = province + " " + city + " " + area + " " + this.address;
         return fullAddress;
     }
+
+    @Override
+    public String toString() {
+        return "OrderInfoVo{" +
+                "orderSn='" + orderSn + '\'' +
+                ", userId='" + userId + '\'' +
+                ", goodsId=" + goodsId +
+                ", goodsNum=" + goodsNum +
+                ", orderStatus=" + orderStatus +
+                ", shippingStatus=" + shippingStatus +
+                ", payStatus=" + payStatus +
+                ", consignee='" + consignee + '\'' +
+                ", country=" + country +
+                ", province=" + province +
+                ", city=" + city +
+                ", district=" + district +
+                ", address='" + address + '\'' +
+                ", zipcode='" + zipcode + '\'' +
+                ", tel='" + tel + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", email='" + email + '\'' +
+                ", postscript='" + postscript + '\'' +
+                ", paymentId=" + paymentId +
+                ", paymentName='" + paymentName + '\'' +
+                ", goodsAmount=" + goodsAmount +
+                ", buyerMoneyPaid=" + buyerMoneyPaid +
+                ", buyerOrderAmount=" + buyerOrderAmount +
+                ", sellerReceiveStatus=" + sellerReceiveStatus +
+                ", sellerMoneyReceived=" + sellerMoneyReceived +
+                ", sellerReceivableAmount=" + sellerReceivableAmount +
+                ", farmerReceiveStatus=" + farmerReceiveStatus +
+                ", farmerMoneyReceived=" + farmerMoneyReceived +
+                ", farmerReceivableAmount=" + farmerReceivableAmount +
+                ", remarks='" + remarks + '\'' +
+                ", paidTime=" + paidTime +
+                ", deliveredTime=" + deliveredTime +
+                ", receivedTime=" + receivedTime +
+                ", completedTime=" + completedTime +
+                ", shopId=" + shopId +
+                ", shopName='" + shopName + '\'' +
+                ", seller='" + seller + '\'' +
+                ", orderGoodsVos=" + orderGoodsVos +
+                ", orderStatusFullName='" + orderStatusFullName + '\'' +
+                ", orderStatusFullCode='" + orderStatusFullCode + '\'' +
+                ", farmerReceiveStatusLabel='" + farmerReceiveStatusLabel + '\'' +
+                ", sellerReceiveStatusLabel='" + sellerReceiveStatusLabel + '\'' +
+                ", fullAddress='" + fullAddress + '\'' +
+                '}';
+    }
 }
