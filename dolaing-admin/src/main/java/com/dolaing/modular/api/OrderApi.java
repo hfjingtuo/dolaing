@@ -71,6 +71,10 @@ public class OrderApi extends BaseApi {
         orderInfo.setSellerReceiveStatus(0);
         orderInfo.setSellerMoneyReceived(BigDecimal.ZERO);
         orderInfo.setSellerReceivableAmount(BigDecimal.ZERO);
+        orderInfo.setBuyerMoneyPaid(BigDecimal.ZERO);
+        orderInfo.setFarmerMoneyReceived(BigDecimal.ZERO);
+        orderInfo.setSellerReceivableAmount(BigDecimal.ZERO);
+        orderInfo.setFarmerReceivableAmount(BigDecimal.ZERO);
         orderInfo.setShopId(mallGoods.getShopId());
         orderInfo.setUserId(account);
         orderInfo.setCreateBy(account);
