@@ -48,6 +48,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         if (dolaingProperties.getSwaggerOpen()) {
             registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
             registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+            System.out.println("==============================================================");
+            System.out.println(dolaingProperties.getFileUploadMapping() + "**");
+            System.out.println("file:" + dolaingProperties.getFileUploadPath());
+            System.out.println("==============================================================");
             registry.addResourceHandler(dolaingProperties.getFileUploadMapping() + "**").addResourceLocations("file:" + dolaingProperties.getFileUploadPath());
         }
     }

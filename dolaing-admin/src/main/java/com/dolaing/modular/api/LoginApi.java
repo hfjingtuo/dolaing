@@ -2,17 +2,22 @@ package com.dolaing.modular.api;
 
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.common.constant.Const;
+import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.core.common.constant.state.ManagerStatus;
 import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.shiro.ShiroUser;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
+import com.dolaing.modular.mall.model.MallShop;
+import com.dolaing.modular.mall.vo.MallShopVo;
 import com.dolaing.modular.member.model.UserPayAccount;
+import com.dolaing.modular.member.vo.UserPayAccountVo;
 import com.dolaing.modular.redis.model.TokenModel;
 import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import com.dolaing.modular.system.vo.UserCacheVo;
+import com.dolaing.pay.client.constants.Global;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -73,12 +78,23 @@ public class LoginApi extends BaseApi {
                 String token = model.getToken();
                 result.put("token", token);
                 //清除敏感数据 将用户数据存入到缓存中
-                result.put("user", new UserCacheVo(user));
+                UserCacheVo userCacheVo = new UserCacheVo(user) ;
+                if(userCacheVo.getType().equals("2")){
+                    MallShop mallShop = new MallShop().selectOne("user_id = {0} " , userCacheVo.getAccount());
+                    MallShopVo mallShopVo = null ;
+                    if(mallShop !=null ) {
+                        mallShopVo = new MallShopVo(mallShop);
+                    }
+                    userCacheVo.setMallShopVo(mallShopVo);
+                }
+                result.put("user", userCacheVo);
                 UserPayAccount userPayAccount = new UserPayAccount().selectOne("user_id = {0}", user.getAccount());
                 if (userPayAccount != null) {
-                    result.put("accountBankCode", userPayAccount.getBankCode());
+                    UserPayAccountVo userPayAccountVo = new UserPayAccountVo(userPayAccount);
+                    result.put("userPayAccount", userPayAccountVo);
+                }else {
+                    result.put("userPayAccount", null);
                 }
-                System.out.println("登录成功>>>>>" + token);
                 return result;
             }
         }
