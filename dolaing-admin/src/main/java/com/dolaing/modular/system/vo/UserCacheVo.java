@@ -1,6 +1,8 @@
 package com.dolaing.modular.system.vo;
 
 import com.dolaing.core.base.model.BaseModel;
+import com.dolaing.modular.mall.model.MallShop;
+import com.dolaing.modular.mall.vo.MallShopVo;
 import com.dolaing.modular.system.model.User;
 import lombok.Data;
 
@@ -73,6 +75,8 @@ public class UserCacheVo extends BaseModel<UserCacheVo> {
      * 最后登录时间
      */
     private Date lastLogin;
+
+    private MallShopVo mallShopVo ;
 
     public UserCacheVo(User user) {
         this.avatar = user.getAvatar();
