@@ -66,7 +66,7 @@ public class HttpUtil {
     /**
      * @Author: 张立华
      * @Description:
-     * @params: *
+     * @params: * 返回 code值如果为 1000 则表示成功，然后取值 data ，错误code值为 -1
      * @return: *
      * @Date: 18:04 2018/5/11
      */

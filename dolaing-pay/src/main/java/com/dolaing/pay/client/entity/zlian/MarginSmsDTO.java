@@ -10,7 +10,7 @@ import lombok.Data;
  * @Modified By:
  */
 @Data
-public class MarginSmsDTO extends ZlBaseDTO<MarginSmsDTO>{
+public class MarginSmsDTO {
     private static final long serialVersionUID = 1L;
     // 证联支付分配给商户的机构代码 最大长度9位 不可为空
     private String instuId ;
@@ -41,8 +41,8 @@ public class MarginSmsDTO extends ZlBaseDTO<MarginSmsDTO>{
     // 保留域 最大长度128位 不可为空
     private String resv ;
 
-    public String toDtoString(){
-        return super.toDtoString(this);
-    }
+//    public String toDtoString(){
+//        return super.toDtoString(this);
+//    }
 
 }

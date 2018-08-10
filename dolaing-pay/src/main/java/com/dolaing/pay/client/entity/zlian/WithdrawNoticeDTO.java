@@ -9,7 +9,7 @@ import lombok.Data;
  * @Modified By:
  */
 @Data
-public class WithdrawNoticeDTO extends ZlBaseDTO<WithdrawNoticeDTO> {
+public class WithdrawNoticeDTO{
     private static final long serialVersionUID = 1L;
 //    // 证联支付分配给商户的机构代码 最大长度9位 不可为空
 //    private String instuId ;
@@ -36,7 +36,4 @@ public class WithdrawNoticeDTO extends ZlBaseDTO<WithdrawNoticeDTO> {
     // 保留域 最大长度128位 可为空
     private String resv ;
 
-    public String toDtoString(){
-        return super.toDtoString(this);
-    }
 }

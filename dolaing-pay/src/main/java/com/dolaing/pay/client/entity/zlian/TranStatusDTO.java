@@ -9,7 +9,7 @@ import lombok.Data;
  * @Modified By:
  */
 @Data
-public class TranStatusDTO extends ZlBaseDTO<TranStatusDTO> {
+public class TranStatusDTO {
     private static final long serialVersionUID = 1L;
     // 交易流水必须保证唯一性 最大长度32位 不可为空
     private String merchantSeqId ;
@@ -22,7 +22,4 @@ public class TranStatusDTO extends ZlBaseDTO<TranStatusDTO> {
     // 保留域 最大长度128位 可为空
     private String resv ;
 
-    public String toDtoString(){
-        return super.toDtoString(this);
-    }
 }
