@@ -139,7 +139,7 @@ public class OrderInfo extends BaseModel<OrderInfo> {
     private BigDecimal sellerMoneyReceived;
 
     /**
-     * 卖家应收金额(单位为元)
+     * 卖家应收金额(单位为元)     10%
      */
     private BigDecimal sellerReceivableAmount;
 
@@ -154,7 +154,7 @@ public class OrderInfo extends BaseModel<OrderInfo> {
     private BigDecimal farmerMoneyReceived;
 
     /**
-     * 农户应收金额(单位为元)
+     * 农户应收金额(单位为元)     80%
      */
     private BigDecimal farmerReceivableAmount;
 

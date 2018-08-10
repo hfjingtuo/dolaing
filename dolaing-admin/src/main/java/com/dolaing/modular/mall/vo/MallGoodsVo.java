@@ -19,7 +19,8 @@ public class MallGoodsVo extends BaseModel<MallGoodsVo> {
     private String goodsName; //商品的名称
     private BigDecimal shopPrice;// 商品单价
     private String goodsBrief;//商品的简短描述
-    private String goodsMasterImgs;//产品主图([xx]号分隔)
+    private String goodsDesc;//商品的详细描述
+    private String goodsMasterImgs;//产品主图(英文逗号分隔)
     private String depositRatio;// 定金比例
     private Integer isFreeShipping;//是否包邮(0不包邮 1包邮)
     private String brandId;// 品牌

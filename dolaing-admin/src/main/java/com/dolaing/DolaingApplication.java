@@ -23,11 +23,6 @@ public class DolaingApplication {
 
     private final static Logger logger = LoggerFactory.getLogger(DolaingApplication.class);
 
-    @PostConstruct
-    void started() {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(DolaingApplication.class, args);
         logger.info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<DolaingApplication is success!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");

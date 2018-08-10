@@ -1,6 +1,5 @@
 package com.dolaing.modular.mall.vo;
 
-import com.baomidou.mybatisplus.annotations.TableName;
 import com.dolaing.core.base.model.BaseModel;
 import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.modular.api.enums.OrderStatusEnum;

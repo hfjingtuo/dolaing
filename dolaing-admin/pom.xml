@@ -28,7 +28,6 @@
         <dependency>
             <groupId>com.dolaing</groupId>
             <artifactId>dolaing-pay</artifactId>
-            <version>0.0.1</version>
         </dependency>
 
         <!--spring boot依赖-->

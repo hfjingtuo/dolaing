@@ -1,5 +1,7 @@
 package com.dolaing.core.common.constant;
 
+import java.math.BigDecimal;
+
 /**
  * 系统常量
  *
@@ -36,7 +38,7 @@ public interface Const {
     /**
      * 广告图片存放地址
      */
-    String GOODS_IMG = "/images/goods/";
+    String GOODS_IMG = "images/goods/";
 
     /**********系统管理员*******/
     String USERT_TYPE_ADMIN = "0";
@@ -55,12 +57,16 @@ public interface Const {
     /********订单的状态:3 无效****************/
     Integer ORDER_STATUS_EXPIRE = 3;
 
+    //卖家应收金额比例：10%
+    BigDecimal SELLERRECEIVABLEAMOUNT_RATE = BigDecimal.valueOf(0.1);
+
+    //农户应收金额比例：80%
+    BigDecimal FARMERRECEIVABLEAMOUNT_RATE = BigDecimal.valueOf(0.8);
+
     /**
      * 国家
      */
     Integer CHINA_ID = 45;
-
-    String REDIRECT_URL = "redirectUrl";
 
     /**
      * Redis配置
@@ -68,6 +74,7 @@ public interface Const {
     /***************************START******************************/
     //token请求头 标识
     String AUTH_HEADER = "Authorization";
+
     //过期时间,默认30分钟
     Long TOKEN_EXPIRED = 30L;
     /***************************END******************************/

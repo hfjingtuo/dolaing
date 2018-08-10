@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -78,8 +79,12 @@ public class GoodsApi extends BaseApi {
         Wrapper<MallShop> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", account);
         MallShop mallShop = mallShopService.selectOne(wrapper);
+        mallGoods.setShopId(mallShop.getId());
         mallGoods.setBrandId(mallShop.getBrandId());
         mallGoods.setBrandName(mallGoods.getBrandName());
+        mallGoods.setDepositRatio(mallGoods.getDepositRatio().divide(BigDecimal.valueOf(100)));
+        //预计发货时间
+        mallGoods.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));
         mallGoods.setCreateBy(account);
         mallGoods.setCreateTime(new Date());
         mallGoods.insert();
@@ -168,16 +173,18 @@ public class GoodsApi extends BaseApi {
         if (file != null) {
             Calendar date = Calendar.getInstance();
             String name = new SimpleDateFormat("yyyyMM").format(date.getTime());
-            String filePath = dolaingPropertie.getFileUploadPath() + Const.GOODS_IMG + name + "/";
+            String imgPath = Const.GOODS_IMG + name + "/";
+            String filePath = dolaingPropertie.getFileUploadPath() + imgPath;
             File filePathDir = new File(filePath);
             if (!(filePathDir.exists() && filePathDir.isDirectory())) {
                 filePathDir.mkdirs();
             }
             String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + new Random().nextInt(99) + "." + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
             filePath = filePath + fileName;
-            System.out.println("filePath=" + filePath);
+            String savePath = imgPath + fileName;
+            System.out.println("savePath=" + savePath);
             if (saveFile(file, filePath)) {
-                return new SuccessTip(200, fileName);
+                return new SuccessTip(200, savePath);
             }
         }
         return new ErrorTip(500, "上传图片异常");

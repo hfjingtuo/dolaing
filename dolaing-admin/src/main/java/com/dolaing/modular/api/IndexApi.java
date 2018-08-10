@@ -33,7 +33,6 @@ public class IndexApi extends BaseApi {
         Pagination page = new Pagination(pageNo, pageSize);
         List<MallGoodsVo> list = mallGoodsService.getGoodsList2(page, null);
         map.put("list", list);
-        System.out.println(map);
         return map;
     }
 }

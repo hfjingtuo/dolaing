@@ -54,7 +54,7 @@ public class OrderQuartz {
     /**
      * 检查已收货订单但是未支付给农户和卖家尾款的订单，执行支付尾款操作
      */
-    @Scheduled(cron = "* */5 * * * ?") //每十分钟执行一次
+    //@Scheduled(cron = "* */5 * * * ?") //每十分钟执行一次
     public void payOrderDepositOrBalanceTask() {
         System.out.println(new Date()+"执行定时任务........");
         //查询尚未支付定金给卖家订单
@@ -93,7 +93,7 @@ public class OrderQuartz {
     /**
      * 查询转出中的订单状态
      */
-    @Scheduled(cron = "* */5 * * * ?") //每五分钟执行一次
+    //@Scheduled(cron = "* */5 * * * ?") //每五分钟执行一次
     public void queryOrderTransStatusTask() {
         System.out.println("");
         //查询尚未转出完成的订单
