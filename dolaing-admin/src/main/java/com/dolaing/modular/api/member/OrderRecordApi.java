@@ -10,13 +10,17 @@ import com.dolaing.modular.api.enums.PayEnum;
 import com.dolaing.modular.mall.service.IOrderGoodsService;
 import com.dolaing.modular.mall.service.IOrderInfoService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
+import com.dolaing.modular.member.model.UserAccountRecord;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.system.model.User;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
 
 /**
  * @Author:张立华
@@ -84,6 +88,22 @@ public class OrderRecordApi extends BaseApi {
         }
         orderInfoService.payOrder(userPayAccount, orderId);
         return render(true);
+    }
+
+
+    @ApiOperation(value = "买家订单详情")
+    @GetMapping("/detail")
+    public Result detail(@RequestParam Integer orderId){
+        HashMap<String, Object> result = new HashMap<>();
+        OrderInfoVo orderInfoVo = orderInfoService.queryOrderById(orderId);
+        if (orderInfoVo != null){
+            orderInfoVo.setOrderGoodsVos(orderGoodsService.queryOrderGoodsByOrderId(orderId));
+        }
+        UserAccountRecord userAccountRecord = new UserAccountRecord().selectOne("user_id = {0} and payment_id ={1} and status ={2} and source_id = {3}",
+                orderInfoVo.getUserId(), 0,1,orderInfoVo.getOrderSn());
+        result.put("orderInfoVo",orderInfoVo);
+        result.put("userAccountRecord",userAccountRecord);
+        return render(result);
     }
 
 
