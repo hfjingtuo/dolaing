@@ -57,7 +57,11 @@
                 <artifactId>dolaing-core</artifactId>
                 <version>${dolaing.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.dolaing</groupId>
+                <artifactId>dolaing-pay</artifactId>
+                <version>${dolaing.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
