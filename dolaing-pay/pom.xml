@@ -5,10 +5,11 @@
 
     <groupId>com.dolaing</groupId>
     <artifactId>dolaing-pay</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>dolaing-pay</name>
+    <url>http://maven.apache.org</url>
     <description>dolaing pay支付客户端</description>
 
     <parent>
@@ -57,6 +58,7 @@
             <artifactId>httpclient</artifactId>
             <version>4.1.2</version>
         </dependency>
+
     </dependencies>
 
     <build>
