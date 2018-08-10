@@ -5,6 +5,7 @@ import com.dolaing.modular.api.base.IResult;
 import com.dolaing.modular.mall.model.OrderInfo;
 import com.baomidou.mybatisplus.service.IService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
+import com.dolaing.modular.member.model.UserAccountRecord;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.system.model.User;
 import org.apache.ibatis.annotations.Param;
@@ -44,5 +45,8 @@ public interface IOrderInfoService extends IService<OrderInfo> {
      * @return: *
      * @Date: 1:00 2018/8/10
      */
-    IResult payOrderDepositOrBalance(Integer opType , Integer roleType ,OrderInfo orderInfo) ;
+    void payOrderDepositOrBalance(Integer opType , Integer roleType ,OrderInfo orderInfo) ;
+
+
+    void queryOrderTransStatusTask(UserAccountRecord userAccountRecord );
 }

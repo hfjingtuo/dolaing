@@ -72,5 +72,10 @@ public class UserAccountRecord  extends BaseModel<UserAccountRecord> {
     @TableField("seq_id")
     private String seqId;
 
+    @TableField("error_message")
+    private String errorMessage;
+
+    @TableField("error_code")
+    private String errorCode;
 
 }

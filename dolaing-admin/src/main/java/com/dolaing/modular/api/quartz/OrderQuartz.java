@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.dolaing.core.common.constant.Const;
 import com.dolaing.modular.mall.model.OrderInfo;
 import com.dolaing.modular.mall.service.IOrderInfoService;
+import com.dolaing.modular.member.model.UserAccountRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -89,7 +90,18 @@ public class OrderQuartz {
         }
     }
 
-
+    /**
+     * 查询转出中的订单状态
+     */
+    @Scheduled(cron = "* */5 * * * ?") //每五分钟执行一次
+    public void queryOrderTransStatusTask() {
+        System.out.println("");
+        //查询尚未转出完成的订单
+//        List<UserAccountRecord> list = new UserAccountRecord().selectList("status = {0} and ( process_type = {1} or process_type = {2} )" ,0,1,2);
+//        for(UserAccountRecord userAccountRecord : list){
+//            orderInfoService.queryOrderTransStatusTask(userAccountRecord);
+//        }
+    }
 
 
 

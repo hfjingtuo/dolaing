@@ -2,6 +2,7 @@ package com.dolaing.modular.mall.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.dolaing.core.util.DateUtils;
 import com.dolaing.core.util.DtoTransUtil;
 import com.dolaing.modular.api.base.IResult;
 import com.dolaing.modular.api.enums.PayEnum;
@@ -19,11 +20,10 @@ import com.dolaing.modular.member.dao.PayAccountMapper;
 import com.dolaing.modular.member.model.UserAccountRecord;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.system.model.User;
-import com.dolaing.pay.client.entity.zlian.Common2901Result;
-import com.dolaing.pay.client.entity.zlian.Common2910Result;
-import com.dolaing.pay.client.entity.zlian.OnlineDepositShortDTO;
-import com.dolaing.pay.client.entity.zlian.WithdrawNoticeDTO;
+import com.dolaing.pay.client.entity.zlian.*;
 import com.dolaing.pay.client.enums.PaymentEnum;
+import com.dolaing.pay.client.enums.zlian.StatusTradeTypeEnum;
+import com.dolaing.pay.client.enums.zlian.TiedCardTypeEnum;
 import com.dolaing.pay.client.utils.IdUtil;
 import com.dolaing.pay.client.utils.PayUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -158,14 +158,14 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     /**
      * @Author: 张立华
-     * @Description: 支付定金或者尾款
+     * @Description: 支付定金或者尾款（待优化）
      * @params: *
      * @return: *
      * @Date: 22:52 2018/8/9
      */
     @Override
     @Async
-    public IResult payOrderDepositOrBalance(Integer opType , Integer roleType ,OrderInfo orderInfo ){
+    public void payOrderDepositOrBalance(Integer opType , Integer roleType ,OrderInfo orderInfo ){
         System.out.println("==opType=>"+opType+"==roleType=>"+roleType);
         String merchantSeqId = IdUtil.randomBase62(32);
         List<OrderGoodsVo> goodsVos = orderGoodsMapper.queryOrderGoodsByOrderId(orderInfo.getId());
@@ -201,7 +201,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 userAccountRecord.setSourceId(orderInfo.getOrderSn());
                 userAccountRecord.setSeqId(merchantSeqId);
                 userAccountRecord.insert();
-                return null;
+                return ;
             }
             //将尾款打给农户和卖家
             Map sellerMap = transferInOrOutPlatform(sellerPayAccount , amount , merchantSeqId ,2);
@@ -236,7 +236,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             }else if(opType == 2){ //尾款金额
                 amount = orderInfo.getFarmerReceivableAmount().subtract(orderInfo.getFarmerMoneyReceived());
             }else {
-                return  PayEnum.SYS_ERR;
+                return ;
             }
 
             /**
@@ -257,7 +257,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 userAccountRecord.setSourceId(orderInfo.getOrderSn());
                 userAccountRecord.setSeqId(merchantSeqId);
                 userAccountRecord.insert();
-                return null;
+                return ;
             }
 
             Map farmerMap = transferInOrOutPlatform(farmerPayAccount , amount , merchantSeqId ,2);
@@ -283,9 +283,56 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 userAccountRecord.insert();
             }
         }
-        return PayEnum.SUCCESS;
+
     }
 
+    /**
+     * 订单状态查询
+     * @param userAccountRecord
+     */
+    @Override
+    @Async
+    @Transactional
+    public void queryOrderTransStatusTask(UserAccountRecord userAccountRecord){
+        TranStatusDTO tranStatusDTO  = new TranStatusDTO();
+        tranStatusDTO.setMerchantLiqDate(DateUtils.formatDateTime(userAccountRecord.getCreateTime()));
+        tranStatusDTO.setTradeType(StatusTradeTypeEnum.TRANS_OUT.getCode());
+        tranStatusDTO.setTiedCardType(TiedCardTypeEnum.QUICK.getCode());
+        tranStatusDTO.setMerchantSeqId(userAccountRecord.getSeqId());
+        Map map = PayUtil.tranStatusQuery(tranStatusDTO);
+        Common2404Result common2404Result =
+                JSONObject.toJavaObject((JSONObject)map.get("data"),Common2404Result.class);
+        logger.debug("订单号"+userAccountRecord.getSourceId()+"证联支付流水号["+userAccountRecord.getSeqId()+"],状态查询结果："+common2404Result.getRespCode()+"["+common2404Result.getRespDesc()+"]");
+        if(common2404Result.getRespCode().equals("RC00")){
+            //如果交易完成 记录已完成
+            userAccountRecord.setStatus(1);
+            userAccountRecord.setErrorCode(common2404Result.getRespCode());
+            userAccountRecord.setErrorMessage(common2404Result.getRespDesc());
+            userAccountRecord.setUpdateTime(DateUtils.getNow());
+            userAccountRecord.updateById();
+            //修改原订单状态
+            OrderInfo orderInfo = new OrderInfo().selectOne("order_sn = {0} and order_status = {1}" ,userAccountRecord.getSourceId() , 1);
+            User user = new User().selectOne("account = {0} " ,userAccountRecord.getUserId() ) ;
+            if(userAccountRecord.getProcessType() == 1 ){ //定金转入
+                if(user.getType().equals(2)){ //卖家
+                    orderInfo.setSellerReceiveStatus(2); //定金已到账
+                }else if(user.getType().equals(3)){ //农户
+                    orderInfo.setFarmerReceiveStatus(2); //定金已到账
+                }
+            }else if(userAccountRecord.getProcessType() == 2 ){ //尾款转入
+                if(user.getType().equals(2)){ //卖家
+                    orderInfo.setSellerReceiveStatus(4); //尾款已到账
+                }else if(user.getType().equals(3)){ //农户
+                    orderInfo.setFarmerReceiveStatus(4); //尾款已到账
+                }
+            }
+            orderInfo.updateById();
+        }else{
+            userAccountRecord.setErrorCode(common2404Result.getRespCode());
+            userAccountRecord.setErrorMessage(common2404Result.getRespDesc());
+            userAccountRecord.updateById();
+        }
+    }
 
     /**
      * @Author: 张立华
@@ -494,36 +541,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 //
 //
 //
-    /**
-     * @Author: 张立华
-     * @Description:转账:转出回执
-     * @params: *
-     * @return: *
-     * @Date: 14:13 2018/5/22
-     */
-    @Transactional
-    public Map transferAccountReceipt(UserAccountRecord userAccountRecord,Common2910Result common2910Result){
-        Map result = new HashMap();
-        userAccountRecord = userAccountRecord.selectOne("where seq_id = " +common2910Result.getMerchantSeqId());
-        if(userAccountRecord !=null && userAccountRecord.getStatus().equals("0")){  //如果是未完成的
-//            if(common2910Result.get){
-//
-//            }
-//             logger.debug("交易记录[编号："+userAccountRecord.getSeqId()+"],状态值由"+status+"变更为"+userTransactionRecord.getStatus());
-        }
-//        Strin        result.put("flag",true);g status = userPayAccount.getStatus() ;
-//        String transOutSeqId = userPayAccount.getTransOutSeqId() ;
-//        //如果是转出的回执
-//        if(transOutSeqId.equals(common2910Result.getMerchantSeqId())){
-//            if(StringUtils.isNotBlank(status) && status.equals("3") && common2910Result.getRespCode().equals("RC00")){
-//                //转出处于交易中状态，且交易回执为已完成交易，则完成转出
-//                userTransactionRecord.setStatus("100");
-//                iUserTransactionRecordDao.updateByPrimaryKey(userTransactionRecord);
-//            }
-//        }
-//        result.put("msg","");
-        return result;
-    }
+
 
 
 }
