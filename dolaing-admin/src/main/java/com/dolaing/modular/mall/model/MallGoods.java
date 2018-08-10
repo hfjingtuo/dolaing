@@ -23,8 +23,9 @@ public class MallGoods extends BaseModel<MallGoods> {
     private String keywords;// 商品关键字
     private String goodsBrief;//商品的简短描述
     private String goodsDesc;//商品描述
-    private String goodsMasterImgs;//产品主图([xx]号分隔)
-    private String goodsDescImgs;//产品详情图([xx]号分隔)
+    private String goodsMasterImgs;//产品主图(英文逗号分隔)
+    private String goodsDescImgs;//产品详情图(英文逗号分隔)
+    private String landImgs;//土地图片(英文逗号分隔)
     private Integer isOnSale;// 是否上架(0不上架 1上架)
     private BigDecimal depositRatio;// 定金比例
     private Integer isFreeShipping;//是否包邮(0不包邮 1包邮)
@@ -41,7 +42,6 @@ public class MallGoods extends BaseModel<MallGoods> {
     private String expectTotalOutputUnit;//预计总产量单位(默认KG)
     private Date expectDeliverTime;//预计发货时间
     private String landSn;//土地编号
-    private String langImgs;//土地图片([xx]分隔)
     private String landAddress;//土地所在地
     private BigDecimal landPartArea;//每单位面积
     private String landPartAreaUnit;//每单位面积单位(默认亩)
@@ -51,5 +51,5 @@ public class MallGoods extends BaseModel<MallGoods> {
     private Date endSubscribeTime;//结束认购时限
     private Integer shopId;//所属店铺id
     private String farmerId;//农户id
-
+    private Integer delFlag;//是否删除(1为删除，0为没删除)
 }

@@ -28,7 +28,7 @@ public class OrderQuartz {
     /**
      * 查询所有未确认订单 超过30分钟订单置为失效
      */
-    //@Scheduled(cron = "* */1 * * * ?") //每分钟执行一次
+    @Scheduled(cron = "0 */1 * * * ?") //每分钟执行一次
     public void setOrderStatus() {
         Calendar nowTime = Calendar.getInstance();
         nowTime.add(Calendar.MINUTE, -30);//30分钟后的时间

@@ -23,7 +23,8 @@ public interface MallGoodsService extends IService<MallGoods> {
      */
     Page getGoodsList(Page page , String createBy);
 
-    List<MallGoodsVo> getGoodsList2(Pagination page, @Param("createBy")String createBy);
+    List<MallGoodsVo> getAllGoods(Page page);
 
+    Boolean batchDelete(String account , String ids);
 
 }

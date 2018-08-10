@@ -20,7 +20,10 @@ public interface MallGoodsMapper extends BaseMapper<MallGoods> {
      */
     List<MallGoodsVo> getGoodsList(Map map);
 
-    List<MallGoodsVo> getGoodsList2(Pagination page, @Param("createBy")String createBy);
+    List<MallGoodsVo> getAllGoods(Pagination page);
 
     Integer queryGoodsCountByAccount(@Param("createBy") String createBy);
+
+    Boolean batchDelete(Map map);
+
 }

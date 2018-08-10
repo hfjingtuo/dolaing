@@ -1,5 +1,6 @@
 package com.dolaing.modular.api;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.service.MallGoodsService;
@@ -30,8 +31,8 @@ public class IndexApi extends BaseApi {
     @PostMapping("/index")
     public Map index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
         Map<String, Object> map = new HashMap<>();
-        Pagination page = new Pagination(pageNo, pageSize);
-        List<MallGoodsVo> list = mallGoodsService.getGoodsList2(page, null);
+        Page page = new Page(pageNo, pageSize);
+        List<MallGoodsVo> list = mallGoodsService.getAllGoods(page);
         map.put("list", list);
         return map;
     }

@@ -21,6 +21,7 @@ import com.dolaing.modular.mall.service.MallShopService;
 import com.dolaing.modular.mall.vo.MallGoodsVo;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,15 +53,15 @@ public class GoodsApi extends BaseApi {
     /**
      * 商品详情
      */
-    @GetMapping("/goods/detail/{goodsId}")
-    public Object detail(@PathVariable Integer goodsId) {
+    @PostMapping("/goods/detail")
+    public Object detail(@RequestParam String goodsId) {
         HashMap<String, Object> result = new HashMap<>();
         MallGoods mallGoods = new MallGoods().selectById(goodsId);
         if (mallGoods != null) {
             MallShop mallShop = new MallShop().selectById(mallGoods.getShopId());
             result.put("mallGoods", mallGoods);
             result.put("mallShop", mallShop);
-            return result;
+            return render(result);
         }
         return new ErrorTip(500, "商品不存在");
     }
@@ -95,7 +96,7 @@ public class GoodsApi extends BaseApi {
      * 已发布商品列表
      */
     @AuthAccess
-    @GetMapping("/publishGoods/list")
+    @PostMapping("/publishGoods/list")
     public Result index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
@@ -128,7 +129,7 @@ public class GoodsApi extends BaseApi {
         old.setLandAddress(mallGoods.getLandAddress());
         old.setLandPartArea(mallGoods.getLandPartArea());
         old.setLandSn(mallGoods.getLandSn());
-        old.setLangImgs(mallGoods.getLangImgs());
+        old.setLandImgs(mallGoods.getLandImgs());
         old.setGoodsDesc(mallGoods.getGoodsDesc());
         old.setGoodsDescImgs(mallGoods.getGoodsDescImgs());
         //预计发货时间=认购结束时间+生长周期
@@ -137,17 +138,15 @@ public class GoodsApi extends BaseApi {
         return SUCCESS_TIP;
     }
 
-    /**
-     * 删除商品
-     */
+    @ApiOperation(value = "批量删除")
     @AuthAccess
-    @PostMapping("/deleteGoods")
-    public Object delete(@RequestParam Integer goodsId) {
-        if (ToolUtil.isEmpty(goodsId)) {
-            return new ErrorTip(500, "商品不存在");
-        }
-        new MallGoods().deleteById(goodsId);
-        return new SuccessTip(200, "删除成功");
+    @PostMapping("/batchDeleteGoods")
+    public Result batchDelete(@RequestParam String ids) {
+        System.out.println("ids==" + ids);
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
+        mallGoodsService.batchDelete(account, ids);
+        return render(true);
     }
 
     /**
