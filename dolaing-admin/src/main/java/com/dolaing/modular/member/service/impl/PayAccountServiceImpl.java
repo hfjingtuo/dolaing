@@ -3,12 +3,15 @@ package com.dolaing.modular.member.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dolaing.core.shiro.ShiroKit;
+import com.dolaing.modular.api.base.IResult;
+import com.dolaing.modular.api.enums.SmsEnum;
 import com.dolaing.modular.member.dao.PayAccountMapper;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.member.service.IPayAccountService;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.pay.client.constants.Global;
 import com.dolaing.pay.client.entity.zlian.Common208Result;
+import com.dolaing.pay.client.entity.zlian.Common2901Result;
 import com.dolaing.pay.client.entity.zlian.MarginRegisterDTO;
 import com.dolaing.pay.client.entity.zlian.MarginSmsDTO;
 import com.dolaing.pay.client.enums.PaymentEnum;
@@ -103,37 +106,5 @@ public class PayAccountServiceImpl extends ServiceImpl<PayAccountMapper, UserPay
     }
 
 
-    /**
-     * 开户演示模式（证联）
-     * @param marginRegisterDTO
-     * @return
-     */
-    @Override
-    @Transactional
-    public Map marginRegisterDemo(String account ,MarginRegisterDTO marginRegisterDTO) {
-        Map map = new HashMap();
-        Common208Result common208Result = new Common208Result();
-        common208Result.setUserId("CP"+IdUtil.randomBase62(10));
-        //开户成功，将结果写入到数据库中
-        UserPayAccount userPayAccount = new UserPayAccount();
-        userPayAccount.setUserId(account);
-        userPayAccount.setUserNameText(marginRegisterDTO.getUserNameText());
-        userPayAccount.setPayment(PaymentEnum.PAY_ZLIAN.getCode());
-        userPayAccount.setBankCode(marginRegisterDTO.getBankCode());
-        userPayAccount.setBankProvinceCode(marginRegisterDTO.getBankProvinceCode());
-        userPayAccount.setBankRegionCode(marginRegisterDTO.getBankRegionCode());
-        userPayAccount.setCardNo(marginRegisterDTO.getCardNo());
-        userPayAccount.setCertId(marginRegisterDTO.getCertId());
-        userPayAccount.setCertType(marginRegisterDTO.getCertType());
-        userPayAccount.setCustType(marginRegisterDTO.getCustType());
-        userPayAccount.setMobile(marginRegisterDTO.getMobile());
-        userPayAccount.setOrgId(marginRegisterDTO.getOrgId());
-        userPayAccount.setPayUserId(common208Result.getUserId());
-        super.insert(userPayAccount);
-        //添加支付密码
-        User user =  new User().selectOne("account = {0}" ,account) ;
-        user.setPayPassword(ShiroKit.md5(marginRegisterDTO.getPayPassWord(), String.valueOf(user.getId())));
-        user.updateById();
-        return map ;
-    }
+
 }

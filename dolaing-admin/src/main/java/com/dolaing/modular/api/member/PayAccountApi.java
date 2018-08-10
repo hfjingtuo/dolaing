@@ -3,7 +3,9 @@ package com.dolaing.modular.api.member;
 import com.dolaing.core.support.HttpKit;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
+import com.dolaing.modular.api.base.IResult;
 import com.dolaing.modular.api.base.Result;
+import com.dolaing.modular.api.enums.SmsEnum;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.member.service.IPayAccountService;
 import com.dolaing.pay.client.entity.zlian.MarginRegisterDTO;
@@ -35,9 +37,8 @@ public class PayAccountApi extends BaseApi {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
         //  2018-05-23  证联开户接口
-        System.out.println("开户数据---->"+marginRegisterDTO.toDtoString());
         //演示数据
-        Map map = payAccountService.marginRegisterDemo(account,marginRegisterDTO);
+        Map map = payAccountService.marginRegister(account,marginRegisterDTO);
 //        Map map = payAccountService.marginRegister(account,marginRegisterDTO);
         //return render(map);
         return render(map);
@@ -71,10 +72,13 @@ public class PayAccountApi extends BaseApi {
         marginSmsDTO.setCertType(userPayAccount.getCertType());
         marginSmsDTO.setCertId(userPayAccount.getCertId());
         marginSmsDTO.setMerchantSeqId(IdUtil.randomBase62(32));
-        System.out.println("开户短信数据---->"+marginSmsDTO.toDtoString());
-        //todo 演示模式
-//        Map map = payAccountService.marginRegisterSms(marginSmsDTO);
-        Map map = new HashMap();
-        return render(map) ;
+        System.out.println("开户短信数据---->"+marginSmsDTO.toString());
+        Map map = payAccountService.marginRegisterSms(marginSmsDTO);
+        if(map.containsKey("code") && map.get("code").toString().equals("1000")){
+           if(map.containsKey("data") && map.get("data") !=null && ((Map)map.get("data")).get("respCode").toString().equals("RC00") ){
+               return render(null) ;
+           }
+        }
+        return render(null,SmsEnum.NETWORK_CONNECTION_TIMEOUT) ;
     }
 }

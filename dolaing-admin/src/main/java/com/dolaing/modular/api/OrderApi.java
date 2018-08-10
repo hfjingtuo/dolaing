@@ -8,6 +8,7 @@ import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.core.support.HttpKit;
+import com.dolaing.core.util.DateUtils;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.api.base.BaseApi;
@@ -70,15 +71,19 @@ public class OrderApi extends BaseApi {
         orderInfo.setPaymentId(0);
         orderInfo.setSellerReceiveStatus(0);
         orderInfo.setSellerMoneyReceived(BigDecimal.ZERO);
-        orderInfo.setSellerReceivableAmount(BigDecimal.ZERO);
+        //卖家应收金额
+        orderInfo.setSellerReceivableAmount(orderInfoVo.getBuyerOrderAmount().multiply(new BigDecimal(0.1)));
         orderInfo.setBuyerMoneyPaid(BigDecimal.ZERO);
         orderInfo.setFarmerMoneyReceived(BigDecimal.ZERO);
         orderInfo.setSellerReceivableAmount(BigDecimal.ZERO);
-        orderInfo.setFarmerReceivableAmount(BigDecimal.ZERO);
+        // 农户应收金额
+        orderInfo.setFarmerReceivableAmount(orderInfoVo.getBuyerOrderAmount().multiply(new BigDecimal(0.8)));
+        orderInfo.setFarmerReceiveStatus(0);
         orderInfo.setShopId(mallGoods.getShopId());
         orderInfo.setUserId(account);
         orderInfo.setCreateBy(account);
-        orderInfo.setCreateTime(new Date());
+        System.out.println(DateUtils.getNow());
+        orderInfo.setCreateTime(DateUtils.getNow());
         orderInfoService.saveOrderInfo(orderInfo);
         Integer orderId = orderInfo.getId();
 

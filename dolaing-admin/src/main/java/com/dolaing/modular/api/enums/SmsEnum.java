@@ -10,20 +10,19 @@ import lombok.Getter;
  * @Modified By:
  */
 @Getter
-public enum PayEnum implements IResult {
-    NO_PAY_ACCOUNT("0", "没有开户"),
-    PAY_PASSWORD_ERR("1", "支付密码错误"),
-    BALANCE_LOW ("2", "余额不足"),
-    PAIED ("3", "订单已支付"),
+public enum SmsEnum implements IResult {
+    NETWORK_CONNECTION_TIMEOUT("0", "网络连接超时"),
+    SEND_ERROR("1","发送失败，请稍后再试"),
     SYS_ERR ("99", "系统异常"),
-    OTHER ("4", "其他错误"),
-    SUCCESS("1000","支付成功"),
+    SUCCESS("1000","处理成功"),
+    RC29("RC29","交易失败"),
+    RC33("RC33","业务处理失败"),
     ;
 
     private String code;
 
     private String message;
-    PayEnum(String code, String message) {
+    SmsEnum(String code, String message) {
         this.code = code;
         this.message = message;
     }

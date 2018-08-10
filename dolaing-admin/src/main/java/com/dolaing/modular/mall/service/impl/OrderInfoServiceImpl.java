@@ -29,6 +29,7 @@ import com.dolaing.pay.client.utils.PayUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,20 +103,27 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         return null ;
     }
 
-
+    /**
+     * 订单支付，买家支付给平台
+     * @param userPayAccount
+     * @param orderId
+     * @return
+     */
     @Override
-    public IResult payOrder(UserPayAccount userPayAccount , String orderId ){
+    public IResult payOrder(UserPayAccount userPayAccount , String orderId ) {
         OrderInfo orderInfo = new OrderInfo(Integer.valueOf(orderId)).selectById();
-        if(orderInfo.getPayStatus() == 1){
-            return PayEnum.PAIED ;
-        }else if(orderInfo.getPayStatus() != 0){
-            return PayEnum.SYS_ERR ;
+        if (orderInfo.getPayStatus() == 1) {
+            return PayEnum.PAIED;
+        } else if (orderInfo.getPayStatus() != 0) {
+            return PayEnum.SYS_ERR;
         }
-        String merchantSeqId  = IdUtil.randomBase62(32);
+        String merchantSeqId = IdUtil.randomBase62(32);
         //先支付
-        Map map = transferInOrOutPlatform(userPayAccount ,orderInfo.getGoodsAmount() , merchantSeqId ,1);
-        if(!(Boolean) map.get("flag")){
-            return PayEnum.SYS_ERR ;
+        Map map = transferInOrOutPlatform(userPayAccount, orderInfo.getGoodsAmount(), merchantSeqId, 1);
+        if (!(Boolean) map.get("flag")) {
+            return PayEnum.SYS_ERR;
+        }else {
+            //判断返回结果
         }
         //增加支付流水
         UserAccountRecord userAccountRecord = new UserAccountRecord();
@@ -130,64 +138,14 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         userAccountRecord.insert();
 
         /**
-         * 支付成功之后，将定金打给农户和卖家
-         */
-        String merchantSeqIdFarmer  = IdUtil.randomBase62(32);
-        String merchantSeqIdSeller  = IdUtil.randomBase62(32);
-        //查询商品归属农户，因一个订单对应一种商品，所以取任意一条记录
-        List<OrderGoodsVo> goodsVos= orderGoodsMapper.queryOrderGoodsByOrderId(orderInfo.getId());
-        String farmer = goodsVos.get(0).getFarmerId() ;
-        UserPayAccount farmerPayAccount = new UserPayAccount().selectOne(" user_id = {0} " ,farmer);
-        BigDecimal farmerAmount = orderInfo.getFarmerReceivableAmount();
-        //根据店铺信息获取卖家账号
-        Shop shop = new Shop().selectById(orderInfo.getShopId()) ;
-        String seller = shop.getUserId();
-        UserPayAccount sellerPayAccount = new UserPayAccount().selectOne(" user_id = {0} " ,seller);
-        BigDecimal sellerAmount = orderInfo.getSellerReceivableAmount();
-        //将定金打给农户和卖家
-        Map farmerMap = transferInOrOutPlatform(farmerPayAccount ,farmerAmount , merchantSeqIdFarmer ,2);
-        Map sellerMap = transferInOrOutPlatform(sellerPayAccount ,sellerAmount , merchantSeqIdSeller ,2);
-        /**
-         * 增加定金打给农户和卖家的流水
-         */
-        //增加定金打给农户流水
-        userAccountRecord.setId(null);
-        userAccountRecord.setUserId(farmer);
-        //农户应该得到的钱  订单总金额 * 定金比例 * 0.8
-        userAccountRecord.setAmount(farmerAmount);
-        userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
-        userAccountRecord.setRemarks("由平台转入定金");
-        userAccountRecord.setProcessType(2);
-        userAccountRecord.setStatus(1);
-        userAccountRecord.setSourceId(orderInfo.getOrderSn());
-        userAccountRecord.setSeqId(merchantSeqIdFarmer);
-        userAccountRecord.insert();
-
-        //增加定金打给卖家流水
-        userAccountRecord.setId(null);
-        userAccountRecord.setUserId(seller);
-        //农户应该得到的钱  订单总金额 * 定金比例 * 0.1
-        userAccountRecord.setAmount(sellerAmount);
-        userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
-        userAccountRecord.setRemarks("由平台转入定金");
-        userAccountRecord.setProcessType(2);
-        userAccountRecord.setStatus(1);
-        userAccountRecord.setSourceId(orderInfo.getOrderSn());
-        userAccountRecord.setSeqId(merchantSeqIdSeller);
-        userAccountRecord.insert();
-
-        /**
          * 修改订单信息
          */
         orderInfo.setBuyerMoneyPaid(orderInfo.getGoodsAmount());
         orderInfo.setPayStatus(1);
-//        orderInfo.setFarmerMoneyReceived();
-        orderInfo.setFarmerReceiveStatus(1);
-        orderInfo.setSellerReceiveStatus(1);
         orderInfo.setPaidTime(new Date());
         orderInfo.setUpdateTime(new Date());
         orderInfo.updateById();
-        return ResultEnum.SUCCESS;
+        return PayEnum.SUCCESS;
     }
 
     @Override
@@ -195,70 +153,137 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         return orderInfoMapper.queryOrderById(orderId);
     }
 
+
+
+
     /**
-     * 支付尾款
-     * @param orderId
-     * @return
+     * @Author: 张立华
+     * @Description: 支付定金或者尾款
+     * @params: *
+     * @return: *
+     * @Date: 22:52 2018/8/9
      */
     @Override
-    public IResult payOrderBalance(String orderId){
-        OrderInfo orderInfo = new OrderInfo(Integer.valueOf(orderId)).selectById();
-        //todo 判断状态是否为支付尾款
-        String merchantSeqIdFarmer  = IdUtil.randomBase62(32);
-        String merchantSeqIdSeller  = IdUtil.randomBase62(32);
-        //查询商品归属农户，因一个订单对应一种商品，所以取任意一条记录
-        List<OrderGoodsVo> goodsVos= orderGoodsMapper.queryOrderGoodsByOrderId(orderInfo.getId());
-        String farmer = goodsVos.get(0).getFarmerId() ;
-        UserPayAccount farmerPayAccount = new UserPayAccount().selectOne(" user_id = {0} " ,farmer);
-        BigDecimal farmerAmountBalance = orderInfo.getFarmerReceivableAmount().subtract(orderInfo.getFarmerMoneyReceived());
-        //根据店铺信息获取卖家账号
-        Shop shop = new Shop().selectById(orderInfo.getShopId()) ;
-        String seller = shop.getUserId();
-        UserPayAccount sellerPayAccount = new UserPayAccount().selectOne(" user_id = {0} " ,seller);
-        BigDecimal sellerAmountBalance = orderInfo.getSellerReceivableAmount().subtract(orderInfo.getSellerMoneyReceived());
-        //todo 将定金打给农户和卖家
-        Map farmerMap = transferInOrOutPlatform(farmerPayAccount , farmerAmountBalance , merchantSeqIdFarmer ,2);
-        Map sellerMap = transferInOrOutPlatform(sellerPayAccount , sellerAmountBalance , merchantSeqIdSeller ,2);
-        /**
-         * 增加定金打给农户和卖家的流水
-         */
-        UserAccountRecord userAccountRecord = new UserAccountRecord();
-        //增加定金打给农户流水
-        userAccountRecord.setId(null);
-        userAccountRecord.setUserId(farmer);
-        userAccountRecord.setAmount(farmerAmountBalance);
-        userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
-        userAccountRecord.setRemarks("由平台转入尾款");
-        userAccountRecord.setProcessType(2);
-        userAccountRecord.setStatus(1);
-        userAccountRecord.setSourceId(orderInfo.getOrderSn());
-        userAccountRecord.setSeqId(merchantSeqIdFarmer);
-        userAccountRecord.insert();
+    @Async
+    public IResult payOrderDepositOrBalance(Integer opType , Integer roleType ,OrderInfo orderInfo ){
+        System.out.println("==opType=>"+opType+"==roleType=>"+roleType);
+        String merchantSeqId = IdUtil.randomBase62(32);
+        List<OrderGoodsVo> goodsVos = orderGoodsMapper.queryOrderGoodsByOrderId(orderInfo.getId());
+        OrderGoodsVo goodsVo = goodsVos.get(0);
+        if(roleType == 1){ //如果是卖家
+            System.out.println("=====>卖家");
+            //根据店铺信息获取卖家账号
+            Shop shop = new Shop().selectById(orderInfo.getShopId()) ;
+            String sellerId = shop.getUserId();
+            UserPayAccount sellerPayAccount = new UserPayAccount().selectOne(" user_id = {0} " ,sellerId);
+            BigDecimal amount ;
+            if(opType == 1){ //定金金额
+                amount = orderInfo.getSellerReceivableAmount().multiply(goodsVo.getDepositRatio());
+            }else { //尾款
+                amount = orderInfo.getSellerReceivableAmount().subtract(orderInfo.getSellerMoneyReceived());
+            }
+            System.out.println("=====>卖家金额："+amount.toString());
+            /**
+             * 判断是否开户了
+             */
+            if(sellerPayAccount == null ){
+                //未开户
+                //增加交易流水
+                UserAccountRecord userAccountRecord = new UserAccountRecord();
+                //增加定金打给农户流水
+                userAccountRecord.setUserId(sellerId) ;
+                userAccountRecord.setAmount(amount);
+                userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
+                userAccountRecord.setRemarks(opType == 1 ? "由平台转入定金" : "由平台转入尾款");
+                userAccountRecord.setProcessType(opType == 1 ? 1 : 2) ;
+                userAccountRecord.setStatus(2);
+                userAccountRecord.setErrorMessage("没有开户");
+                userAccountRecord.setSourceId(orderInfo.getOrderSn());
+                userAccountRecord.setSeqId(merchantSeqId);
+                userAccountRecord.insert();
+                return null;
+            }
+            //将尾款打给农户和卖家
+            Map sellerMap = transferInOrOutPlatform(sellerPayAccount , amount , merchantSeqId ,2);
+            //更改订单状态
+            int sellerStatus = 0 ;
+            if((Boolean) sellerMap.get("flag")){
+                sellerStatus = opType == 1 ? 1 : 3 ; //定金收款中1，尾款收款中3
+                orderInfo.setSellerMoneyReceived(orderInfo.getSellerMoneyReceived().add(amount));
+                orderInfo.setSellerReceiveStatus(sellerStatus);
+                orderInfo.setUpdateTime(new Date());
+                orderInfo.updateById();
+                //增加交易流水
+                UserAccountRecord userAccountRecord = new UserAccountRecord();
+                //增加定金打给农户流水
+                userAccountRecord.setUserId(sellerId) ;
+                userAccountRecord.setAmount(amount);
+                userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
+                userAccountRecord.setRemarks(opType == 1 ? "由平台转入定金" : "由平台转入尾款");
+                userAccountRecord.setProcessType(opType == 1 ? 1 :2) ;
+                userAccountRecord.setStatus(0);
+                userAccountRecord.setSourceId(orderInfo.getOrderSn());
+                userAccountRecord.setSeqId(merchantSeqId);
+                userAccountRecord.insert();
+            }
+        }else if(roleType == 2){
+            //查询商品归属农户，因一个订单对应一种商品，所以取任意一条记录
+            String farmerId = goodsVo.getFarmerId();
+            UserPayAccount farmerPayAccount = new UserPayAccount().selectOne(" user_id = {0} " ,farmerId);
+            BigDecimal amount ;
+            if(opType == 1){ //定金金额
+                amount = orderInfo.getFarmerReceivableAmount().multiply(goodsVo.getDepositRatio());
+            }else if(opType == 2){ //尾款金额
+                amount = orderInfo.getFarmerReceivableAmount().subtract(orderInfo.getFarmerMoneyReceived());
+            }else {
+                return  PayEnum.SYS_ERR;
+            }
 
-        //增加定金打给卖家流水
-        userAccountRecord.setId(null);
-        userAccountRecord.setUserId(seller);
-        //农户应该得到的钱  订单总金额 * 定金比例 * 0.1
-        userAccountRecord.setAmount(sellerAmountBalance);
-        userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
-        userAccountRecord.setRemarks("由平台转入尾款");
-        userAccountRecord.setProcessType(2);
-        userAccountRecord.setStatus(1);
-        userAccountRecord.setSourceId(orderInfo.getOrderSn());
-        userAccountRecord.setSeqId(merchantSeqIdSeller);
-        userAccountRecord.insert();
+            /**
+             * 判断是否开户了
+             */
+            if(farmerPayAccount == null ){
+                //未开户
+                //增加交易流水
+                UserAccountRecord userAccountRecord = new UserAccountRecord();
+                //增加定金打给农户流水
+                userAccountRecord.setUserId(farmerId) ;
+                userAccountRecord.setAmount(amount);
+                userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
+                userAccountRecord.setRemarks(opType == 1 ? "由平台转入定金" : "由平台转入尾款");
+                userAccountRecord.setProcessType(opType == 1 ? 1 :2) ;
+                userAccountRecord.setStatus(2);
+                userAccountRecord.setErrorMessage("没有开户");
+                userAccountRecord.setSourceId(orderInfo.getOrderSn());
+                userAccountRecord.setSeqId(merchantSeqId);
+                userAccountRecord.insert();
+                return null;
+            }
 
-        /**
-         * 修改订单信息
-         */
-        orderInfo.setBuyerMoneyPaid(orderInfo.getGoodsAmount());
-        orderInfo.setPayStatus(1);
-        orderInfo.setFarmerReceiveStatus(1);
-        orderInfo.setSellerReceiveStatus(1);
-        orderInfo.setPaidTime(new Date());
-        orderInfo.setUpdateTime(new Date());
-        orderInfo.updateById();
-        return ResultEnum.SUCCESS;
+            Map farmerMap = transferInOrOutPlatform(farmerPayAccount , amount , merchantSeqId ,2);
+            int farmerStatus = 0 ;
+            if((Boolean) farmerMap.get("flag")){
+                farmerStatus = opType == 1 ? 1 : 3 ; //定金收款中1，尾款收款中3
+                orderInfo.setSellerMoneyReceived(orderInfo.getSellerMoneyReceived().add(amount));
+                orderInfo.setSellerReceiveStatus(farmerStatus);
+                orderInfo.setUpdateTime(new Date());
+                orderInfo.updateById();
+
+                //增加交易流水
+                UserAccountRecord userAccountRecord = new UserAccountRecord();
+                //增加定金打给农户流水
+                userAccountRecord.setUserId(farmerId) ;
+                userAccountRecord.setAmount(amount);
+                userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
+                userAccountRecord.setRemarks(opType == 1 ? "由平台转入定金" : "由平台转入尾款");
+                userAccountRecord.setProcessType(opType == 1 ? 1 :2) ;
+                userAccountRecord.setStatus(0);
+                userAccountRecord.setSourceId(orderInfo.getOrderSn());
+                userAccountRecord.setSeqId(merchantSeqId);
+                userAccountRecord.insert();
+            }
+        }
+        return PayEnum.SUCCESS;
     }
 
 
@@ -314,9 +339,9 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 JSONObject.toJavaObject((JSONObject)map.get("data"),Common2901Result.class);
         if(common2901Result ==null || !common2901Result.getRespCode().toString().equals("RC00")){
             //验证返回结果是否成功
-            logger.error("用户["+userPayAccount.getUserId()+"]资金"+(type==1 ? "转入":"转出")+"异常："+common2901Result.getRespCode());
+            logger.error("用户["+userPayAccount.getUserId()+"]资金"+(type==1 ? "转入":"转出")+"异常："+common2901Result == null ? "支付通讯异常" :common2901Result.getRespCode());
             result.put("flag",false);
-            result.put("msg",common2901Result.getRespDesc());
+            result.put("msg",common2901Result == null ? "支付通讯异常" :common2901Result.getRespDesc());
         }
         return result ;
     }

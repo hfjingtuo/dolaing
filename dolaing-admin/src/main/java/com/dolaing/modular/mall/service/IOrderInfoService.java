@@ -37,5 +37,12 @@ public interface IOrderInfoService extends IService<OrderInfo> {
      */
     OrderInfoVo queryOrderById(@Param("orderId") Integer orderId);
 
-    IResult payOrderBalance(String orderId ) ;
+    /**
+     * @Author: 张立华
+     * @Description: 支付定金或者尾款 给卖家或者农户
+     * @params: * opType[1:定金 2:尾款]  roleType[1:卖家 2:农户]  orderInfo:订单
+     * @return: *
+     * @Date: 1:00 2018/8/10
+     */
+    IResult payOrderDepositOrBalance(Integer opType , Integer roleType ,OrderInfo orderInfo) ;
 }
