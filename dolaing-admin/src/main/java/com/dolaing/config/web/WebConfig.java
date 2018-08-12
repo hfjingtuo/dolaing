@@ -39,6 +39,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
     private DolaingProperties dolaingProperties;
+    @Autowired
+    private RestApiInteceptor restApiInteceptor;
 
     /**
      * 增加swagger的支持
@@ -61,7 +63,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RestApiInteceptor()).addPathPatterns("/dolaing/**");
+        registry.addInterceptor(restApiInteceptor).addPathPatterns("/dolaing/**");
     }
 
     /**
@@ -175,5 +177,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
         defaultKaptcha.setConfig(config);
         return defaultKaptcha;
+    }
+
+    /**
+     * RestApiInteceptor 注册
+     * @return
+     */
+    @Bean
+    public RestApiInteceptor restApiInteceptor() {
+        return new RestApiInteceptor();
     }
 }

@@ -10,6 +10,7 @@ import com.dolaing.modular.system.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
@@ -23,7 +24,7 @@ import java.lang.reflect.Method;
 public class RestApiInteceptor extends HandlerInterceptorAdapter {
 
     @Autowired
-    private RedisTokenService manager;
+    private RedisTokenService redisTokenService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -38,15 +39,14 @@ public class RestApiInteceptor extends HandlerInterceptorAdapter {
         return check(request, response, handler);
     }
 
-    //TODO
     private boolean check(HttpServletRequest request, HttpServletResponse response, Object handler) {
         //如果不是映射到方法直接通过
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
-        /*HandlerMethod handlerMethod = (HandlerMethod) handler;
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
-        // 判断接口是否需要登录
+        // 判断接口是否需要登录认证
         AuthAccess methodAnnotation = method.getAnnotation(AuthAccess.class);
         // 有 @AuthAccess 注解，需要认证
         if (methodAnnotation != null) {
@@ -57,8 +57,8 @@ public class RestApiInteceptor extends HandlerInterceptorAdapter {
                 return false;
             }
             //验证token
-            if (manager.checkToken(authToken)) {
-                User user = manager.getUserByToken(authToken);
+            if (redisTokenService.checkToken(authToken)) {
+                User user = redisTokenService.getUserByToken(authToken);
                 if (user == null) {
                     RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_EXPIRED.getCode(), BizExceptionEnum.TOKEN_EXPIRED.getMessage()));
                     return false;
@@ -68,7 +68,7 @@ public class RestApiInteceptor extends HandlerInterceptorAdapter {
                 RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_ERROR.getCode(), BizExceptionEnum.TOKEN_ERROR.getMessage()));
                 return false;
             }
-        }*/
+        }
         return true;
     }
 

@@ -1,8 +1,6 @@
 package com.dolaing.core.util;
 
 import com.dolaing.core.common.constant.Const;
-import com.dolaing.core.common.constant.JwtConstants;
-import com.dolaing.core.common.exception.NoTokenException;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +23,7 @@ import java.util.Map;
  * </pre>
  *
  * @author zx
- * @Date 2018/8/25 10:59
+ * @Date 2018/8/12 10:59
  */
 @Component
 public class JwtTokenUtil {
@@ -82,7 +80,7 @@ public class JwtTokenUtil {
      */
     public static Claims getClaimFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(JwtConstants.SECRET)
+                .setSigningKey(Const.JWT_SECRET)
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -91,7 +89,7 @@ public class JwtTokenUtil {
      * 解析token是否正确,不正确会报异常<br>
      */
     public static void parseToken(String token) throws JwtException {
-        Jwts.parser().setSigningKey(JwtConstants.SECRET).parseClaimsJws(token).getBody();
+        Jwts.parser().setSigningKey(Const.JWT_SECRET).parseClaimsJws(token).getBody();
     }
 
     /**
@@ -122,14 +120,14 @@ public class JwtTokenUtil {
      */
     private static String doGenerateToken(Map<String, Object> claims, String subject) {
         final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + JwtConstants.EXPIRATION * 1000);
+        final Date expirationDate = new Date(createdDate.getTime() + Const.JWT_EXPIRED);
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS512, JwtConstants.SECRET)
+                .signWith(SignatureAlgorithm.HS512, Const.JWT_SECRET)
                 .compact();
     }
 

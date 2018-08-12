@@ -64,19 +64,23 @@ public interface Const {
     BigDecimal FARMERRECEIVABLEAMOUNT_RATE = BigDecimal.valueOf(0.8);
 
     /**
-     * 国家
+     * 国家：中国ID
      */
     Integer CHINA_ID = 45;
 
     /**
-     * Redis配置
+     * Redis、JWT相关配置
      */
-    /***************************START******************************/
     //token请求头 标识
     String AUTH_HEADER = "Authorization";
 
-    //过期时间,默认30分钟
+    //Redis过期时间,默认30分钟
     Long TOKEN_EXPIRED = 30L;
-    /***************************END******************************/
+
+    //JWT生成token密钥
+    String JWT_SECRET = "dolaing";
+
+    //JWT过期时间,默认30分钟
+    Long JWT_EXPIRED = 30L * 60 * 1000;
 
 }
