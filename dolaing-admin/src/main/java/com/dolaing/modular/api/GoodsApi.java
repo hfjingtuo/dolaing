@@ -8,6 +8,7 @@ import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.base.tips.SuccessTip;
 import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.common.constant.Const;
+import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.core.support.HttpKit;
 import com.dolaing.core.util.DateUtil;
 import com.dolaing.core.util.JwtTokenUtil;
@@ -19,6 +20,7 @@ import com.dolaing.modular.mall.model.MallShop;
 import com.dolaing.modular.mall.service.MallGoodsService;
 import com.dolaing.modular.mall.service.MallShopService;
 import com.dolaing.modular.mall.vo.MallGoodsVo;
+import com.dolaing.modular.system.model.Dictionary;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import io.swagger.annotations.ApiOperation;
@@ -61,6 +63,15 @@ public class GoodsApi extends BaseApi {
             MallShop mallShop = new MallShop().selectById(mallGoods.getShopId());
             result.put("mallGoods", mallGoods);
             result.put("mallShop", mallShop);
+            String catId = mallGoods.getCatId() + "";
+            String catName = "";
+            List<Dictionary> list = GlobalData.DICTIONARY_ARR.get("catId");
+            for (Dictionary dictionary : list) {
+                if (dictionary.getDictValue().equals(catId)) {
+                    catName = dictionary.getDictLabel();
+                }
+            }
+            result.put("catName", catName);
             return render(result);
         }
         return new ErrorTip(500, "商品不存在");

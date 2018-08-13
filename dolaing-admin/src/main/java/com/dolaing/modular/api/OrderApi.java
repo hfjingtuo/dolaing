@@ -83,7 +83,7 @@ public class OrderApi extends BaseApi {
         orderInfo.setUserId(account);
         orderInfo.setCreateBy(account);
         orderInfo.setCreateTime(new Date());
-        orderInfo.setShopId(orderInfoVo.getId());
+        orderInfo.setShopId(orderInfoVo.getShopId());
         orderInfo.setDeliveredTime(mallGoods.getExpectDeliverTime());
         orderInfoService.saveOrderInfo(orderInfo);
         Integer orderId = orderInfo.getId();

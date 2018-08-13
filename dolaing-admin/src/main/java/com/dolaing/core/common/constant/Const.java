@@ -80,7 +80,7 @@ public interface Const {
     //JWT生成token密钥
     String JWT_SECRET = "dolaing";
 
-    //JWT过期时间,默认30分钟
-    Long JWT_EXPIRED = 30L * 60 * 1000;
+    //JWT过期时间,默认7天
+    Long JWT_EXPIRED = 7L * 24 * 60 * 60 * 1000;
 
 }
