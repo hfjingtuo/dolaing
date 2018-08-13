@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.dolaing.core.base.tips.ErrorTip;
+import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.mall.vo.UserAccountRecordVo;
@@ -38,6 +39,7 @@ public class AccountRecordApi extends BaseApi {
 
     @ApiOperation(value = "交易记录查询")
     @RequestMapping("/queryRecordsByUser")
+    @AuthAccess
     public Result queryRecordsByUser(@RequestParam String userId,@RequestParam Integer pageSize,@RequestParam Integer pageNo){
         Page page = new UserAccountRecord().selectPage(new Page<UserAccountRecord>(pageNo,pageSize),
                 new EntityWrapper<UserAccountRecord>().eq("user_id",userId).orderBy("id",false));
@@ -46,6 +48,7 @@ public class AccountRecordApi extends BaseApi {
 
     @ApiOperation(value = "支付流水详情")
     @GetMapping("/getPayDetail")
+    @AuthAccess
     public Object getPayDetail(@RequestParam Integer orderId,@RequestParam String account,@RequestParam Integer processType){
         HashMap<String, Object> result = new HashMap<>();
         UserAccountRecordVo userAccountRecordVo = accountRecordService.queryPayDetail(orderId,account,processType);

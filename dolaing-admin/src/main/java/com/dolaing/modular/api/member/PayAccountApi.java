@@ -1,5 +1,6 @@
 package com.dolaing.modular.api.member;
 
+import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.support.HttpKit;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
@@ -8,6 +9,7 @@ import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.api.enums.SmsEnum;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.member.service.IPayAccountService;
+import com.dolaing.modular.member.vo.UserPayAccountVo;
 import com.dolaing.pay.client.entity.zlian.MarginRegisterDTO;
 import com.dolaing.pay.client.entity.zlian.MarginSmsDTO;
 import com.dolaing.pay.client.enums.PaymentEnum;
@@ -32,19 +34,32 @@ public class PayAccountApi extends BaseApi {
     private IPayAccountService payAccountService;
 
     @ApiOperation(value = "注册开户")
+    @AuthAccess
     @RequestMapping("/marginRegister")
     public Result marginRegister(@RequestBody MarginRegisterDTO marginRegisterDTO) {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
+        UserPayAccount userPayAccount = new UserPayAccount().selectOne("user_id = {0}", account);
+        if(userPayAccount !=null ){
+            return render(null, "1" ,"您已开户，请勿重复操作。");
+        }
         //  2018-05-23  证联开户接口
         //演示数据
         Map map = payAccountService.marginRegister(account,marginRegisterDTO);
-//        Map map = payAccountService.marginRegister(account,marginRegisterDTO);
-        //return render(map);
+        if(map.get("code").toString().equals("1000")){
+            userPayAccount = new UserPayAccount().selectOne("user_id = {0}", account);
+            if (userPayAccount != null) {
+                UserPayAccountVo userPayAccountVo = new UserPayAccountVo(userPayAccount);
+                map.put("userPayAccount", userPayAccountVo);
+            }else {
+                map.put("userPayAccount", null);
+            }
+        }
         return render(map);
     }
 
     @ApiOperation(value = "查询开户信息")
+    @AuthAccess
     @RequestMapping("/queryUserPayAccount/{userId}")
     public Result getUserPayAccountByUserId(@PathVariable String userId) {
         UserPayAccount userPayAccount= new UserPayAccount();
@@ -62,6 +77,7 @@ public class PayAccountApi extends BaseApi {
      * @Date: 12:28 2018/5/22
      */
     @ApiOperation(value = "开户短信")
+    @AuthAccess
     @RequestMapping(value="/marginRegisterSms",method = RequestMethod.POST)
     public Result marginRegisterSms(@RequestBody UserPayAccount userPayAccount) {
         MarginSmsDTO marginSmsDTO  = new MarginSmsDTO();

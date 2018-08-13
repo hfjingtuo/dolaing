@@ -1,12 +1,14 @@
 package com.dolaing.modular.api.member;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.support.HttpKit;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.api.enums.PayEnum;
+import com.dolaing.modular.mall.model.OrderInfo;
 import com.dolaing.modular.mall.service.IOrderGoodsService;
 import com.dolaing.modular.mall.service.IOrderInfoService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
@@ -38,6 +40,7 @@ public class OrderRecordApi extends BaseApi {
 
     @ApiOperation(value = "订单查询")
     @RequestMapping("/queryRecordsByUser")
+    @AuthAccess
     public Result queryRecordsByUser(@RequestParam String userId, @RequestParam Integer pageSize, @RequestParam Integer pageNo) {
         User user = new User().selectOne("account = {0}", userId);
         Page<OrderInfoVo> page = new Page(pageNo, pageSize);
@@ -55,6 +58,7 @@ public class OrderRecordApi extends BaseApi {
 
     @ApiOperation(value = "批量发货")
     @RequestMapping("/batchDeliver")
+    @AuthAccess
     public Result batchDeliver(@RequestParam String ids) {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
@@ -64,6 +68,7 @@ public class OrderRecordApi extends BaseApi {
 
     @ApiOperation(value = "批量收货")
     @RequestMapping("/batchReceive")
+    @AuthAccess
     public Result batchReceive(@RequestParam String ids) {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
@@ -73,10 +78,21 @@ public class OrderRecordApi extends BaseApi {
 
     @ApiOperation(value = "订单支付")
     @RequestMapping("/pay")
+    @AuthAccess
     public Result pay(@RequestParam String orderId, @RequestParam String payPassword) {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
         User user = new User().selectOne("account = {0}", account);
+        OrderInfo orderInfo = new OrderInfo().selectOne("id = {0} " ,orderId) ;
+        if(orderInfo == null ){
+            return render(null, PayEnum.NO_ORDER);
+        }else if(!orderInfo.getUserId().equals(account)){
+            return render(null, PayEnum.NO_RIGHT);
+        }else if(orderInfo.getOrderStatus() != 1){
+            return render(null, PayEnum.NOT_PAY_STATUS);
+        }else if(orderInfo.getPayStatus() == 1){
+            return render(null, PayEnum.PAIED);
+        }
         UserPayAccount userPayAccount = new UserPayAccount().selectOne("user_id = {0}", account);
         if (null == userPayAccount) {
             return render(null, PayEnum.NO_PAY_ACCOUNT);
@@ -84,7 +100,7 @@ public class OrderRecordApi extends BaseApi {
 
         String payPasswordMd5 = ShiroKit.md5(payPassword, String.valueOf(user.getId()));
         if (!user.getPayPassword().equals(payPasswordMd5)) {
-            render(null, PayEnum.PAY_PASSWORD_ERR);
+            return render(null, PayEnum.PAY_PASSWORD_ERR);
         }
         orderInfoService.payOrder(userPayAccount, orderId);
         return render(true);
@@ -93,6 +109,7 @@ public class OrderRecordApi extends BaseApi {
 
     @ApiOperation(value = "买家订单详情")
     @GetMapping("/detail")
+    @AuthAccess
     public Result detail(@RequestParam Integer orderId){
         HashMap<String, Object> result = new HashMap<>();
         OrderInfoVo orderInfoVo = orderInfoService.queryOrderById(orderId);

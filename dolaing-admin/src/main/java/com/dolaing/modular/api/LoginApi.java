@@ -79,8 +79,13 @@ public class LoginApi extends BaseApi {
                 result.put("token", token);
                 //清除敏感数据 将用户数据存入到缓存中
                 UserCacheVo userCacheVo = new UserCacheVo(user) ;
-                if(userCacheVo.getType().equals("2")){
-                    MallShop mallShop = new MallShop().selectOne("user_id = {0} " , userCacheVo.getAccount());
+                if(userCacheVo.getType().equals("2") || userCacheVo.getType().equals("3")){
+                    MallShop mallShop = null ;
+                    if(userCacheVo.getType().equals("2")){
+                        mallShop = new MallShop().selectOne("user_id = {0} " , userCacheVo.getAccount());
+                    }else {
+                        mallShop = new MallShop().selectOne("user_id = {0} " , user.getParentAccount());
+                    }
                     MallShopVo mallShopVo = null ;
                     if(mallShop !=null ) {
                         mallShopVo = new MallShopVo(mallShop);

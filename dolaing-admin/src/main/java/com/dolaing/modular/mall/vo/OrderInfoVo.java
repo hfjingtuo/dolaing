@@ -239,6 +239,10 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
             orderStatusFullName = OrderStatusEnum.WAIT_FOR_RECEPTION.getMessage();
         }else if(this.shippingStatus == 2 ){
             orderStatusFullName = OrderStatusEnum.COMPLETED.getMessage();
+        }else if(this.orderStatus == 3){
+            orderStatusFullName = OrderStatusEnum.TIMEOUT_PAY.getMessage();
+        }else if(this.orderStatus == 2){
+            orderStatusFullName = OrderStatusEnum.CANCELL.getMessage();
         }
         return orderStatusFullName;
     }
@@ -254,6 +258,10 @@ public class OrderInfoVo extends BaseModel<OrderInfoVo> {
             orderStatusFullCode = OrderStatusEnum.WAIT_FOR_RECEPTION.getCode();
         }else if(this.shippingStatus == 2 ){
             orderStatusFullCode = OrderStatusEnum.COMPLETED.getCode();
+        }else if(this.orderStatus == 3){
+            orderStatusFullCode = OrderStatusEnum.TIMEOUT_PAY.getCode();
+        }else if(this.orderStatus == 2){
+            orderStatusFullCode = OrderStatusEnum.CANCELL.getCode();
         }
         return orderStatusFullCode;
     }

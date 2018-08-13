@@ -11,12 +11,16 @@ import lombok.Getter;
  */
 @Getter
 public enum PayEnum implements IResult {
-    NO_PAY_ACCOUNT("0", "没有开户"),
-    PAY_PASSWORD_ERR("1", "支付密码错误"),
-    BALANCE_LOW ("2", "余额不足"),
-    PAIED ("3", "订单已支付"),
-    SYS_ERR ("99", "系统异常"),
+
+    NO_PAY_ACCOUNT("0", "您暂未开户，请开户后再支付。"),
+    PAY_PASSWORD_ERR("1", "您的支付密码错误"),
+    BALANCE_LOW ("2", "您的账户余额不足"),
+    PAIED ("3", "该订单已支付,请勿重复支付。"),
     OTHER ("4", "其他错误"),
+    NO_ORDER("5", "不存在该订单"),
+    NOT_PAY_STATUS("6", "该订单不处于待付款状态。"),
+    NO_RIGHT("7", "您无权限查看该订单"),
+    SYS_ERR ("99", "系统异常"),
     SUCCESS("1000","支付成功"),
     ;
 
