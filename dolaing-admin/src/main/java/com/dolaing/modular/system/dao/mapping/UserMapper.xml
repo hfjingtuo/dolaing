@@ -55,6 +55,7 @@
 	  role_id as roleId,
 	  salt,
 	  STATUS,
+	  parent_account as parentAccount ,
 	  create_time as createTime,
 	  pay_password  as payPassword
 	</sql>

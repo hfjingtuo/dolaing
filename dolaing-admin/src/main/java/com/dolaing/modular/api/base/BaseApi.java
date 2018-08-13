@@ -17,6 +17,10 @@ public class BaseApi {
         return new Result(object, resultEnum);
     }
 
+    protected Result render(Object object, String code ,String msg) {
+        return new Result(object, code ,msg);
+    }
+
     protected static SuccessTip SUCCESS_TIP = new SuccessTip();
 
     protected String getPara(String name) {

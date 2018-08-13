@@ -14,6 +14,13 @@ public class Result<T> {
     /**返回对象*/
     private T data ;
 
+
+    public Result(T data ,String code,String msg ) {
+        this.data = data;
+        this.code = code;
+        this.msg = msg;
+    }
+
     public Result(T data ,IResult result) {
         this.data = data;
         this.code = result.getCode();
