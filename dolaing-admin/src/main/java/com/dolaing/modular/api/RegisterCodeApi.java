@@ -45,8 +45,8 @@ public class RegisterCodeApi extends BaseApi {
                 }
             }
             //TODO
-            //Boolean isSuccess = RegisterCodeUtil.sendMsg(phone,code);
-            Boolean isSuccess = true;
+            Boolean isSuccess = RegisterCodeUtil.sendMsg(phone,code);
+//            Boolean isSuccess = true;
             if (isSuccess) {
                 /**验证码记录入库*/
                 Captcha captcha = new Captcha();
