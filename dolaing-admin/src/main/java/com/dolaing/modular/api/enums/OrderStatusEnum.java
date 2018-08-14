@@ -15,7 +15,7 @@ public enum OrderStatusEnum {
     PRODUCTION("2", "生产中"),
     WAIT_FOR_RECEPTION ("3", "待收货"),
     COMPLETED("100", "已完成"),
-    TIMEOUT_PAY("4", "无效"),
+    TIMEOUT_PAY("4", "已取消"),
     CANCELL("5", "已取消"),;
     private String code;
     private String message;
