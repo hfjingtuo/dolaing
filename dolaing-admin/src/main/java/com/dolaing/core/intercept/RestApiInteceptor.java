@@ -5,6 +5,7 @@ import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.common.exception.BizExceptionEnum;
 import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.core.util.RenderUtil;
+import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,12 +61,12 @@ public class RestApiInteceptor extends HandlerInterceptorAdapter {
             if (redisTokenService.checkToken(authToken)) {
                 User user = redisTokenService.getUserByToken(authToken);
                 if (user == null) {
-                    RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_EXPIRED.getCode(), BizExceptionEnum.TOKEN_EXPIRED.getMessage()));
+                    RenderUtil.renderJson(response, new Result(null,BizExceptionEnum.TOKEN_EXPIRED.getCode().toString(), BizExceptionEnum.TOKEN_EXPIRED.getMessage()));
                     return false;
                 }
                 return true;
             } else {
-                RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_ERROR.getCode(), BizExceptionEnum.TOKEN_ERROR.getMessage()));
+                RenderUtil.renderJson(response, new Result(null,BizExceptionEnum.TOKEN_ERROR.getCode().toString(), BizExceptionEnum.TOKEN_ERROR.getMessage()));
                 return false;
             }
         }

@@ -91,9 +91,10 @@ public class GoodsApi extends BaseApi {
         Wrapper<MallShop> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", account);
         MallShop mallShop = mallShopService.selectOne(wrapper);
+        mallGoods.setGoodsSn("SN" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + new Random().nextInt(99));
         mallGoods.setShopId(mallShop.getId());
         mallGoods.setBrandId(mallShop.getBrandId());
-        mallGoods.setBrandName(mallGoods.getBrandName());
+        mallGoods.setBrandName(mallShop.getBrandName());
         mallGoods.setDepositRatio(mallGoods.getDepositRatio().divide(BigDecimal.valueOf(100)));
         //预计发货时间
         mallGoods.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));
@@ -114,6 +115,26 @@ public class GoodsApi extends BaseApi {
         Page<MallGoodsVo> page = new Page(pageNo, pageSize);
         page = mallGoodsService.getGoodsList(page, account);
         return render(page);
+    }
+
+
+    /**
+     * 已发布商品详情：编辑商品
+     */
+    @AuthAccess
+    @PostMapping("/publishedGoods/detail")
+    public Object publishedDetail(@RequestParam String goodsId) {
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
+        Wrapper<MallGoods> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", goodsId);
+        wrapper.eq("create_by", account);
+        wrapper.eq("del_flag", 0);
+        MallGoods mallGoods = new MallGoods().selectById(goodsId);
+        if (mallGoods != null) {
+            return render(mallGoods);
+        }
+        return new ErrorTip(500, "商品不存在");
     }
 
     /**

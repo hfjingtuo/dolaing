@@ -45,8 +45,8 @@ public class RegisterCodeApi extends BaseApi {
                 }
             }
             //TODO
-            //Boolean isSuccess = RegisterCodeUtil.sendMsg(phone);
-            Boolean isSuccess = true;
+            Boolean isSuccess = RegisterCodeUtil.sendMsg(phone,code);
+//            Boolean isSuccess = true;
             if (isSuccess) {
                 /**验证码记录入库*/
                 Captcha captcha = new Captcha();
@@ -58,8 +58,8 @@ public class RegisterCodeApi extends BaseApi {
                 captcha.setCreateBy(phone);
                 captcha.insert();
                 System.out.println("短信验证码：" + code);
-                getSession().setAttribute("code",code);
-                System.out.println("code==="+getSession().getAttribute("code"));
+                getSession().setAttribute("code", code);
+                System.out.println("code===" + getSession().getAttribute("code"));
                 return SUCCESS_TIP;
             }
         }
