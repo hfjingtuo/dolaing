@@ -116,6 +116,26 @@ public class GoodsApi extends BaseApi {
         return render(page);
     }
 
+
+    /**
+     * 已发布商品详情：编辑商品
+     */
+    @AuthAccess
+    @PostMapping("/publishedGoods/detail")
+    public Object publishedDetail(@RequestParam String goodsId) {
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
+        Wrapper<MallGoods> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", goodsId);
+        wrapper.eq("create_by", account);
+        wrapper.eq("del_flag", 0);
+        MallGoods mallGoods = new MallGoods().selectById(goodsId);
+        if (mallGoods != null) {
+            return render(mallGoods);
+        }
+        return new ErrorTip(500, "商品不存在");
+    }
+
     /**
      * 修改商品
      */
