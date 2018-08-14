@@ -90,7 +90,7 @@ public class OrderApi extends BaseApi {
 
         OrderGoods orderGoods = new OrderGoods();
         orderGoods.setOrderId(orderId);
-        orderGoods.setGoodsSn("NO" + orderId);
+        orderGoods.setGoodsSn(mallGoods.getGoodsSn());
         orderGoods.setGoodsName(mallGoods.getGoodsName());
         orderGoods.setGoodsPrice(mallGoods.getShopPrice());
         orderGoods.setGoodsId(goodsId);

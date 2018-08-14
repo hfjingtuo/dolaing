@@ -91,9 +91,10 @@ public class GoodsApi extends BaseApi {
         Wrapper<MallShop> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", account);
         MallShop mallShop = mallShopService.selectOne(wrapper);
+        mallGoods.setGoodsSn("SN" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + new Random().nextInt(99));
         mallGoods.setShopId(mallShop.getId());
         mallGoods.setBrandId(mallShop.getBrandId());
-        mallGoods.setBrandName(mallGoods.getBrandName());
+        mallGoods.setBrandName(mallShop.getBrandName());
         mallGoods.setDepositRatio(mallGoods.getDepositRatio().divide(BigDecimal.valueOf(100)));
         //预计发货时间
         mallGoods.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));

@@ -29,9 +29,6 @@ public class RegisterCodeUtil {
     //产品域名,开发者无需替换
     static final String domain = "dysmsapi.aliyuncs.com";
 
-    /**
-     * AccessKeyID： AccessKeySecret：
-     */
     static final String accessKeyId = smsProperties.getAccessKeyId();
     static final String accessKeySecret = smsProperties.getAccessKeySecret();
 
@@ -40,7 +37,7 @@ public class RegisterCodeUtil {
      * @param phone
      * @return
      */
-    public static Boolean sendMsg(String phone) {
+    public static Boolean sendMsg(String phone,String code) {
         try {
             //设置超时时间-可自行调整
             System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
@@ -58,10 +55,9 @@ public class RegisterCodeUtil {
             //必填:短信签名-可在短信控制台中找到
             request.setSignName(smsProperties.getSignName());
             //必填:短信模板-可在短信控制台中找到
-            //"您的注册验证码是【" + code + "】，请不要把验证码泄漏给其他人，如非本人请勿操作。【阳光电源产品资料搜索平台】"
+            //【都来应】您的验证码782914，该验证码5分钟内有效，请在页面填写完成验证，勿泄漏于他人！
             request.setTemplateCode(smsProperties.getTemplateCode());
-            String checkCode = randomCode();//此处是生成6位数验证码工具类
-            request.setTemplateParam("{\"code\":\"" + checkCode + "\"}");
+            request.setTemplateParam("{\"code\":\"" + code + "\"}");
             //可选-上行短信扩展码(扩展码字段控制在7位或以下，无特殊需求用户请忽略此字段)
             //request.setSmsUpExtendCode("90997");
             //可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者
@@ -69,33 +65,20 @@ public class RegisterCodeUtil {
             //请求失败这里会抛ClientException异常
             SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
 
-            //请求成功
-            if(sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {
-                QuerySendDetailsResponse querySendDetailsResponse = querySendDetails(sendSmsResponse.getBizId());
-                System.out.println("短信明细查询接口返回数据----------------");
-                System.out.println("Code=" + querySendDetailsResponse.getCode());
-                System.out.println("Message=" + querySendDetailsResponse.getMessage());
-                int i = 0;
-                for(QuerySendDetailsResponse.SmsSendDetailDTO smsSendDetailDTO : querySendDetailsResponse.getSmsSendDetailDTOs())
-                {
-                    System.out.println("SmsSendDetailDTO["+i+"]:");
-                    System.out.println("Content=" + smsSendDetailDTO.getContent());
-                    System.out.println("ErrCode=" + smsSendDetailDTO.getErrCode());
-                    System.out.println("OutId=" + smsSendDetailDTO.getOutId());
-                    System.out.println("PhoneNum=" + smsSendDetailDTO.getPhoneNum());
-                    System.out.println("ReceiveDate=" + smsSendDetailDTO.getReceiveDate());
-                    System.out.println("SendDate=" + smsSendDetailDTO.getSendDate());
-                    System.out.println("SendStatus=" + smsSendDetailDTO.getSendStatus());
-                    System.out.println("Template=" + smsSendDetailDTO.getTemplateCode());
+            if (sendSmsResponse != null) {
+                System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<短信发送接口返回数据>>>>>>>>>>>>>>>>>>>>>>>>");
+                System.out.println("sendSmsResponseCode=" + sendSmsResponse.getCode());
+                System.out.println("sendSmsResponseMessage" + sendSmsResponse.getMessage());
+                //请求成功
+                if (sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {
+                    System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<短信发送成功>>>>>>>>>>>>>>>>>>>>>>>>");
+                    return true;
                 }
-                System.out.println("TotalCount=" + querySendDetailsResponse.getTotalCount());
-                System.out.println("RequestId=" + querySendDetailsResponse.getRequestId());
-                return true;
             }
         } catch (ClientException e) {
-            e.printStackTrace();
+            System.err.println("发送短信异常" + e.getMessage());
+            return false;
         }
-
         return false;
     }
 

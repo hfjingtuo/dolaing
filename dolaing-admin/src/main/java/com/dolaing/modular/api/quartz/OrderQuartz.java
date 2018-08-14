@@ -26,7 +26,7 @@ public class OrderQuartz {
     private IOrderInfoService orderInfoService;
 
     /**
-     * 查询所有未确认订单 超过30分钟订单置为失效
+     * 查询所有确认订单超过30分钟未付款订单 置为失效
      */
     @Scheduled(cron = "0 */1 * * * ?") //每分钟执行一次
     public void setOrderStatus() {
@@ -39,6 +39,7 @@ public class OrderQuartz {
 
         Wrapper<OrderInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("order_status", Const.ORDER_STATUS_UNCONFIRMED);
+        wrapper.eq("pay_status", Const.ORDER_PAY_STATUS);
         wrapper.lt("create_time", beforeDate);
         List<OrderInfo> list = new OrderInfo().selectList(wrapper);
         if (!list.isEmpty() && list.size() != 0) {

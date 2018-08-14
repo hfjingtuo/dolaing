@@ -52,10 +52,13 @@ public interface Const {
     /**********农户**********/
     String USERT_TYPE_FARMER = "3";
 
-    /**********订单的状态:1 未确认*************/
+    /**********订单的状态:1 确认状态*************/
     Integer ORDER_STATUS_UNCONFIRMED = 1;
     /********订单的状态:3 无效****************/
     Integer ORDER_STATUS_EXPIRE = 3;
+    /********付款状态;0未付款****************/
+    Integer ORDER_PAY_STATUS = 0;
+
 
     //卖家应收金额比例：10%
     BigDecimal SELLERRECEIVABLEAMOUNT_RATE = BigDecimal.valueOf(0.1);
