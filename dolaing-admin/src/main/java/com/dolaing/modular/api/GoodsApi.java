@@ -71,6 +71,9 @@ public class GoodsApi extends BaseApi {
                     catName = dictionary.getDictLabel();
                 }
             }
+            Integer province = mallShop.getProvince();
+            Integer city = mallShop.getCity();
+            result.put("address", GlobalData.AREAS.get(province).getChName() + GlobalData.AREAS.get(city).getChName());
             result.put("catName", catName);
             return render(result);
         }
@@ -197,7 +200,7 @@ public class GoodsApi extends BaseApi {
     }
 
     /**
-     * 上传商品图片
+     * 上传商品相关图片
      */
     @RequestMapping("/upload/goodsImage")
     public Object uploadImage(@RequestParam("file") MultipartFile file) {
@@ -222,6 +225,22 @@ public class GoodsApi extends BaseApi {
     }
 
     /**
+     * 删除商品相关图片
+     */
+    @RequestMapping("/delete/goodsImage")
+    public Object deleteImage(@RequestParam String fileName) {
+        if (fileName != null) {
+            String path = dolaingPropertie.getFileUploadPath();
+            File file = new File(path + fileName);
+            if (file.exists() && file.isFile()) {
+                file.delete();
+                return render("删除成功");
+            }
+        }
+        return new ErrorTip(500, "删除图片异常");
+    }
+
+    /**
      * 保存文件
      *
      * @param file
@@ -241,4 +260,5 @@ public class GoodsApi extends BaseApi {
         }
         return false;
     }
+
 }

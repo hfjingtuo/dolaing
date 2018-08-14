@@ -109,7 +109,7 @@ public class RegisterApi extends BaseApi {
      */
     public static String getAccount() {
         String account;
-        String maxAccount = "DU9999";
+        String maxAccount = "DU0000";
         Wrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("type", Const.USERT_TYPE_MEMBER);
         wrapper.orderBy("account", false);

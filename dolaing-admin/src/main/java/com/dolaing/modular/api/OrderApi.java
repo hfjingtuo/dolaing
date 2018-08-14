@@ -100,17 +100,19 @@ public class OrderApi extends BaseApi {
     }
 
     /**
-     * 订单详情：未确认状态下
+     * 订单详情：确认状态下没有付款
      */
     @AuthAccess
     @PostMapping("/order/detail")
     public Object detail(@RequestParam String orderId) {
-        OrderInfo orderInfo = orderInfoService.selectById(orderId);
-        if (orderInfo != null && Const.ORDER_STATUS_UNCONFIRMED == orderInfo.getOrderStatus()) {
-            String province = GlobalData.AREAS.get(orderInfo.getProvince()).getChName();
-            String city = GlobalData.AREAS.get(orderInfo.getCity()).getChName();
-            String district = GlobalData.AREAS.get(orderInfo.getDistrict()).getChName();
-            orderInfo.setAddress(province + city + district + orderInfo.getAddress());
+        OrderInfo orderInfo = new OrderInfo().selectById(orderId);
+        if (orderInfo != null && Const.ORDER_STATUS_UNCONFIRMED == orderInfo.getOrderStatus() && Const.ORDER_PAY_STATUS == orderInfo.getPayStatus()) {
+            Integer province = orderInfo.getProvince();
+            Integer city = orderInfo.getCity();
+            Integer district = orderInfo.getDistrict();
+            if (province != null && city != null && district != null){
+                orderInfo.setAddress(GlobalData.AREAS.get(province).getChName() + GlobalData.AREAS.get(city).getChName() + GlobalData.AREAS.get(district).getChName() + orderInfo.getAddress());
+            }
             return render(orderInfo);
         }
         return new ErrorTip(500, "订单不存在");
@@ -123,14 +125,14 @@ public class OrderApi extends BaseApi {
      */
     public static String getOrderSn() {
         String orderSn;
-        String maxOrderSn = "DLY99999999";
+        String maxOrderSn = "DLY00000000";
         Wrapper<OrderInfo> wrapper = new EntityWrapper<>();
         wrapper.orderBy("order_sn", false);
         List<OrderInfo> list = new OrderInfo().selectList(wrapper);
         if (!list.isEmpty() && list.size() != 0) {
             maxOrderSn = list.get(0).getOrderSn();
         }
-        maxOrderSn = maxOrderSn.substring(3, 11);
+        maxOrderSn = maxOrderSn.substring(3, 10);
         Integer temp = Integer.valueOf(maxOrderSn);
         orderSn = "DLY" + String.format("%08d", temp + 1);
         return orderSn;
