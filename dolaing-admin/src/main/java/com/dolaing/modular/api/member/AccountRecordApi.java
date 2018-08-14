@@ -50,12 +50,7 @@ public class AccountRecordApi extends BaseApi {
     @GetMapping("/getPayDetail")
     @AuthAccess
     public Object getPayDetail(@RequestParam Integer orderId,@RequestParam String account,@RequestParam Integer processType){
-        HashMap<String, Object> result = new HashMap<>();
         UserAccountRecordVo userAccountRecordVo = accountRecordService.queryPayDetail(orderId,account,processType);
-        if (userAccountRecordVo != null){
-            result.put("payDetailVo",userAccountRecordVo);
-            return result;
-        }
-        return new ErrorTip(500, "支付记录不存在");
+        return render(userAccountRecordVo);
     }
 }
