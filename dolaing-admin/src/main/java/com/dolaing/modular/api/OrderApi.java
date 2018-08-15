@@ -2,6 +2,7 @@ package com.dolaing.modular.api;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.common.constant.Const;
@@ -123,18 +124,23 @@ public class OrderApi extends BaseApi {
      *
      * @return orderSn
      */
-    public static String getOrderSn() {
+    public  String getOrderSn() {
         String orderSn;
-        String maxOrderSn = "DLY00000000";
-        Wrapper<OrderInfo> wrapper = new EntityWrapper<>();
+        String maxOrderSn = "";
+        OrderInfo orderInfo = new OrderInfo();
+        EntityWrapper<OrderInfo> wrapper = new EntityWrapper<OrderInfo>(orderInfo);
         wrapper.orderBy("order_sn", false);
-        List<OrderInfo> list = new OrderInfo().selectList(wrapper);
-        if (!list.isEmpty() && list.size() != 0) {
-            maxOrderSn = list.get(0).getOrderSn();
+        wrapper.setEntity(new OrderInfo());
+        Page<OrderInfo> page = new Page<OrderInfo>(1,1);
+        Page<OrderInfo> orders = orderInfoService.selectPage(page, wrapper);
+        if(orders !=null && orders.getRecords() !=null && orders.getRecords().size() >0 ){
+            orderInfo = orders.getRecords().get(0);
+            maxOrderSn = orderInfo.getOrderSn().substring(3,orderInfo.getOrderSn().length());
+            Integer temp = Integer.valueOf(maxOrderSn);
+            orderSn = "DLY" + String.format("%08d", temp + 1);
+        }else {
+            orderSn = "DLY00000001";
         }
-        maxOrderSn = maxOrderSn.substring(3, 10);
-        Integer temp = Integer.valueOf(maxOrderSn);
-        orderSn = "DLY" + String.format("%08d", temp + 1);
         return orderSn;
     }
 }
