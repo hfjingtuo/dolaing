@@ -11,6 +11,7 @@ import com.dolaing.modular.system.model.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -29,7 +30,7 @@ public interface IOrderInfoService extends IService<OrderInfo> {
 
     Integer saveOrderInfo(OrderInfo orderInfo);
 
-    IResult payOrder(UserPayAccount userPayAccount , String orderId );
+    Map payOrder(UserPayAccount userPayAccount , String orderId );
 
     /**
      * 根据订单id查询订单

@@ -6,6 +6,7 @@ import com.dolaing.core.support.HttpKit;
 import com.dolaing.modular.api.enums.ResultEnum;
 
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 public class BaseApi {
 
@@ -33,6 +34,17 @@ public class BaseApi {
 
     protected HttpSession getSession() {
         return HttpKit.getRequest().getSession();
+    }
+
+    protected Result renderPayResponseResult(Map map) {
+        Map result = (Map)map.get("data");
+        if(map.get("code").toString().equals("1000")  && result !=null && result.get("respCode").toString().equals("RC00")){
+            return render(null);
+        }else if(map.get("code").toString().equals("1000") && result != null && result.get("respDesc") !=null){
+            return render(null,"1001",result.get("respDesc").toString());
+        }else{
+            return render(null,map.get("code").toString(),map.get("msg").toString());
+        }
     }
 
 }

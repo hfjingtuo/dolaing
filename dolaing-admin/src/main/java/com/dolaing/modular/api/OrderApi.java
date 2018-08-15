@@ -107,14 +107,58 @@ public class OrderApi extends BaseApi {
     @PostMapping("/order/detail")
     public Object detail(@RequestParam String orderId) {
         OrderInfo orderInfo = new OrderInfo().selectById(orderId);
-        if (orderInfo != null && Const.ORDER_STATUS_UNCONFIRMED == orderInfo.getOrderStatus() && Const.ORDER_PAY_STATUS == orderInfo.getPayStatus()) {
-            Integer province = orderInfo.getProvince();
-            Integer city = orderInfo.getCity();
-            Integer district = orderInfo.getDistrict();
-            if (province != null && city != null && district != null) {
-                orderInfo.setAddress(GlobalData.AREAS.get(province).getChName() + GlobalData.AREAS.get(city).getChName() + GlobalData.AREAS.get(district).getChName() + orderInfo.getAddress());
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
+        if (orderInfo != null ){
+            if(!account.equals(orderInfo.getUserId())){
+                return new ErrorTip(500, "您没有权限查看该订单");
             }
-            return render(orderInfo);
+            if(orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 1 ){
+                return new ErrorTip(500, "该订单已完成支付");
+            }
+
+            if(orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 0 ){
+                Integer province = orderInfo.getProvince();
+                Integer city = orderInfo.getCity();
+                Integer district = orderInfo.getDistrict();
+                if (province != null && city != null && district != null) {
+                    orderInfo.setAddress(GlobalData.AREAS.get(province).getChName() + GlobalData.AREAS.get(city).getChName() + GlobalData.AREAS.get(district).getChName() + orderInfo.getAddress());
+                }
+                return render(orderInfo);
+            }else{
+                return new ErrorTip(500, "订单状态异常");
+            }
+        }
+        return new ErrorTip(500, "订单不存在");
+    }
+
+    /**
+     * 订单详情：确认状态下已付款
+     */
+    @AuthAccess
+    @PostMapping("/order/detailPaied")
+    public Object detailPaied(@RequestParam String orderId) {
+        OrderInfo orderInfo = new OrderInfo().selectById(orderId);
+        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+        String account = JwtTokenUtil.getAccountFromToken(token);
+        if (orderInfo != null ){
+            if(!account.equals(orderInfo.getUserId())){
+                return new ErrorTip(500, "您没有权限查看该订单");
+            }
+            if(orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 0 ){
+                return new ErrorTip(500, "该订单待付款");
+            }
+            if(orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 1 ){
+                Integer province = orderInfo.getProvince();
+                Integer city = orderInfo.getCity();
+                Integer district = orderInfo.getDistrict();
+                if (province != null && city != null && district != null) {
+                    orderInfo.setAddress(GlobalData.AREAS.get(province).getChName() + GlobalData.AREAS.get(city).getChName() + GlobalData.AREAS.get(district).getChName() + orderInfo.getAddress());
+                }
+                return render(orderInfo);
+            }else{
+                return new ErrorTip(500, "订单状态异常");
+            }
         }
         return new ErrorTip(500, "订单不存在");
     }
