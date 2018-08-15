@@ -111,7 +111,7 @@ public class OrderApi extends BaseApi {
             Integer province = orderInfo.getProvince();
             Integer city = orderInfo.getCity();
             Integer district = orderInfo.getDistrict();
-            if (province != null && city != null && district != null){
+            if (province != null && city != null && district != null) {
                 orderInfo.setAddress(GlobalData.AREAS.get(province).getChName() + GlobalData.AREAS.get(city).getChName() + GlobalData.AREAS.get(district).getChName() + orderInfo.getAddress());
             }
             return render(orderInfo);
@@ -124,23 +124,23 @@ public class OrderApi extends BaseApi {
      *
      * @return orderSn
      */
-    public  String getOrderSn() {
+    public String getOrderSn() {
         String orderSn;
-        String maxOrderSn = "";
-        OrderInfo orderInfo = new OrderInfo();
-        EntityWrapper<OrderInfo> wrapper = new EntityWrapper<OrderInfo>(orderInfo);
+        String maxOrderSn;
+        OrderInfo orderInfo;
+        Wrapper<OrderInfo> wrapper = new EntityWrapper<>();
         wrapper.orderBy("order_sn", false);
-        wrapper.setEntity(new OrderInfo());
-        Page<OrderInfo> page = new Page<OrderInfo>(1,1);
+        Page<OrderInfo> page = new Page<>(1, 1);
         Page<OrderInfo> orders = orderInfoService.selectPage(page, wrapper);
-        if(orders !=null && orders.getRecords() !=null && orders.getRecords().size() >0 ){
+        if (orders != null && orders.getRecords() != null && orders.getRecords().size() > 0) {
             orderInfo = orders.getRecords().get(0);
-            maxOrderSn = orderInfo.getOrderSn().substring(3,orderInfo.getOrderSn().length());
+            maxOrderSn = orderInfo.getOrderSn().substring(3, orderInfo.getOrderSn().length());
             Integer temp = Integer.valueOf(maxOrderSn);
             orderSn = "DLY" + String.format("%08d", temp + 1);
-        }else {
+        } else {
             orderSn = "DLY00000001";
         }
+        System.out.println("orderSn=" + orderSn);
         return orderSn;
     }
 }

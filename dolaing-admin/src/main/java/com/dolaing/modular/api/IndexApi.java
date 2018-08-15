@@ -1,7 +1,6 @@
 package com.dolaing.modular.api;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.service.MallGoodsService;
 import com.dolaing.modular.mall.vo.MallGoodsVo;

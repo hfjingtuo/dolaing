@@ -2,6 +2,7 @@ package com.dolaing.modular.api;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.state.ManagerStatus;
@@ -107,20 +108,24 @@ public class RegisterApi extends BaseApi {
      *
      * @return account
      */
-    public static String getAccount() {
+    public String getAccount() {
         String account;
-        String maxAccount = "DU0000";
+        String maxAccount;
+        User user;
         Wrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("type", Const.USERT_TYPE_MEMBER);
         wrapper.orderBy("account", false);
-        List<User> list = new User().selectList(wrapper);
-        if (!list.isEmpty() && list.size() != 0) {
-            maxAccount = list.get(0).getAccount();
+        Page<User> page = new Page<>(1, 1);
+        Page<User> users = userService.selectPage(page, wrapper);
+        if (users != null && users.getRecords() != null && users.getRecords().size() > 0) {
+            user = users.getRecords().get(0);
+            maxAccount = user.getAccount().substring(2, user.getAccount().length());
+            Integer temp = Integer.valueOf(maxAccount);
+            account = "DU" + String.format("%04d", temp + 1);
+        } else {
+            account = "DU0001";
         }
-        maxAccount = maxAccount.substring(2, 6);
-        System.out.println("maxAccount=" + maxAccount);
-        Integer temp = Integer.valueOf(maxAccount);
-        account = "DU" + String.format("%04d", temp + 1);
+        System.out.println("account=" + account);
         return account;
     }
 }
