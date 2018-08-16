@@ -101,6 +101,9 @@ public class PayAccountServiceImpl extends ServiceImpl<PayAccountMapper, UserPay
             User user =  new User().selectOne("account = {0}" ,account) ;
             user.setPayPassword(ShiroKit.md5(marginRegisterDTO.getPayPassWord(), String.valueOf(user.getId())));
             user.updateById();
+        }else if(common208Result !=null && !common208Result.getRespCode().toString().equals("RC00")){
+            map.put("code","1001") ;
+            map.put("msg",common208Result.getRespDesc()) ;
         }
         return map ;
     }

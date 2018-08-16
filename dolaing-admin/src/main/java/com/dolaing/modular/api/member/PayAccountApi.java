@@ -48,14 +48,11 @@ public class PayAccountApi extends BaseApi {
         Map map = payAccountService.marginRegister(account,marginRegisterDTO);
         if(map.get("code").toString().equals("1000")){
             userPayAccount = new UserPayAccount().selectOne("user_id = {0}", account);
-            if (userPayAccount != null) {
-                UserPayAccountVo userPayAccountVo = new UserPayAccountVo(userPayAccount);
-                map.put("userPayAccount", userPayAccountVo);
-            }else {
-                map.put("userPayAccount", null);
-            }
+            return render(userPayAccount);
+        }else{
+            return render(null,map.get("code").toString(),map.get("msg").toString());
         }
-        return render(map);
+
     }
 
     @ApiOperation(value = "查询开户信息")
@@ -90,11 +87,6 @@ public class PayAccountApi extends BaseApi {
         marginSmsDTO.setMerchantSeqId(IdUtil.randomBase62(32));
         System.out.println("开户短信数据---->"+marginSmsDTO.toString());
         Map map = payAccountService.marginRegisterSms(marginSmsDTO);
-        if(map.containsKey("code") && map.get("code").toString().equals("1000")){
-           if(map.containsKey("data") && map.get("data") !=null && ((Map)map.get("data")).get("respCode").toString().equals("RC00") ){
-               return render(null) ;
-           }
-        }
-        return render(null,SmsEnum.NETWORK_CONNECTION_TIMEOUT) ;
+        return renderPayResponseResult(map) ;
     }
 }

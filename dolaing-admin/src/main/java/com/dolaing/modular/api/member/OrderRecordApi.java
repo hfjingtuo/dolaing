@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author:张立华
@@ -104,7 +105,10 @@ public class OrderRecordApi extends BaseApi {
         if (!user.getPayPassword().equals(payPasswordMd5)) {
             return render(null, PayEnum.PAY_PASSWORD_ERR);
         }
-        orderInfoService.payOrder(userPayAccount, orderId);
+        Map map = orderInfoService.payOrder(userPayAccount, orderId);
+        if(!map.get("code").toString().equals("1000")){
+            return render(null,map.get("code").toString(),map.get("msg").toString());
+        }
         return render(true);
     }
 

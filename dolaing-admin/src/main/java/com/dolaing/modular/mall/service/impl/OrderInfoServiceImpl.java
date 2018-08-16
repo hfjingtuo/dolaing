@@ -110,20 +110,27 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
      * @return
      */
     @Override
-    public IResult payOrder(UserPayAccount userPayAccount , String orderId ) {
+    public Map payOrder(UserPayAccount userPayAccount , String orderId ) {
+        Map map = new HashMap();
+        map.put("code","1000");
+        map.put("msg","");
         OrderInfo orderInfo = new OrderInfo(Integer.valueOf(orderId)).selectById();
         if (orderInfo.getPayStatus() == 1) {
-            return PayEnum.PAIED;
+            map.put("code",PayEnum.PAIED.getCode());
+            map.put("msg",PayEnum.PAIED.getMessage());
+            return map;
         } else if (orderInfo.getPayStatus() != 0) {
-            return PayEnum.SYS_ERR;
+            map.put("code",PayEnum.NOT_PAY_STATUS.getCode());
+            map.put("msg",PayEnum.NOT_PAY_STATUS.getMessage());
+            return map;
         }
         String merchantSeqId = IdUtil.randomBase62(32);
         //先支付
-        Map map = transferInOrOutPlatform(userPayAccount, orderInfo.getGoodsAmount(), merchantSeqId, 1);
-        if (!(Boolean) map.get("flag")) {
-            return PayEnum.SYS_ERR;
-        }else {
-            //判断返回结果
+        Map mapResult = transferInOrOutPlatform(userPayAccount, orderInfo.getGoodsAmount(), merchantSeqId, 1);
+        if (!(Boolean) mapResult.get("flag")) {
+            map.put("code",PayEnum.SYS_ERR.getCode());
+            map.put("msg",mapResult.get("msg"));
+            return map;
         }
         //增加支付流水
         UserAccountRecord userAccountRecord = new UserAccountRecord();
@@ -145,7 +152,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderInfo.setPaidTime(new Date());
         orderInfo.setUpdateTime(new Date());
         orderInfo.updateById();
-        return PayEnum.SUCCESS;
+        return map;
     }
 
     @Override

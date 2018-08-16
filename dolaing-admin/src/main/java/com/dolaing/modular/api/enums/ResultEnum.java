@@ -14,7 +14,7 @@ import lombok.Getter;
 public enum ResultEnum implements IResult {
 
     SUCCESS("1000", "成功"),
-    Fail("1001", "失败"),
+    FAIL("1001", "失败"),
     ;
 
     private String code;
