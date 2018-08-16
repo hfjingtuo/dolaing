@@ -122,6 +122,10 @@ public class GoodsApi extends BaseApi {
             String startSubscribeTime = getPara("startSubscribeTime");
             String endSubscribeTime = getPara("endSubscribeTime");
 
+            String masterImgsUrl = getPara("masterImgsUrl");
+            String landImgsUrl = getPara("landImgsUrl");
+            String descImgsUrl = getPara("descImgsUrl");
+
             if (ToolUtil.isOneEmpty(goodsName, shopPrice, depositRatio, isFreeShipping, catId, breeds, plantime, plantingCycle, expectPartOutput, landSn, landAddress, landPartArea, goodsNumber, goodsDesc, farmerId, startSubscribeTime, endSubscribeTime)) {
                 return new ErrorTip(500, "商品发布异常，请重新发布");
             }
@@ -160,27 +164,58 @@ public class GoodsApi extends BaseApi {
             mallGoods.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));
             mallGoods.setCreateBy(account);
             mallGoods.setCreateTime(new Date());
+
             String masterImgsPath = saveGoodsImg(masterImgs);
             String landImgsPath = saveGoodsImg(landImgs);
             String descImgsPath = saveGoodsImg(descImgs);
-            if ("".equals(masterImgsPath)) {
-                return new ErrorTip(500, "商品主图没有上传，请上传");
-            } else {
-                mallGoods.setGoodsMasterImgs(masterImgsPath);
-            }
-            if ("".equals(landImgsPath)) {
-                return new ErrorTip(500, "土地图没有上传，请上传");
-            } else {
-                mallGoods.setLandImgs(landImgsPath);
-            }
-            if ("".equals(descImgsPath)) {
-                return new ErrorTip(500, "商品详情图没有上传，请上传");
-            } else {
-                mallGoods.setGoodsDescImgs(descImgsPath);
-            }
-            if (StringUtils.isNotBlank(goodsId)) {
+
+            if (StringUtils.isNotBlank(goodsId)) {//编辑商品
+                if (StringUtils.isNotBlank(masterImgsPath) && StringUtils.isNotBlank(masterImgsUrl)) {
+                    mallGoods.setGoodsMasterImgs(masterImgsUrl + "," + masterImgsPath);
+                } else if (StringUtils.isNotBlank(masterImgsUrl) && StringUtils.isBlank(masterImgsPath)) {
+                    mallGoods.setGoodsMasterImgs(masterImgsUrl);
+                } else if (StringUtils.isNotBlank(masterImgsPath) && StringUtils.isBlank(masterImgsUrl)) {
+                    mallGoods.setGoodsMasterImgs(masterImgsPath);
+                } else {
+                    return new ErrorTip(500, "商品主图没有上传，请上传");
+                }
+
+                if (StringUtils.isNotBlank(landImgsPath) && StringUtils.isNotBlank(landImgsUrl)) {
+                    mallGoods.setLandImgs(landImgsUrl + "," + landImgsPath);
+                } else if (StringUtils.isNotBlank(landImgsUrl) && StringUtils.isBlank(landImgsPath)) {
+                    mallGoods.setLandImgs(landImgsUrl);
+                } else if (StringUtils.isNotBlank(landImgsPath) && StringUtils.isBlank(landImgsUrl)) {
+                    mallGoods.setLandImgs(landImgsPath);
+                } else {
+                    return new ErrorTip(500, "土地图没有上传，请上传");
+                }
+
+                if (StringUtils.isNotBlank(descImgsPath) && StringUtils.isNotBlank(descImgsUrl)) {
+                    mallGoods.setGoodsDescImgs(descImgsUrl + "," + descImgsPath);
+                } else if (StringUtils.isNotBlank(descImgsUrl) && StringUtils.isBlank(descImgsPath)) {
+                    mallGoods.setGoodsDescImgs(descImgsUrl);
+                } else if (StringUtils.isNotBlank(descImgsPath) && StringUtils.isBlank(descImgsUrl)) {
+                    mallGoods.setGoodsDescImgs(descImgsPath);
+                } else {
+                    return new ErrorTip(500, "商品主图没有上传，请上传");
+                }
                 mallGoods.updateById();
-            } else {
+            } else {//新增商品
+                if ("".equals(masterImgsPath)) {
+                    return new ErrorTip(500, "商品主图没有上传，请上传");
+                } else {
+                    mallGoods.setGoodsMasterImgs(masterImgsPath);
+                }
+                if ("".equals(landImgsPath)) {
+                    return new ErrorTip(500, "土地图没有上传，请上传");
+                } else {
+                    mallGoods.setLandImgs(landImgsPath);
+                }
+                if ("".equals(descImgsPath)) {
+                    return new ErrorTip(500, "商品详情图没有上传，请上传");
+                } else {
+                    mallGoods.setGoodsDescImgs(descImgsPath);
+                }
                 mallGoods.insert();
             }
             return SUCCESS_TIP;
