@@ -103,7 +103,7 @@ public class PasswordApi extends BaseApi {
             captcha.updateById();
         }
         User user = new User();
-        user = user.selectOne("account = {0}", userName);
+        user = user.selectOne("phone = {0}", userName);
         String salt = ShiroKit.getRandomSalt(5);
         user.setPassword(ShiroKit.md5(password, salt));
         user.setSalt(salt);
