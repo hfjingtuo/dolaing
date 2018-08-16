@@ -6,6 +6,8 @@ import com.dolaing.core.common.constant.Const;
 import com.dolaing.modular.mall.model.OrderInfo;
 import com.dolaing.modular.mall.service.IOrderInfoService;
 import com.dolaing.modular.member.model.UserAccountRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +24,7 @@ import java.util.List;
  */
 @Component
 public class OrderQuartz {
+    Logger logger = LoggerFactory.getLogger(OrderQuartz.class);
     @Autowired
     private IOrderInfoService orderInfoService;
 
@@ -100,6 +103,7 @@ public class OrderQuartz {
         //查询尚未转出完成的订单
         List<UserAccountRecord> list = new UserAccountRecord().selectList("status = {0} and ( process_type = {1} or process_type = {2} )" ,0,1,2);
         for(UserAccountRecord userAccountRecord : list){
+            logger.debug("查询订单状态-交易流水号为："+userAccountRecord.getSeqId());
             orderInfoService.queryOrderTransStatusTask(userAccountRecord);
         }
     }
