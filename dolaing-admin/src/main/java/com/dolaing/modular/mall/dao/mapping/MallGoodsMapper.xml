@@ -30,7 +30,6 @@
         <include refid="Base_Column_List"/>
         from mall_goods
         where del_flag = 0 and is_on_sale = 1
-        NOW()
         <if test="createBy != null and createBy != ''">
             AND create_by = #{createBy}
         </if>

@@ -160,9 +160,9 @@ public class GoodsApi extends BaseApi {
             mallGoods.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));
             mallGoods.setCreateBy(account);
             mallGoods.setCreateTime(new Date());
-            String masterImgsPath=saveGoodsImg(masterImgs);
-            String landImgsPath=saveGoodsImg(landImgs);
-            String descImgsPath=saveGoodsImg(descImgs);
+            String masterImgsPath = saveGoodsImg(masterImgs);
+            String landImgsPath = saveGoodsImg(landImgs);
+            String descImgsPath = saveGoodsImg(descImgs);
             if ("".equals(masterImgsPath)) {
                 return new ErrorTip(500, "商品主图没有上传，请上传");
             } else {
@@ -202,7 +202,6 @@ public class GoodsApi extends BaseApi {
         page = mallGoodsService.getGoodsList(page, account);
         return render(page);
     }
-
 
     /**
      * 已发布商品详情：编辑商品
@@ -284,11 +283,11 @@ public class GoodsApi extends BaseApi {
 
     /**
      * 保存商品图片
+     *
      * @param imgs
      * @return
      */
     private String saveGoodsImg(List<MultipartFile> imgs) {
-        System.out.println("imgs:" + imgs.get(0).getOriginalFilename());
         String savePath = "";
         if (imgs != null && imgs.size() > 0) {
             MultipartFile file;
@@ -317,6 +316,7 @@ public class GoodsApi extends BaseApi {
 
     /**
      * 保存文件
+     *
      * @param file
      * @param path
      * @return
