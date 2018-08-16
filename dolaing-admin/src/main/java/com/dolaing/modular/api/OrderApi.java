@@ -76,7 +76,6 @@ public class OrderApi extends BaseApi {
         orderInfo.setSellerReceivableAmount(goodsAmount.multiply(Const.SELLERRECEIVABLEAMOUNT_RATE));
         orderInfo.setBuyerMoneyPaid(BigDecimal.ZERO);
         orderInfo.setFarmerMoneyReceived(BigDecimal.ZERO);
-        orderInfo.setSellerReceivableAmount(BigDecimal.ZERO);
         //农户应收金额 = 商品总额 * 80%
         orderInfo.setFarmerReceivableAmount(goodsAmount.multiply(Const.FARMERRECEIVABLEAMOUNT_RATE));
         orderInfo.setDeliveredTime(mallGoods.getExpectDeliverTime());

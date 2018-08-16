@@ -113,11 +113,9 @@
             </if>
             <if test='user.type != null and user.type == "2"'>
                 ms.user_id = #{user.account}
-                and moi.order_status in (0,1)
             </if>
             <if test='user.type != null and user.type == "3"'>
                 ms.user_id  = #{user.parentAccount}
-                and moi.order_status in (0,1)
             </if>
         </where>
         order by moi.create_time desc
@@ -139,11 +137,9 @@
             </if>
             <if test='type != null and type == "2"'>
                and ms.user_id = #{account}
-               and moi.order_status in (0,1)
             </if>
             <if test='type != null and type == "3"'>
                and ms.user_id  = #{parentAccount}
-               and moi.order_status in (0,1)
             </if>
         </where>
         order by moi.create_time desc
