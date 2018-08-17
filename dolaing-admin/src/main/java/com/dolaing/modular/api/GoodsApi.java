@@ -133,6 +133,9 @@ public class GoodsApi extends BaseApi {
             MallGoods mallGoods;
             if (StringUtils.isNotBlank(goodsId)) {
                 mallGoods = mallGoodsService.selectById(goodsId);
+                if (!account.equals(mallGoods.getCreateBy())){
+                    return new ErrorTip(500, "商品发布异常，您无权限编辑此商品");
+                }
             } else {
                 mallGoods = new MallGoods();
             }
@@ -197,7 +200,7 @@ public class GoodsApi extends BaseApi {
                 } else if (StringUtils.isNotBlank(descImgsPath) && StringUtils.isBlank(descImgsUrl)) {
                     mallGoods.setGoodsDescImgs(descImgsPath);
                 } else {
-                    return new ErrorTip(500, "商品主图没有上传，请上传");
+                    return new ErrorTip(500, "商品详情图没有上传，请上传");
                 }
                 mallGoods.updateById();
             } else {//新增商品

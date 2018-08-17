@@ -72,7 +72,6 @@ public class RegisterApi extends BaseApi {
             captcha.setStatus("2");
             captcha.updateById();
         }
-
         User user = new User();
         user.setAccount(getAccount());
         String salt = ShiroKit.getRandomSalt(5);
@@ -85,21 +84,6 @@ public class RegisterApi extends BaseApi {
         user.setRegTime(new Date());
         user.setCreateBy(userName);
         this.userService.insert(user);
-        return SUCCESS_TIP;
-    }
-
-    /**
-     * 检验手机号是否已经被注册
-     */
-    @PostMapping("/validUserName")
-    public Object validUserName() {
-        String userName = super.getPara("userName");
-        if (ToolUtil.isNotEmpty(userName)) {
-            User user = userService.getUserByUserName(userName);//判断手机号是否已经注册
-            if (user != null) {
-                return new ErrorTip(501, "该手机号已被注册");
-            }
-        }
         return SUCCESS_TIP;
     }
 

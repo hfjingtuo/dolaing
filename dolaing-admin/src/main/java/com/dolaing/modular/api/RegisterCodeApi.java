@@ -7,6 +7,9 @@ import com.dolaing.core.util.RegisterCodeUtil;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.Captcha;
+import com.dolaing.modular.system.model.User;
+import com.dolaing.modular.system.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +28,9 @@ import java.util.List;
 @RequestMapping(value = "/dolaing/code")
 public class RegisterCodeApi extends BaseApi {
 
+    @Autowired
+    private IUserService userService;
+
     /**
      * 发送手机验证码
      */
@@ -32,6 +38,10 @@ public class RegisterCodeApi extends BaseApi {
     public Object sendMsgCode() {
         String phone = super.getPara("phone");
         if (ToolUtil.isNotEmpty(phone)) {
+            User user = userService.getUserByUserName(phone);
+            if (user != null) {
+                return new ErrorTip(500, "该手机号已被注册");
+            }
             String code = RegisterCodeUtil.randomCode();
             Wrapper<Captcha> wrapper = new EntityWrapper<>();
             wrapper.eq("captcha_num", phone);
@@ -44,9 +54,7 @@ public class RegisterCodeApi extends BaseApi {
                     return new ErrorTip(60 - difftime.intValue(), "60s内不允许重复发送验证码");
                 }
             }
-            //TODO
             Boolean isSuccess = RegisterCodeUtil.sendMsg(phone,code);
-//            Boolean isSuccess = true;
             if (isSuccess) {
                 /**验证码记录入库*/
                 Captcha captcha = new Captcha();

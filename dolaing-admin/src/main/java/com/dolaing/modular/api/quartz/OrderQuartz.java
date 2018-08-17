@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -38,8 +39,7 @@ public class OrderQuartz {
         nowTime.add(Calendar.MINUTE, -30);
         Date beforeDate = nowTime.getTime();//30分钟前的时间
 
-        System.out.println("now：" + new Date());
-        System.out.println("beforeDate：" + beforeDate);
+        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<更新订单状态、更新商品库存【" + nowTime + "】>>>>>>>>>>>>>>>>>>>>>");
 
         Wrapper<OrderInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("order_status", Const.ORDER_STATUS_UNCONFIRMED);
@@ -48,13 +48,21 @@ public class OrderQuartz {
         List<OrderInfo> list = new OrderInfo().selectList(wrapper);
         if (!list.isEmpty() && list.size() != 0) {
             list.forEach(obj -> {
-                System.out.println(obj.getOrderSn() + "--" + obj.getOrderStatus() + "--" + obj.getCreateTime());
                 /*******订单失效 新的库存=失效订单商品数量+库存******/
-                OrderGoods orderGoods = new OrderGoods().selectById(obj.getId());
-                MallGoods mallGoods = new MallGoods().selectById(orderGoods.getGoodsId());
-                mallGoods.setGoodsNumber(mallGoods.getGoodsNumber() + orderGoods.getGoodsNumber());
+                Wrapper<OrderGoods> orderGoodsWrapper = new EntityWrapper<>();
+                orderGoodsWrapper.eq("order_id", obj.getId());
+                OrderGoods orderGoods = new OrderGoods().selectOne(orderGoodsWrapper);
+                if (orderGoods != null) {
+                    MallGoods mallGoods = new MallGoods().selectById(orderGoods.getGoodsId());
+                    if (mallGoods != null) {
+                        mallGoods.setGoodsNumber(mallGoods.getGoodsNumber() + orderGoods.getGoodsNumber());
+                        mallGoods.updateById();//更新商品库存
+                        logger.debug("更新商品：" + orderGoods.getGoodsId() + "库存");
+                    }
+                }
                 obj.setOrderStatus(Const.ORDER_STATUS_EXPIRE);
-                obj.updateById();
+                logger.debug("订单号：" + obj.getOrderSn() + "订单失效");
+                obj.updateById();//更新订单状态
             });
         }
     }

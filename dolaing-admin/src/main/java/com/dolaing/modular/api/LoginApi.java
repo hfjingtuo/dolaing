@@ -2,11 +2,9 @@ package com.dolaing.modular.api;
 
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.common.constant.Const;
-import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.core.common.constant.state.ManagerStatus;
 import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.shiro.ShiroUser;
-import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.MallShop;
 import com.dolaing.modular.mall.vo.MallShopVo;
@@ -17,7 +15,6 @@ import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import com.dolaing.modular.system.vo.UserCacheVo;
-import com.dolaing.pay.client.constants.Global;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -80,7 +77,7 @@ public class LoginApi extends BaseApi {
                 //清除敏感数据 将用户数据存入到缓存中
                 UserCacheVo userCacheVo = new UserCacheVo(user) ;
                 if(userCacheVo.getType().equals("2") || userCacheVo.getType().equals("3")){
-                    MallShop mallShop = null ;
+                    MallShop mallShop ;
                     if(userCacheVo.getType().equals("2")){
                         mallShop = new MallShop().selectOne("user_id = {0} " , userCacheVo.getAccount());
                     }else {
