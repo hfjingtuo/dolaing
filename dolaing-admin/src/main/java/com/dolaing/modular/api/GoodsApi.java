@@ -5,13 +5,12 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.dolaing.config.properties.DolaingProperties;
 import com.dolaing.core.base.tips.ErrorTip;
-import com.dolaing.core.base.tips.SuccessTip;
 import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.core.support.HttpKit;
 import com.dolaing.core.util.DateUtil;
-import com.dolaing.core.util.JwtTokenUtil;
+import com.dolaing.core.util.TokenUtil;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
@@ -20,6 +19,7 @@ import com.dolaing.modular.mall.model.MallShop;
 import com.dolaing.modular.mall.service.MallGoodsService;
 import com.dolaing.modular.mall.service.MallShopService;
 import com.dolaing.modular.mall.vo.MallGoodsVo;
+import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.Dictionary;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
@@ -31,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -59,6 +58,8 @@ public class GoodsApi extends BaseApi {
     private MallShopService mallShopService;
     @Autowired
     private IUserService userService;
+    @Autowired
+    private RedisTokenService redisTokenService;
 
     /**
      * 商品详情
@@ -95,8 +96,8 @@ public class GoodsApi extends BaseApi {
     @PostMapping("/publishGoods")
     public Object publish(HttpServletRequest request) {
         try {
-            String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-            String account = JwtTokenUtil.getAccountFromToken(token);
+            String token = TokenUtil.getToken(HttpKit.getRequest());
+            String account = redisTokenService.getTokenModel(token).getAccount();
 
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             List<MultipartFile> masterImgs = multipartRequest.getFiles("masterImgs");
@@ -234,8 +235,8 @@ public class GoodsApi extends BaseApi {
     @AuthAccess
     @PostMapping("/publishGoods/list")
     public Result index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         Page<MallGoodsVo> page = new Page(pageNo, pageSize);
         page = mallGoodsService.getGoodsList(page, account);
         return render(page);
@@ -247,8 +248,8 @@ public class GoodsApi extends BaseApi {
     @AuthAccess
     @PostMapping("/publishedGoods/detail")
     public Object publishedDetail(@RequestParam String goodsId) {
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         Wrapper<MallGoods> wrapper = new EntityWrapper<>();
         wrapper.eq("id", goodsId);
         wrapper.eq("create_by", account);
@@ -298,8 +299,8 @@ public class GoodsApi extends BaseApi {
     @PostMapping("/batchDeleteGoods")
     public Result batchDelete(@RequestParam String ids) {
         System.out.println("ids==" + ids);
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         mallGoodsService.batchDelete(account, ids);
         return render(true);
     }
@@ -310,8 +311,8 @@ public class GoodsApi extends BaseApi {
     @AuthAccess
     @PostMapping("/getAllFarmer")
     public Object getAllFarmer() {
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         List<User> list = userService.getFarmerByParentAccount(account);
         if (list != null) {
             return render(list);

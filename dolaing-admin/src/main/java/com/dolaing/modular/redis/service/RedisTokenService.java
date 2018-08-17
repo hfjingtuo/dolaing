@@ -13,10 +13,10 @@ public interface RedisTokenService {
 
     /**
      * 创建一个 token 关联上指定用户
-     * @param userName 指定用户的 id
+     * @param account 指定用户的 id
      * @return 生成的 token
      */
-    TokenModel createTokenByAccount(String userName);
+    TokenModel createTokenByAccount(String account);
 
     /**
      * 检查 token 是否有效
@@ -33,9 +33,16 @@ public interface RedisTokenService {
     User getUserByToken(String token);
 
     /**
-     * 清除 token
-     * @param userName
+     * 从字符串中解析 token
+     * @param authentication 加密后的字符串
+     * @return
      */
-    void deleteToken(String userName);
+    TokenModel getTokenModel(String authentication);
+
+    /**
+     * 清除 token
+     * @param token
+     */
+    void deleteToken(String token);
 
 }

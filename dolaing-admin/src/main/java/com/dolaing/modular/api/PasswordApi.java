@@ -5,11 +5,12 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.support.HttpKit;
-import com.dolaing.core.util.JwtTokenUtil;
+import com.dolaing.core.util.TokenUtil;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.Captcha;
 import com.dolaing.modular.mall.vo.EditPasswordVo;
+import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ public class PasswordApi extends BaseApi {
 
     @Autowired
     private IUserService userService;
+    @Autowired
+    private RedisTokenService redisTokenService;
 
     /**
      * 修改密码
@@ -45,8 +48,8 @@ public class PasswordApi extends BaseApi {
         if (ToolUtil.isOneEmpty(oldPwd, newPwd, rePwd)) {
             return new ErrorTip(500, "参数有空值");
         }
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         User user = userService.getByAccount(account);
         String oldMd5 = ShiroKit.md5(oldPwd, user.getSalt());
         if (!user.getPassword().equals(oldMd5)) {

@@ -3,11 +3,13 @@ package com.dolaing.core.intercept;
 import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.common.exception.BizExceptionEnum;
-import com.dolaing.core.util.JwtTokenUtil;
 import com.dolaing.core.util.RenderUtil;
+import com.dolaing.core.util.TokenUtil;
 import com.dolaing.modular.api.base.Result;
+import com.dolaing.modular.redis.model.TokenModel;
 import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
+import com.dolaing.modular.system.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -26,6 +28,8 @@ public class RestApiInteceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private RedisTokenService redisTokenService;
+    @Autowired
+    private IUserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -52,20 +56,23 @@ public class RestApiInteceptor extends HandlerInterceptorAdapter {
         // 有 @AuthAccess 注解，需要认证
         if (methodAnnotation != null) {
             //从http 请求头header中得到token
-            String authToken = JwtTokenUtil.getToken(request);
+            String authToken = TokenUtil.getToken(request);
             if (authToken == null) {
                 RenderUtil.renderJson(response, new ErrorTip(BizExceptionEnum.TOKEN_ERROR.getCode(), BizExceptionEnum.TOKEN_ERROR.getMessage()));
                 return false;
             }
+
             //验证token
+            TokenModel model = redisTokenService.getTokenModel(authToken);
             if (redisTokenService.checkToken(authToken)) {
-                User user = redisTokenService.getUserByToken(authToken);
+                String account = model.getAccount();
+                User user = userService.getByAccount(account);
                 if (user == null) {
                     RenderUtil.renderJson(response, new Result(null,BizExceptionEnum.TOKEN_EXPIRED.getCode().toString(), BizExceptionEnum.TOKEN_EXPIRED.getMessage()));
                     return false;
                 }
                 return true;
-            } else {
+            }else {
                 RenderUtil.renderJson(response, new Result(null,BizExceptionEnum.TOKEN_ERROR.getCode().toString(), BizExceptionEnum.TOKEN_ERROR.getMessage()));
                 return false;
             }

@@ -1,12 +1,10 @@
 package com.dolaing.modular.api.member;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.support.HttpKit;
-import com.dolaing.core.util.JwtTokenUtil;
+import com.dolaing.core.util.TokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.api.enums.PayEnum;
@@ -16,6 +14,7 @@ import com.dolaing.modular.mall.service.IOrderInfoService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
 import com.dolaing.modular.member.model.UserAccountRecord;
 import com.dolaing.modular.member.model.UserPayAccount;
+import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,8 @@ public class OrderRecordApi extends BaseApi {
     private IOrderInfoService orderInfoService;
     @Autowired
     private IOrderGoodsService orderGoodsService;
+    @Autowired
+    private RedisTokenService redisTokenService;
 
     @ApiOperation(value = "订单查询")
     @RequestMapping("/queryRecordsByUser")
@@ -63,8 +64,8 @@ public class OrderRecordApi extends BaseApi {
     @RequestMapping("/batchDeliver")
     @AuthAccess
     public Result batchDeliver(@RequestParam String ids) {
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         orderInfoService.batchDeliver(account, ids);
         return render(true);
     }
@@ -73,8 +74,8 @@ public class OrderRecordApi extends BaseApi {
     @RequestMapping("/batchReceive")
     @AuthAccess
     public Result batchReceive(@RequestParam String ids) {
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         orderInfoService.batchReceive(account, ids);
         return render(true);
     }
@@ -83,8 +84,8 @@ public class OrderRecordApi extends BaseApi {
     @RequestMapping("/pay")
     @AuthAccess
     public Result pay(@RequestParam String orderId, @RequestParam String payPassword) {
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         User user = new User().selectOne("account = {0}", account);
         OrderInfo orderInfo = new OrderInfo().selectOne("id = {0} " ,orderId) ;
         if(orderInfo == null ){

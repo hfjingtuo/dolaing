@@ -80,10 +80,7 @@ public interface Const {
     //Redis过期时间,默认30分钟
     Long TOKEN_EXPIRED = 30L;
 
-    //JWT生成token密钥
+    //生成token密钥
     String JWT_SECRET = "dolaing";
-
-    //JWT过期时间,默认7天
-    Long JWT_EXPIRED = 7L * 24 * 60 * 60 * 1000;
 
 }

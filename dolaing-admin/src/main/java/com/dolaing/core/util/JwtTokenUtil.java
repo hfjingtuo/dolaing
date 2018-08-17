@@ -120,7 +120,7 @@ public class JwtTokenUtil {
      */
     private static String doGenerateToken(Map<String, Object> claims, String subject) {
         final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + Const.JWT_EXPIRED);
+        final Date expirationDate = new Date(createdDate.getTime() + 7L * 24 * 60 * 60 * 1000);
 
         return Jwts.builder()
                 .setClaims(claims)

@@ -2,8 +2,8 @@ package com.dolaing.modular.redis.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.dolaing.core.common.constant.Const;
-import com.dolaing.core.util.JwtTokenUtil;
-import com.dolaing.core.util.MD5Util;
+import com.dolaing.core.shiro.ShiroKit;
+import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.redis.model.TokenModel;
 import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
@@ -41,7 +41,7 @@ public class RedisRedisTokenImpl implements RedisTokenService {
     }
 
     public TokenModel createTokenByAccount(String account) {
-        String token = JwtTokenUtil.generateToken(String.valueOf(account));
+        String token = account + "@" + ShiroKit.md5(account, Const.JWT_SECRET) + ToolUtil.getRandomString(6);
         TokenModel model = new TokenModel(account, token);
         User user = userService.getByAccount(account);
         User newUser = new User();
@@ -63,6 +63,19 @@ public class RedisRedisTokenImpl implements RedisTokenService {
         return user;
     }
 
+    public TokenModel getTokenModel(String token) {
+        if (token == null || token.length() == 0) {
+            return null;
+        }
+        String[] param = token.split("@");
+        if (param.length != 2) {
+            return null;
+        }
+        // 使用 account 和源 token 简单拼接成的 token，可以增加加密措施
+        String account = param[0];
+        return new TokenModel(account, token);
+    }
+
     public boolean checkToken(String token) {
         if (token == null) {
             return false;
@@ -76,7 +89,7 @@ public class RedisRedisTokenImpl implements RedisTokenService {
         return true;
     }
 
-    public void deleteToken(String userName) {
-        redis.delete(userName);
+    public void deleteToken(String token) {
+        redis.delete(token);
     }
 }

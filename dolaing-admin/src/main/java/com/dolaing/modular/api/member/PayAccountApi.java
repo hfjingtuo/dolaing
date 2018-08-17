@@ -2,14 +2,12 @@ package com.dolaing.modular.api.member;
 
 import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.support.HttpKit;
-import com.dolaing.core.util.JwtTokenUtil;
+import com.dolaing.core.util.TokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
-import com.dolaing.modular.api.base.IResult;
 import com.dolaing.modular.api.base.Result;
-import com.dolaing.modular.api.enums.SmsEnum;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.member.service.IPayAccountService;
-import com.dolaing.modular.member.vo.UserPayAccountVo;
+import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.pay.client.entity.zlian.MarginRegisterDTO;
 import com.dolaing.pay.client.entity.zlian.MarginSmsDTO;
 import com.dolaing.pay.client.enums.PaymentEnum;
@@ -18,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,13 +29,15 @@ import java.util.Map;
 public class PayAccountApi extends BaseApi {
     @Autowired
     private IPayAccountService payAccountService;
+    @Autowired
+    private RedisTokenService redisTokenService;
 
     @ApiOperation(value = "注册开户")
     @AuthAccess
     @RequestMapping("/marginRegister")
     public Result marginRegister(@RequestBody MarginRegisterDTO marginRegisterDTO) {
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         UserPayAccount userPayAccount = new UserPayAccount().selectOne("user_id = {0}", account);
         if(userPayAccount !=null ){
             return render(null, "1" ,"您已开户，请勿重复操作。");

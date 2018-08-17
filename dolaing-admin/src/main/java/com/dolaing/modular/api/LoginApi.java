@@ -1,10 +1,13 @@
 package com.dolaing.modular.api;
 
 import com.dolaing.core.base.tips.ErrorTip;
+import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.state.ManagerStatus;
 import com.dolaing.core.shiro.ShiroKit;
 import com.dolaing.core.shiro.ShiroUser;
+import com.dolaing.core.support.HttpKit;
+import com.dolaing.core.util.TokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.MallShop;
 import com.dolaing.modular.mall.vo.MallShopVo;
@@ -15,6 +18,7 @@ import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import com.dolaing.modular.system.vo.UserCacheVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -75,16 +79,16 @@ public class LoginApi extends BaseApi {
                 String token = model.getToken();
                 result.put("token", token);
                 //清除敏感数据 将用户数据存入到缓存中
-                UserCacheVo userCacheVo = new UserCacheVo(user) ;
-                if(userCacheVo.getType().equals("2") || userCacheVo.getType().equals("3")){
-                    MallShop mallShop ;
-                    if(userCacheVo.getType().equals("2")){
-                        mallShop = new MallShop().selectOne("user_id = {0} " , userCacheVo.getAccount());
-                    }else {
-                        mallShop = new MallShop().selectOne("user_id = {0} " , user.getParentAccount());
+                UserCacheVo userCacheVo = new UserCacheVo(user);
+                if (userCacheVo.getType().equals("2") || userCacheVo.getType().equals("3")) {
+                    MallShop mallShop;
+                    if (userCacheVo.getType().equals("2")) {
+                        mallShop = new MallShop().selectOne("user_id = {0} ", userCacheVo.getAccount());
+                    } else {
+                        mallShop = new MallShop().selectOne("user_id = {0} ", user.getParentAccount());
                     }
-                    MallShopVo mallShopVo = null ;
-                    if(mallShop !=null ) {
+                    MallShopVo mallShopVo = null;
+                    if (mallShop != null) {
                         mallShopVo = new MallShopVo(mallShop);
                     }
                     userCacheVo.setMallShopVo(mallShopVo);
@@ -94,13 +98,29 @@ public class LoginApi extends BaseApi {
                 if (userPayAccount != null) {
                     UserPayAccountVo userPayAccountVo = new UserPayAccountVo(userPayAccount);
                     result.put("userPayAccount", userPayAccountVo);
-                }else {
+                } else {
                     result.put("userPayAccount", null);
                 }
                 return result;
             }
         }
         return new ErrorTip(500, "账号或密码错误");
+    }
+
+    /**
+     * 退出登录
+     * 清除token
+     */
+    @AuthAccess
+    @PostMapping("/logout")
+    public Object logout() {
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        if (StringUtils.isNotBlank(token)) {
+            redisTokenService.deleteToken(token);
+            return render("退出成功");
+        } else {
+            return render("退出失败");
+        }
     }
 }
 

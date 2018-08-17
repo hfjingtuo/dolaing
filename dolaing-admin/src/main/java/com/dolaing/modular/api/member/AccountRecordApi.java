@@ -4,12 +4,13 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.support.HttpKit;
-import com.dolaing.core.util.JwtTokenUtil;
+import com.dolaing.core.util.TokenUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.mall.vo.UserAccountRecordVo;
 import com.dolaing.modular.member.model.UserAccountRecord;
 import com.dolaing.modular.member.service.IAccountRecordService;
+import com.dolaing.modular.redis.service.RedisTokenService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountRecordApi extends BaseApi {
     @Autowired
     private IAccountRecordService accountRecordService;
+    @Autowired
+    private RedisTokenService redisTokenService;
 
     @ApiOperation(value = "交易记录查询")
     @RequestMapping("/queryRecordsByUser")
@@ -42,8 +45,8 @@ public class AccountRecordApi extends BaseApi {
     @GetMapping("/getPayDetail")
     @AuthAccess
     public Object getPayDetail(@RequestParam Integer orderId, @RequestParam Integer processType) {
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         UserAccountRecordVo userAccountRecordVo = accountRecordService.queryPayDetail(orderId, account, processType);
         return render(userAccountRecordVo);
     }

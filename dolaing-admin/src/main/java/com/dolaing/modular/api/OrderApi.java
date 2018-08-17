@@ -8,21 +8,20 @@ import com.dolaing.core.common.annotion.AuthAccess;
 import com.dolaing.core.common.constant.Const;
 import com.dolaing.core.common.constant.GlobalData;
 import com.dolaing.core.support.HttpKit;
-import com.dolaing.core.util.JwtTokenUtil;
+import com.dolaing.core.util.TokenUtil;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.model.MallGoods;
-import com.dolaing.modular.mall.model.MallShop;
 import com.dolaing.modular.mall.model.OrderGoods;
 import com.dolaing.modular.mall.model.OrderInfo;
 import com.dolaing.modular.mall.service.IOrderInfoService;
 import com.dolaing.modular.mall.vo.OrderInfoVo;
+import com.dolaing.modular.redis.service.RedisTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Author: zx
@@ -36,6 +35,8 @@ public class OrderApi extends BaseApi {
 
     @Autowired
     private IOrderInfoService orderInfoService;
+    @Autowired
+    private RedisTokenService redisTokenService;
 
     /**
      * 生成订单
@@ -43,8 +44,8 @@ public class OrderApi extends BaseApi {
     @AuthAccess
     @PostMapping("/order/generateOrder")
     public Object publish(@RequestBody OrderInfoVo orderInfoVo) {
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         if (ToolUtil.isOneEmpty(orderInfoVo.getGoodsId(), orderInfoVo.getMobile(), orderInfoVo.getConsignee(), orderInfoVo.getAddress())) {
             return new ErrorTip(500, "订单生成异常，请稍候重试");
         }
@@ -78,13 +79,11 @@ public class OrderApi extends BaseApi {
         orderInfo.setFarmerMoneyReceived(BigDecimal.ZERO);
         //农户应收金额 = 商品总额 * 80%
         orderInfo.setFarmerReceivableAmount(goodsAmount.multiply(Const.FARMERRECEIVABLEAMOUNT_RATE));
-        orderInfo.setDeliveredTime(mallGoods.getExpectDeliverTime());
         orderInfo.setShopId(mallGoods.getShopId());
         orderInfo.setUserId(account);
         orderInfo.setCreateBy(account);
         orderInfo.setCreateTime(new Date());
         orderInfo.setShopId(orderInfoVo.getShopId());
-        orderInfo.setDeliveredTime(mallGoods.getExpectDeliverTime());
         orderInfoService.saveOrderInfo(orderInfo);
         Integer orderId = orderInfo.getId();
 
@@ -110,8 +109,8 @@ public class OrderApi extends BaseApi {
     @PostMapping("/order/detail")
     public Object detail(@RequestParam String orderId) {
         OrderInfo orderInfo = new OrderInfo().selectById(orderId);
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         if (orderInfo != null) {
             if (!account.equals(orderInfo.getUserId())) {
                 return new ErrorTip(500, "您没有权限查看该订单");
@@ -142,8 +141,8 @@ public class OrderApi extends BaseApi {
     @PostMapping("/order/detailPaied")
     public Object detailPaied(@RequestParam String orderId) {
         OrderInfo orderInfo = new OrderInfo().selectById(orderId);
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
+        String token = TokenUtil.getToken(HttpKit.getRequest());
+        String account = redisTokenService.getTokenModel(token).getAccount();
         if (orderInfo != null) {
             if (!account.equals(orderInfo.getUserId())) {
                 return new ErrorTip(500, "您没有权限查看该订单");
