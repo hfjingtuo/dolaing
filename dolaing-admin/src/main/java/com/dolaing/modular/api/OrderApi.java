@@ -46,7 +46,7 @@ public class OrderApi extends BaseApi {
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
         if (ToolUtil.isOneEmpty(orderInfoVo.getGoodsId(), orderInfoVo.getMobile(), orderInfoVo.getConsignee(), orderInfoVo.getAddress())) {
-            return new ErrorTip(500, "订单生成失败，参数有空值");
+            return new ErrorTip(500, "订单生成异常，请稍候重试");
         }
         Integer goodsId = orderInfoVo.getGoodsId();
         MallGoods mallGoods = new MallGoods().selectById(goodsId);
@@ -76,7 +76,6 @@ public class OrderApi extends BaseApi {
         orderInfo.setSellerReceivableAmount(goodsAmount.multiply(Const.SELLERRECEIVABLEAMOUNT_RATE));
         orderInfo.setBuyerMoneyPaid(BigDecimal.ZERO);
         orderInfo.setFarmerMoneyReceived(BigDecimal.ZERO);
-        orderInfo.setSellerReceivableAmount(BigDecimal.ZERO);
         //农户应收金额 = 商品总额 * 80%
         orderInfo.setFarmerReceivableAmount(goodsAmount.multiply(Const.FARMERRECEIVABLEAMOUNT_RATE));
         orderInfo.setDeliveredTime(mallGoods.getExpectDeliverTime());
@@ -97,6 +96,10 @@ public class OrderApi extends BaseApi {
         orderGoods.setGoodsId(goodsId);
         orderGoods.setGoodsNumber(orderInfoVo.getGoodsNum());
         orderGoods.insert();
+
+        /*******下单 新的库存=库存-订单商品数量******/
+        mallGoods.setGoodsNumber(mallGoods.getGoodsNumber() - orderInfoVo.getGoodsNum());
+        mallGoods.updateById();
         return render(orderId);
     }
 
@@ -109,15 +112,15 @@ public class OrderApi extends BaseApi {
         OrderInfo orderInfo = new OrderInfo().selectById(orderId);
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
-        if (orderInfo != null ){
-            if(!account.equals(orderInfo.getUserId())){
+        if (orderInfo != null) {
+            if (!account.equals(orderInfo.getUserId())) {
                 return new ErrorTip(500, "您没有权限查看该订单");
             }
-            if(orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 1 ){
+            if (orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 1) {
                 return new ErrorTip(500, "该订单已完成支付");
             }
 
-            if(orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 0 ){
+            if (orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 0) {
                 Integer province = orderInfo.getProvince();
                 Integer city = orderInfo.getCity();
                 Integer district = orderInfo.getDistrict();
@@ -125,7 +128,7 @@ public class OrderApi extends BaseApi {
                     orderInfo.setAddress(GlobalData.AREAS.get(province).getChName() + GlobalData.AREAS.get(city).getChName() + GlobalData.AREAS.get(district).getChName() + orderInfo.getAddress());
                 }
                 return render(orderInfo);
-            }else{
+            } else {
                 return new ErrorTip(500, "订单状态异常");
             }
         }
@@ -141,14 +144,14 @@ public class OrderApi extends BaseApi {
         OrderInfo orderInfo = new OrderInfo().selectById(orderId);
         String token = JwtTokenUtil.getToken(HttpKit.getRequest());
         String account = JwtTokenUtil.getAccountFromToken(token);
-        if (orderInfo != null ){
-            if(!account.equals(orderInfo.getUserId())){
+        if (orderInfo != null) {
+            if (!account.equals(orderInfo.getUserId())) {
                 return new ErrorTip(500, "您没有权限查看该订单");
             }
-            if(orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 0 ){
+            if (orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 0) {
                 return new ErrorTip(500, "该订单待付款");
             }
-            if(orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 1 ){
+            if (orderInfo.getOrderStatus() == 1 && orderInfo.getPayStatus() == 1) {
                 Integer province = orderInfo.getProvince();
                 Integer city = orderInfo.getCity();
                 Integer district = orderInfo.getDistrict();
@@ -156,7 +159,7 @@ public class OrderApi extends BaseApi {
                     orderInfo.setAddress(GlobalData.AREAS.get(province).getChName() + GlobalData.AREAS.get(city).getChName() + GlobalData.AREAS.get(district).getChName() + orderInfo.getAddress());
                 }
                 return render(orderInfo);
-            }else{
+            } else {
                 return new ErrorTip(500, "订单状态异常");
             }
         }

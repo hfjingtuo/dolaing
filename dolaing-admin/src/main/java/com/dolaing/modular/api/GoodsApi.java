@@ -24,12 +24,18 @@ import com.dolaing.modular.system.model.Dictionary;
 import com.dolaing.modular.system.model.User;
 import com.dolaing.modular.system.service.IUserService;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -42,6 +48,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/dolaing")
 public class GoodsApi extends BaseApi {
+
+    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     private DolaingProperties dolaingPropertie;
@@ -85,26 +93,136 @@ public class GoodsApi extends BaseApi {
      */
     @AuthAccess
     @PostMapping("/publishGoods")
-    public Object publish(@RequestBody MallGoods mallGoods) {
-        String token = JwtTokenUtil.getToken(HttpKit.getRequest());
-        String account = JwtTokenUtil.getAccountFromToken(token);
-        if (ToolUtil.isOneEmpty(mallGoods.getGoodsName(), mallGoods.getShopPrice())) {
-            return new ErrorTip(500, "产品发布失败，参数有空值");
+    public Object publish(HttpServletRequest request) {
+        try {
+            String token = JwtTokenUtil.getToken(HttpKit.getRequest());
+            String account = JwtTokenUtil.getAccountFromToken(token);
+
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+            List<MultipartFile> masterImgs = multipartRequest.getFiles("masterImgs");
+            List<MultipartFile> landImgs = multipartRequest.getFiles("landImgs");
+            List<MultipartFile> descImgs = multipartRequest.getFiles("descImgs");
+
+            String goodsId = getPara("goodsId");
+            String goodsName = getPara("goodsName");
+            String shopPrice = getPara("shopPrice");
+            String depositRatio = getPara("depositRatio");
+            String isFreeShipping = getPara("isFreeShipping");
+            String catId = getPara("catId");
+            String breeds = getPara("breeds");
+            String plantime = getPara("plantime");
+            String plantingCycle = getPara("plantingCycle");
+            String expectPartOutput = getPara("expectPartOutput");
+            String landSn = getPara("landSn");
+            String landAddress = getPara("landAddress");
+            String landPartArea = getPara("landPartArea");
+            String goodsNumber = getPara("goodsNumber");
+            String goodsDesc = getPara("goodsDesc");
+            String farmerId = getPara("farmerId");
+            String startSubscribeTime = getPara("startSubscribeTime");
+            String endSubscribeTime = getPara("endSubscribeTime");
+
+            String masterImgsUrl = getPara("masterImgsUrl");
+            String landImgsUrl = getPara("landImgsUrl");
+            String descImgsUrl = getPara("descImgsUrl");
+
+            if (ToolUtil.isOneEmpty(goodsName, shopPrice, depositRatio, isFreeShipping, catId, breeds, plantime, plantingCycle, expectPartOutput, landSn, landAddress, landPartArea, goodsNumber, goodsDesc, farmerId, startSubscribeTime, endSubscribeTime)) {
+                return new ErrorTip(500, "商品发布异常，请重新发布");
+            }
+
+            MallGoods mallGoods;
+            if (StringUtils.isNotBlank(goodsId)) {
+                mallGoods = mallGoodsService.selectById(goodsId);
+            } else {
+                mallGoods = new MallGoods();
+            }
+            Wrapper<MallShop> wrapper = new EntityWrapper<>();
+            wrapper.eq("user_id", account);
+            MallShop mallShop = mallShopService.selectOne(wrapper);
+            mallGoods.setGoodsName(goodsName);
+            mallGoods.setShopPrice(new BigDecimal(shopPrice));
+            mallGoods.setDepositRatio(new BigDecimal(depositRatio).divide(BigDecimal.valueOf(100)));
+            mallGoods.setIsFreeShipping(Integer.valueOf(isFreeShipping));
+            mallGoods.setCatId(Integer.valueOf(catId));
+            mallGoods.setBreeds(breeds);
+            mallGoods.setPlantime(plantime);
+            mallGoods.setPlantingCycle(Integer.valueOf(plantingCycle));
+            mallGoods.setExpectPartOutput(new BigDecimal(expectPartOutput));
+            mallGoods.setLandSn(landSn);
+            mallGoods.setLandAddress(landAddress);
+            mallGoods.setLandPartArea(new BigDecimal(landPartArea));
+            mallGoods.setGoodsNumber(Integer.valueOf(goodsNumber));
+            mallGoods.setGoodsDesc(goodsDesc);
+            mallGoods.setFarmerId(farmerId);
+            mallGoods.setStartSubscribeTime(format.parse(startSubscribeTime));
+            mallGoods.setEndSubscribeTime(format.parse(endSubscribeTime));
+            mallGoods.setGoodsSn("SN" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + new Random().nextInt(99));
+            mallGoods.setShopId(mallShop.getId());
+            mallGoods.setBrandId(mallShop.getBrandId());
+            mallGoods.setBrandName(mallShop.getBrandName());
+            //预计发货时间
+            mallGoods.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));
+            mallGoods.setCreateBy(account);
+            mallGoods.setCreateTime(new Date());
+
+            String masterImgsPath = saveGoodsImg(masterImgs);
+            String landImgsPath = saveGoodsImg(landImgs);
+            String descImgsPath = saveGoodsImg(descImgs);
+
+            if (StringUtils.isNotBlank(goodsId)) {//编辑商品
+                if (StringUtils.isNotBlank(masterImgsPath) && StringUtils.isNotBlank(masterImgsUrl)) {
+                    mallGoods.setGoodsMasterImgs(masterImgsUrl + "," + masterImgsPath);
+                } else if (StringUtils.isNotBlank(masterImgsUrl) && StringUtils.isBlank(masterImgsPath)) {
+                    mallGoods.setGoodsMasterImgs(masterImgsUrl);
+                } else if (StringUtils.isNotBlank(masterImgsPath) && StringUtils.isBlank(masterImgsUrl)) {
+                    mallGoods.setGoodsMasterImgs(masterImgsPath);
+                } else {
+                    return new ErrorTip(500, "商品主图没有上传，请上传");
+                }
+
+                if (StringUtils.isNotBlank(landImgsPath) && StringUtils.isNotBlank(landImgsUrl)) {
+                    mallGoods.setLandImgs(landImgsUrl + "," + landImgsPath);
+                } else if (StringUtils.isNotBlank(landImgsUrl) && StringUtils.isBlank(landImgsPath)) {
+                    mallGoods.setLandImgs(landImgsUrl);
+                } else if (StringUtils.isNotBlank(landImgsPath) && StringUtils.isBlank(landImgsUrl)) {
+                    mallGoods.setLandImgs(landImgsPath);
+                } else {
+                    return new ErrorTip(500, "土地图没有上传，请上传");
+                }
+
+                if (StringUtils.isNotBlank(descImgsPath) && StringUtils.isNotBlank(descImgsUrl)) {
+                    mallGoods.setGoodsDescImgs(descImgsUrl + "," + descImgsPath);
+                } else if (StringUtils.isNotBlank(descImgsUrl) && StringUtils.isBlank(descImgsPath)) {
+                    mallGoods.setGoodsDescImgs(descImgsUrl);
+                } else if (StringUtils.isNotBlank(descImgsPath) && StringUtils.isBlank(descImgsUrl)) {
+                    mallGoods.setGoodsDescImgs(descImgsPath);
+                } else {
+                    return new ErrorTip(500, "商品主图没有上传，请上传");
+                }
+                mallGoods.updateById();
+            } else {//新增商品
+                if ("".equals(masterImgsPath)) {
+                    return new ErrorTip(500, "商品主图没有上传，请上传");
+                } else {
+                    mallGoods.setGoodsMasterImgs(masterImgsPath);
+                }
+                if ("".equals(landImgsPath)) {
+                    return new ErrorTip(500, "土地图没有上传，请上传");
+                } else {
+                    mallGoods.setLandImgs(landImgsPath);
+                }
+                if ("".equals(descImgsPath)) {
+                    return new ErrorTip(500, "商品详情图没有上传，请上传");
+                } else {
+                    mallGoods.setGoodsDescImgs(descImgsPath);
+                }
+                mallGoods.insert();
+            }
+            return SUCCESS_TIP;
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
         }
-        Wrapper<MallShop> wrapper = new EntityWrapper<>();
-        wrapper.eq("user_id", account);
-        MallShop mallShop = mallShopService.selectOne(wrapper);
-        mallGoods.setGoodsSn("SN" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + new Random().nextInt(99));
-        mallGoods.setShopId(mallShop.getId());
-        mallGoods.setBrandId(mallShop.getBrandId());
-        mallGoods.setBrandName(mallShop.getBrandName());
-        mallGoods.setDepositRatio(mallGoods.getDepositRatio().divide(BigDecimal.valueOf(100)));
-        //预计发货时间
-        mallGoods.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));
-        mallGoods.setCreateBy(account);
-        mallGoods.setCreateTime(new Date());
-        mallGoods.insert();
-        return SUCCESS_TIP;
+        return new ErrorTip(500, "系统异常");
     }
 
     /**
@@ -119,7 +237,6 @@ public class GoodsApi extends BaseApi {
         page = mallGoodsService.getGoodsList(page, account);
         return render(page);
     }
-
 
     /**
      * 已发布商品详情：编辑商品
@@ -200,44 +317,36 @@ public class GoodsApi extends BaseApi {
     }
 
     /**
-     * 上传商品相关图片
+     * 保存商品图片
+     *
+     * @param imgs
+     * @return
      */
-    @RequestMapping("/upload/goodsImage")
-    public Object uploadImage(@RequestParam("file") MultipartFile file) {
-        if (file != null) {
-            Calendar date = Calendar.getInstance();
-            String name = new SimpleDateFormat("yyyyMM").format(date.getTime());
-            String imgPath = Const.GOODS_IMG + name + "/";
-            String filePath = dolaingPropertie.getFileUploadPath() + imgPath;
-            File filePathDir = new File(filePath);
-            if (!(filePathDir.exists() && filePathDir.isDirectory())) {
-                filePathDir.mkdirs();
+    private String saveGoodsImg(List<MultipartFile> imgs) {
+        String savePath = "";
+        if (imgs != null && imgs.size() > 0) {
+            MultipartFile file;
+            for (int i = 0; i < imgs.size(); ++i) {
+                file = imgs.get(i);
+                Calendar date = Calendar.getInstance();
+                String name = new SimpleDateFormat("yyyyMM").format(date.getTime());
+                String imgPath = Const.GOODS_IMG + name + "/";
+                String filePath = dolaingPropertie.getFileUploadPath() + imgPath;
+                File filePathDir = new File(filePath);
+                if (!(filePathDir.exists() && filePathDir.isDirectory())) {
+                    filePathDir.mkdirs();
+                }
+                String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + new Random().nextInt(99) + "." + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+                filePath = filePath + fileName;
+                savePath += imgPath + fileName + ",";
+                System.out.println("filePath=" + filePath);
+                System.out.println("savePath=" + savePath);
+                saveFile(file, filePath);
             }
-            String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + new Random().nextInt(99) + "." + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
-            filePath = filePath + fileName;
-            String savePath = imgPath + fileName;
-            System.out.println("savePath=" + savePath);
-            if (saveFile(file, filePath)) {
-                return new SuccessTip(200, savePath);
-            }
+            savePath = savePath.substring(0, savePath.length() - 1);
         }
-        return new ErrorTip(500, "上传图片异常");
-    }
-
-    /**
-     * 删除商品相关图片
-     */
-    @RequestMapping("/delete/goodsImage")
-    public Object deleteImage(@RequestParam String fileName) {
-        if (fileName != null) {
-            String path = dolaingPropertie.getFileUploadPath();
-            File file = new File(path + fileName);
-            if (file.exists() && file.isFile()) {
-                file.delete();
-                return render("删除成功");
-            }
-        }
-        return new ErrorTip(500, "删除图片异常");
+        System.out.println("savePath:" + savePath);
+        return savePath;
     }
 
     /**
