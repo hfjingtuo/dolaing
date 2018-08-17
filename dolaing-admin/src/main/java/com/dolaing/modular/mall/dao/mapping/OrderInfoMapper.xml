@@ -145,6 +145,7 @@
         order by moi.create_time desc
     </select>
 
+    <!-- 批量发货，卖家必须收到定金 -->
     <update id="batchDeliver"  parameterType="Map">
         update mall_order_info
         set
@@ -156,6 +157,7 @@
         shipping_status = 0
         and order_status = 1
         and pay_status = 1
+        and seller_receive_status = 2
         and id in (${ids})
     </update>
 
@@ -183,5 +185,35 @@
         and order_status = 1
         and pay_status = 1
         and id in (${ids})
+    </update>
+
+    <!-- 批量收货 -->
+    <update id="updateSellerMsgById">
+        update mall_order_info
+        set
+        <if test='sellerReceiveStatus != null'>
+            seller_receive_status = #{sellerReceiveStatus},
+        </if>
+        <if test='sellerMoneyReceived != null'>
+            seller_money_received = #{sellerMoneyReceived} ,
+        </if>
+        update_time = now()
+        where
+        id = #{id}
+    </update>
+
+    <!-- 批量收货 -->
+    <update id="updateFarmerMsgById"  parameterType="Map">
+        update mall_order_info
+        set
+        <if test='farmerReceiveStatus != null'>
+            farmer_receive_status = #{farmerReceiveStatus},
+        </if>
+        <if test='sellerMoneyReceived != null'>
+            farmer_money_received = #{farmerMoneyReceived} ,
+        </if>
+        update_time = now()
+        where
+        id = #{id}
     </update>
 </mapper>

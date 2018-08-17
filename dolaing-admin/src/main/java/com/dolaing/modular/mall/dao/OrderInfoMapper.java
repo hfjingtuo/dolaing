@@ -30,4 +30,17 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
      * @return
      */
     OrderInfoVo queryOrderById(@Param("orderId") Integer orderId);
+
+    /**
+     * 修改订单卖家信息
+     * @param orderInfo
+     * @return
+     */
+    Boolean updateSellerMsgById(OrderInfo orderInfo);
+    /**
+     * 修改订单农户信息
+     * @param orderInfo
+     * @return
+     */
+    Boolean updateFarmerMsgById(OrderInfo orderInfo);
 }

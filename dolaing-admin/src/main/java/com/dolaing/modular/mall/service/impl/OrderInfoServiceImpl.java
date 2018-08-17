@@ -139,7 +139,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
         userAccountRecord.setRemarks("订单支付");
         userAccountRecord.setProcessType(0);
-        userAccountRecord.setStatus(1); //根据返回的结果判断
+        userAccountRecord.setStatus(1);
         userAccountRecord.setSourceId(orderInfo.getOrderSn());
         userAccountRecord.setSeqId(merchantSeqId);
         userAccountRecord.insert();
@@ -178,9 +178,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         List<OrderGoodsVo> goodsVos = orderGoodsMapper.queryOrderGoodsByOrderId(orderInfo.getId());
         OrderGoodsVo goodsVo = goodsVos.get(0);
         if(roleType == 1){ //如果是卖家
-            System.out.println("=====>卖家");
             //根据店铺信息获取卖家账号
-            Shop shop = new Shop().selectById(orderInfo.getShopId()) ;
+            Shop shop = new Shop().selectById(orderInfo.getShopId());
             String sellerId = shop.getUserId();
             UserPayAccount sellerPayAccount = new UserPayAccount().selectOne(" user_id = {0} " ,sellerId);
             BigDecimal amount ;
@@ -189,25 +188,26 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             }else { //尾款
                 amount = orderInfo.getSellerReceivableAmount().subtract(orderInfo.getSellerMoneyReceived());
             }
-            System.out.println("=====>卖家金额："+amount.toString());
             /**
              * 判断是否开户了
              */
             if(sellerPayAccount == null ){
                 //未开户
                 //增加交易流水
-                UserAccountRecord userAccountRecord = new UserAccountRecord();
-                //增加定金打给农户流水
-                userAccountRecord.setUserId(sellerId) ;
-                userAccountRecord.setAmount(amount);
-                userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
-                userAccountRecord.setRemarks(opType == 1 ? "由平台转入定金" : "由平台转入尾款");
-                userAccountRecord.setProcessType(opType == 1 ? 1 : 2) ;
-                userAccountRecord.setStatus(2);
-                userAccountRecord.setErrorMessage("没有开户");
-                userAccountRecord.setSourceId(orderInfo.getOrderSn());
-                userAccountRecord.setSeqId(merchantSeqId);
-                userAccountRecord.insert();
+                UserAccountRecord userAccountRecord = new UserAccountRecord().selectOne("source_id = {0} and user_id = {1} and process_type = {2} " ,
+                        orderInfo.getOrderSn(),sellerId,opType == 1 ? 1 :2);
+                if(userAccountRecord == null || userAccountRecord.getStatus() == null || !userAccountRecord.getStatus().equals("1")){
+                    userAccountRecord.setUserId(sellerId) ;
+                    userAccountRecord.setAmount(amount);
+                    userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
+                    userAccountRecord.setRemarks(opType == 1 ? "由平台转入定金" : "由平台转入尾款");
+                    userAccountRecord.setProcessType(opType == 1 ? 1 : 2) ;
+                    userAccountRecord.setStatus(2);
+                    userAccountRecord.setErrorMessage("没有开户");
+                    userAccountRecord.setSourceId(orderInfo.getOrderSn());
+                    userAccountRecord.setSeqId(merchantSeqId);
+                    userAccountRecord.insertOrUpdate();
+                }
                 return ;
             }
             //将尾款打给农户和卖家
@@ -216,10 +216,10 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             int sellerStatus = 0 ;
             if((Boolean) sellerMap.get("flag")){
                 sellerStatus = opType == 1 ? 1 : 3 ; //定金收款中1，尾款收款中3
-                orderInfo.setSellerMoneyReceived(orderInfo.getSellerMoneyReceived().add(amount));
+//                orderInfo.setSellerMoneyReceived(orderInfo.getSellerMoneyReceived().add(amount));// 收款中金额是否变化
                 orderInfo.setSellerReceiveStatus(sellerStatus);
-                orderInfo.setUpdateTime(new Date());
-                orderInfo.updateById();
+                orderInfoMapper.updateSellerMsgById(orderInfo);
+//                orderInfo.updateById();
                 //增加交易流水
                 UserAccountRecord userAccountRecord = new UserAccountRecord();
                 //增加定金打给农户流水
@@ -252,18 +252,21 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             if(farmerPayAccount == null ){
                 //未开户
                 //增加交易流水
-                UserAccountRecord userAccountRecord = new UserAccountRecord();
-                //增加定金打给农户流水
-                userAccountRecord.setUserId(farmerId) ;
-                userAccountRecord.setAmount(amount);
-                userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
-                userAccountRecord.setRemarks(opType == 1 ? "由平台转入定金" : "由平台转入尾款");
-                userAccountRecord.setProcessType(opType == 1 ? 1 :2) ;
-                userAccountRecord.setStatus(2);
-                userAccountRecord.setErrorMessage("没有开户");
-                userAccountRecord.setSourceId(orderInfo.getOrderSn());
-                userAccountRecord.setSeqId(merchantSeqId);
-                userAccountRecord.insert();
+                UserAccountRecord userAccountRecord = new UserAccountRecord().selectOne("source_id = {0} and user_id = {1} and process_type = {2} " ,
+                        orderInfo.getOrderSn(),farmerId,opType == 1 ? 1 :2);
+                if(userAccountRecord == null || userAccountRecord.getStatus() == null || !userAccountRecord.getStatus().equals("1")){
+                    //增加定金打给农户流水
+                    userAccountRecord.setUserId(farmerId) ;
+                    userAccountRecord.setAmount(amount);
+                    userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
+                    userAccountRecord.setRemarks(opType == 1 ? "由平台转入定金" : "由平台转入尾款");
+                    userAccountRecord.setProcessType(opType == 1 ? 1 :2) ;
+                    userAccountRecord.setStatus(2);
+                    userAccountRecord.setErrorMessage("没有开户");
+                    userAccountRecord.setSourceId(orderInfo.getOrderSn());
+                    userAccountRecord.setSeqId(merchantSeqId);
+                    userAccountRecord.insertOrUpdate();
+                }
                 return ;
             }
 
@@ -271,11 +274,10 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             int farmerStatus = 0 ;
             if((Boolean) farmerMap.get("flag")){
                 farmerStatus = opType == 1 ? 1 : 3 ; //定金收款中1，尾款收款中3
-                orderInfo.setSellerMoneyReceived(orderInfo.getSellerMoneyReceived().add(amount));
-                orderInfo.setSellerReceiveStatus(farmerStatus);
-                orderInfo.setUpdateTime(new Date());
-                orderInfo.updateById();
-
+//                orderInfo.setFarmerMoneyReceived(orderInfo.getSellerMoneyReceived().add(amount));
+                orderInfo.setFarmerReceiveStatus(farmerStatus);
+//                orderInfo.updateById();
+                orderInfoMapper.updateFarmerMsgById(orderInfo);
                 //增加交易流水
                 UserAccountRecord userAccountRecord = new UserAccountRecord();
                 //增加定金打给农户流水
@@ -321,19 +323,27 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             OrderInfo orderInfo = new OrderInfo().selectOne("order_sn = {0} and order_status = {1}" ,userAccountRecord.getSourceId() , 1);
             User user = new User().selectOne("account = {0} " ,userAccountRecord.getUserId() ) ;
             if(userAccountRecord.getProcessType() == 1 ){ //定金转入
-                if(user.getType().equals(2)){ //卖家
+                if(user.getType().equals("2")){ //卖家
+                    orderInfo.setSellerMoneyReceived(orderInfo.getSellerMoneyReceived().add(userAccountRecord.getAmount()));
                     orderInfo.setSellerReceiveStatus(2); //定金已到账
-                }else if(user.getType().equals(3)){ //农户
+                    orderInfoMapper.updateSellerMsgById(orderInfo);
+                }else if(user.getType().equals("3")){ //农户
+                    orderInfo.setFarmerMoneyReceived(orderInfo.getFarmerMoneyReceived().add(userAccountRecord.getAmount()));
                     orderInfo.setFarmerReceiveStatus(2); //定金已到账
+                    orderInfoMapper.updateFarmerMsgById(orderInfo);
                 }
             }else if(userAccountRecord.getProcessType() == 2 ){ //尾款转入
-                if(user.getType().equals(2)){ //卖家
+                if(user.getType().equals("2")){ //卖家
+                    orderInfo.setSellerMoneyReceived(orderInfo.getSellerMoneyReceived().add(userAccountRecord.getAmount()));
                     orderInfo.setSellerReceiveStatus(4); //尾款已到账
-                }else if(user.getType().equals(3)){ //农户
+                    orderInfoMapper.updateSellerMsgById(orderInfo);
+                }else if(user.getType().equals("3")){ //农户
+                    orderInfo.setFarmerMoneyReceived(orderInfo.getFarmerMoneyReceived().add(userAccountRecord.getAmount()));
                     orderInfo.setFarmerReceiveStatus(4); //尾款已到账
+                    orderInfoMapper.updateFarmerMsgById(orderInfo);
                 }
             }
-            orderInfo.updateById();
+
         }else{
             userAccountRecord.setErrorCode(common2404Result.getRespCode());
             userAccountRecord.setErrorMessage(common2404Result.getRespDesc());
