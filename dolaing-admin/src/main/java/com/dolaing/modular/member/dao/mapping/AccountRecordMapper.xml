@@ -35,7 +35,7 @@
         SELECT ur.id,ur.amount,ur.payment_id,ur.create_time,ur.update_time,ur.seq_id
         FROM user_account_record ur
         LEFT JOIN mall_order_info oi ON oi.order_sn = ur.source_id
-        WHERE ur.`status` = '1' and ur.process_type = #{processType} and oi.id = #{orderId} and ur.user_id = #{account}
+        WHERE (ur.`status` = '0' or ur.`status` = '1') and ur.process_type = #{processType} and oi.id = #{orderId} and ur.user_id = #{account}
     </select>
 
 </mapper>

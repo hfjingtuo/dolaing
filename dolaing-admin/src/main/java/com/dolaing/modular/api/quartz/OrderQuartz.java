@@ -91,7 +91,7 @@ public class OrderQuartz {
         }
 
         //查询尚未支付尾款给卖家订单
-        List<OrderInfo> sellerBalanceOrders = new OrderInfo().selectList("order_status = 1 and shipping_status =3 " +
+        List<OrderInfo> sellerBalanceOrders = new OrderInfo().selectList("order_status = 1 and shipping_status =2 " +
                 "and pay_status = 1 and seller_receive_status = 2 and seller_money_received < seller_receivable_amount", null);
 
         for (OrderInfo sellerOrder : sellerBalanceOrders) {
@@ -99,7 +99,7 @@ public class OrderQuartz {
         }
 
         //查询尚未支付尾款给农户的订单
-        List<OrderInfo> farmerBalanceOrders = new OrderInfo().selectList("order_status = 1 and shipping_status =3 " +
+        List<OrderInfo> farmerBalanceOrders = new OrderInfo().selectList("order_status = 1 and shipping_status =2 " +
                 "and pay_status = 1 and farmer_receive_status = 2 and farmer_money_received < farmer_receivable_amount", null);
 
         for (OrderInfo farmerOrder : farmerBalanceOrders) {
@@ -110,7 +110,7 @@ public class OrderQuartz {
     /**
      * 查询转出中的订单状态
      */
-    @Scheduled(cron = "0 */5 * * * ?") //每五分钟执行一次
+    @Scheduled(cron = "0 */7 * * * ?") //每五分钟执行一次
     public void queryOrderTransStatusTask() {
         System.out.println(new Date() + " --------查询转出中的订单状态--------- ");
         //查询尚未转出完成的订单
