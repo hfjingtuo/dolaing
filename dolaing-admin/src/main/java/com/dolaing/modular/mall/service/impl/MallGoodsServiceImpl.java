@@ -1,19 +1,12 @@
 package com.dolaing.modular.mall.service.impl;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.dolaing.core.datascope.DataScope;
 import com.dolaing.modular.mall.dao.MallGoodsMapper;
-import com.dolaing.modular.mall.dao.OrderInfoMapper;
 import com.dolaing.modular.mall.model.MallGoods;
 import com.dolaing.modular.mall.service.MallGoodsService;
 import com.dolaing.modular.mall.vo.MallGoodsVo;
-import com.dolaing.modular.mall.vo.OrderInfoVo;
-import com.dolaing.modular.system.dao.UserMapper;
-import com.dolaing.modular.system.model.User;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,10 +39,15 @@ public class MallGoodsServiceImpl extends ServiceImpl<MallGoodsMapper, MallGoods
     }
 
     @Override
-    public List<MallGoodsVo> getAllGoods(Page page) {
-        return this.baseMapper.getAllGoods(page);
+    public Page getAllGoods(Page page, String goodsId) {
+        Map map = new HashMap();
+        map.put("page", page);
+        map.put("id", goodsId);
+        List<MallGoodsVo> mallGoodsVos = mallGoodsMapper.getAllGoods(map);
+        page.setTotal(mallGoodsVos.size());
+        page.setRecords(mallGoodsVos);
+        return page;
     }
-
     @Override
     public Boolean batchDelete(String account, String ids) {
         Map map = new HashMap();
