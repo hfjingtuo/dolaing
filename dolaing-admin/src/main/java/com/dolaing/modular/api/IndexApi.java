@@ -5,11 +5,10 @@ import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.mall.service.MallGoodsService;
 import com.dolaing.modular.mall.vo.MallGoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Author: zx
@@ -25,14 +24,13 @@ public class IndexApi extends BaseApi {
     private MallGoodsService mallGoodsService;
 
     /**
-     * 首页接口
+     * 查询未删除已上架且在认购期的所有商品(首页商品)、
+     * 排除当前商品(商品详情页左侧商品)
      */
-    @PostMapping("/index")
-    public Map index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
-        Map<String, Object> map = new HashMap<>();
-        Page page = new Page(pageNo, pageSize);
-        List<MallGoodsVo> list = mallGoodsService.getAllGoods(page);
-        map.put("list", list);
-        return map;
+    @PostMapping("/getAllGoods")
+    public Object index(@RequestParam Integer pageNo, @RequestParam Integer pageSize, @RequestParam String goodsId) {
+        Page<MallGoodsVo> page = new Page(pageNo, pageSize);
+        page = mallGoodsService.getAllGoods(page, goodsId);
+        return render(page);
     }
 }
