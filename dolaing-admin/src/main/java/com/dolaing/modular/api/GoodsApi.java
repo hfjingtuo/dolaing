@@ -62,6 +62,18 @@ public class GoodsApi extends BaseApi {
     private RedisTokenService redisTokenService;
 
     /**
+     * 首页商品、推荐商品
+     * 查询未删除已上架且在认购期的所有商品(首页商品)、
+     * 排除当前商品(商品详情页左侧商品)
+     */
+    @PostMapping("/getAllGoods")
+    public Object index(@RequestParam Integer pageNo, @RequestParam Integer pageSize, @RequestParam String goodsId) {
+        Page<MallGoodsVo> page = new Page(pageNo, pageSize);
+        page = mallGoodsService.getAllGoods(page, goodsId);
+        return render(page);
+    }
+
+    /**
      * 商品详情
      */
     @PostMapping("/goods/detail")
@@ -233,7 +245,7 @@ public class GoodsApi extends BaseApi {
      * 已发布商品列表
      */
     @AuthAccess
-    @PostMapping("/publishGoods/list")
+    @PostMapping("/publishedGoods/list")
     public Result index(@RequestParam Integer pageNo, @RequestParam Integer pageSize) {
         String token = TokenUtil.getToken(HttpKit.getRequest());
         String account = redisTokenService.getTokenModel(token).getAccount();
@@ -261,44 +273,10 @@ public class GoodsApi extends BaseApi {
         return new ErrorTip(500, "商品不存在");
     }
 
-    /**
-     * 修改商品
-     */
-    @AuthAccess
-    @PostMapping("/updateGoods")
-    public Object update(@RequestBody MallGoods mallGoods) {
-        MallGoods old = new MallGoods().selectById(mallGoods.getId());
-        if (ToolUtil.isOneEmpty(mallGoods.getGoodsName(), mallGoods.getShopPrice())) {
-            return new ErrorTip(500, "产品发布失败，参数有空值");
-        }
-        old.setGoodsName(mallGoods.getGoodsName());
-        old.setBreeds(mallGoods.getBreeds());
-        old.setCatId(mallGoods.getCatId());
-        old.setDepositRatio(mallGoods.getDepositRatio());
-        old.setExpectPartOutput(mallGoods.getExpectPartOutput());
-        old.setShopPrice(mallGoods.getShopPrice());
-        old.setStartSubscribeTime(mallGoods.getStartSubscribeTime());
-        old.setEndSubscribeTime(mallGoods.getEndSubscribeTime());
-        old.setPlantime(mallGoods.getPlantime());
-        old.setPlantingCycle(mallGoods.getPlantingCycle());
-        old.setGoodsMasterImgs(mallGoods.getGoodsMasterImgs());
-        old.setLandAddress(mallGoods.getLandAddress());
-        old.setLandPartArea(mallGoods.getLandPartArea());
-        old.setLandSn(mallGoods.getLandSn());
-        old.setLandImgs(mallGoods.getLandImgs());
-        old.setGoodsDesc(mallGoods.getGoodsDesc());
-        old.setGoodsDescImgs(mallGoods.getGoodsDescImgs());
-        //预计发货时间=认购结束时间+生长周期
-        old.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));
-        old.updateById();
-        return SUCCESS_TIP;
-    }
-
     @ApiOperation(value = "批量删除")
     @AuthAccess
     @PostMapping("/batchDeleteGoods")
     public Result batchDelete(@RequestParam String ids) {
-        System.out.println("ids==" + ids);
         String token = TokenUtil.getToken(HttpKit.getRequest());
         String account = redisTokenService.getTokenModel(token).getAccount();
         mallGoodsService.batchDelete(account, ids);
