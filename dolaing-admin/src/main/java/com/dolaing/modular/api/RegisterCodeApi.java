@@ -37,9 +37,10 @@ public class RegisterCodeApi extends BaseApi {
     @PostMapping("/msgCode")
     public Object sendMsgCode() {
         String phone = super.getPara("phone");
+        Integer type = Integer.valueOf(super.getPara("type"));
         if (ToolUtil.isNotEmpty(phone)) {
             User user = userService.getUserByUserName(phone);
-            if (user != null) {
+            if (type == 1 && user != null) {
                 return new ErrorTip(500, "该手机号已被注册");
             }
             String code = RegisterCodeUtil.randomCode();
