@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.service.IService;
 import com.dolaing.pay.client.entity.zlian.MarginRegisterDTO;
 import com.dolaing.pay.client.entity.zlian.MarginSmsDTO;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,4 +21,6 @@ public interface IPayAccountService extends IService<UserPayAccount> {
     UserPayAccount getUserPayAccountByUserId(UserPayAccount userPayAccount);
     Map marginRegister(String account ,MarginRegisterDTO marginRegisterDTO);
     Map marginRegisterSms(MarginSmsDTO marginSmsDTO);
+
+    List<Map<String, Object>> payAccountList(String condition);
 }

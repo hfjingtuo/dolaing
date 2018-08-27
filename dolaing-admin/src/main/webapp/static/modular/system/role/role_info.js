@@ -19,13 +19,6 @@ var RolInfoDlg = {
                     message: '别名不能为空'
                 }
             }
-        },
-        pName: {
-            validators: {
-                notEmpty: {
-                    message: '父级名称不能为空'
-                }
-            }
         }
     }
 };
@@ -180,15 +173,4 @@ RolInfoDlg.editSubmit = function () {
 
 $(function () {
     Feng.initValidator("roleInfoForm", RolInfoDlg.validateFields);
-
-    var deptTree = new $ZTree("deptTree", "/dept/tree");
-    deptTree.bindOnClick(RolInfoDlg.onClickDept);
-    deptTree.bindOnDblClick(RolInfoDlg.onDblClickDept)
-    deptTree.init();
-    RolInfoDlg.deptZtree = deptTree;
-
-    var pNameTree = new $ZTree("pNameTree", "/role/roleTreeList");
-    pNameTree.bindOnClick(RolInfoDlg.onClickPName);
-    pNameTree.init();
-    RolInfoDlg.pNameZtree = pNameTree;
 });

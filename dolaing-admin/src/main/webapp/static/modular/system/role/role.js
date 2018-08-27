@@ -60,7 +60,7 @@ Role.openChangeRole = function () {
         var index = layer.open({
             type: 2,
             title: '修改角色',
-            area: ['800px', '450px'], //宽高
+            area: ['800px', '350px'], //宽高
             fix: false, //不固定
             maxmin: true,
             content: Feng.ctxPath + '/role/role_edit/' + this.seItem.id

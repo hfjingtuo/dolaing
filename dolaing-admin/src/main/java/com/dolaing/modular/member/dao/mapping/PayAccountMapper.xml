@@ -4,32 +4,39 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.dolaing.modular.member.model.UserPayAccount">
-        <id column="id" property="id" />
-        <result column="user_id" property="userId" />
-        <result column="payment" property="payment" />
-        <result column="pay_user_Id" property="payUserId" />
-        <result column="user_name_text" property="userNameText" />
-        <result column="cust_type" property="custType" />
-        <result column="cert_type" property="certType" />
-        <result column="cert_id" property="certId" />
-        <result column="org_id" property="orgId" />
-        <result column="bank_code" property="bankCode" />
-        <result column="bank_province_code" property="bankProvinceCode" />
-        <result column="bank_region_code" property="bankRegionCode" />
-        <result column="card_No" property="cardNo" />
-        <result column="mobile" property="mobile" />
-        <result column="remarks" property="remarks" />
-        <result column="account_psw" property="accountPsw" />
-        <result column="create_by" property="createBy" />
-        <result column="create_date" property="createDate" />
-        <result column="update_by" property="updateBy" />
-        <result column="update_date" property="updateDate" />
-        <result column="del_flag" property="delFlag" />
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="payment" property="payment"/>
+        <result column="pay_user_Id" property="payUserId"/>
+        <result column="user_name_text" property="userNameText"/>
+        <result column="cust_type" property="custType"/>
+        <result column="cert_type" property="certType"/>
+        <result column="cert_id" property="certId"/>
+        <result column="org_id" property="orgId"/>
+        <result column="bank_code" property="bankCode"/>
+        <result column="bank_province_code" property="bankProvinceCode"/>
+        <result column="bank_region_code" property="bankRegionCode"/>
+        <result column="card_No" property="cardNo"/>
+        <result column="mobile" property="mobile"/>
+        <result column="remarks" property="remarks"/>
+        <result column="account_psw" property="accountPsw"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="del_flag" property="delFlag"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, user_id, payment, pay_user_Id, user_name_text, cust_type, cert_type, cert_id, org_id, bank_code, bank_province_code, bank_region_code, card_No, mobile, remarks, account_psw, create_by, create_date, update_by, update_date, del_flag
     </sql>
+
+    <select id="payAccountList" resultType="map">
+        select id, user_id, payment, user_name_text, cust_type, cert_type, bank_code, card_No, mobile, create_by, create_date, del_flag from user_pay_account
+        <if test="condition != null and condition != ''">
+            where user_id = #{condition} or mobile = #{condition}
+        </if>
+    </select>
 
 </mapper>

@@ -1,7 +1,5 @@
 package com.dolaing.modular.member.vo;
 
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableName;
 import com.dolaing.core.base.model.BaseModel;
 import com.dolaing.modular.member.model.UserPayAccount;
 import lombok.Data;

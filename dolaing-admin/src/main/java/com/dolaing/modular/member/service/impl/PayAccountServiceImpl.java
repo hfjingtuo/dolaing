@@ -23,11 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zhanglihua
@@ -35,12 +36,14 @@ import java.util.Map;
  */
 @Service
 public class PayAccountServiceImpl extends ServiceImpl<PayAccountMapper, UserPayAccount> implements IPayAccountService {
+
     @Resource
     private PayAccountMapper payAccountMapper;
 
 
     /**
      * 查询开户信息
+     *
      * @param userPayAccount
      * @return
      */
@@ -57,29 +60,35 @@ public class PayAccountServiceImpl extends ServiceImpl<PayAccountMapper, UserPay
      * @Date: 11:37 2018/5/24
      */
     @Override
-    public Map marginRegisterSms(MarginSmsDTO marginSmsDTO){
+    public Map marginRegisterSms(MarginSmsDTO marginSmsDTO) {
         marginSmsDTO.setTradeType(SmsTradeTypeEnum.PROTOCOL_REGISTRATION.getCode());
         String marginSmsDTOStr = JSONObject.toJSON(marginSmsDTO).toString();
-        String url = Global.PAY_ZLIAN_MARGIN_SMS_URL ;
-        return HttpUtil.sendMsg(url,marginSmsDTOStr);
+        String url = Global.PAY_ZLIAN_MARGIN_SMS_URL;
+        return HttpUtil.sendMsg(url, marginSmsDTOStr);
+    }
+
+    @Override
+    public List<Map<String, Object>> payAccountList(String condition) {
+        return this.baseMapper.payAccountList(condition);
     }
 
     /**
      * 开户（证联）
+     *
      * @param marginRegisterDTO
      * @return
      */
     @Override
     @Transactional
-    public Map marginRegister(String account ,MarginRegisterDTO marginRegisterDTO) {
+    public Map marginRegister(String account, MarginRegisterDTO marginRegisterDTO) {
         marginRegisterDTO.setResv("");
         marginRegisterDTO.setFundSeqId(IdUtil.randomBase62(32));
         String marginSmsDTOStr = JSONObject.toJSON(marginRegisterDTO).toString();
         String url = Global.PAY_ZLIAN_MARGIN_REGISTER_URL;
-        Map map = HttpUtil.sendMsg(url,marginSmsDTOStr);
+        Map map = HttpUtil.sendMsg(url, marginSmsDTOStr);
         Common208Result common208Result =
-                JSONObject.toJavaObject((JSONObject)map.get("data"),Common208Result.class);
-        if(common208Result !=null && common208Result.getRespCode().toString().equals("RC00")){
+                JSONObject.toJavaObject((JSONObject) map.get("data"), Common208Result.class);
+        if (common208Result != null && common208Result.getRespCode().toString().equals("RC00")) {
             System.out.println(common208Result.toString());
             //开户成功，将结果写入到数据库中
             UserPayAccount userPayAccount = new UserPayAccount();
@@ -98,16 +107,15 @@ public class PayAccountServiceImpl extends ServiceImpl<PayAccountMapper, UserPay
             userPayAccount.setPayUserId(common208Result.getUserId());
             super.insert(userPayAccount);
             //添加支付密码
-            User user =  new User().selectOne("account = {0}" ,account) ;
+            User user = new User().selectOne("account = {0}", account);
             user.setPayPassword(ShiroKit.md5(marginRegisterDTO.getPayPassWord(), String.valueOf(user.getId())));
             user.updateById();
-        }else if(common208Result !=null && !common208Result.getRespCode().toString().equals("RC00")){
-            map.put("code","1001") ;
-            map.put("msg",common208Result.getRespDesc()) ;
+        } else if (common208Result != null && !common208Result.getRespCode().toString().equals("RC00")) {
+            map.put("code", "1001");
+            map.put("msg", common208Result.getRespDesc());
         }
-        return map ;
+        return map;
     }
-
 
 
 }

@@ -1,9 +1,5 @@
 package com.dolaing.core.common.constant.factory;
 
-import com.dolaing.modular.system.model.Dict;
-
-import java.util.List;
-
 /**
  * 常量生产工厂的接口
  *

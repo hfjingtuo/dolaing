@@ -18,11 +18,6 @@ public class Area extends BaseModel<Area> {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 英文名称
-     */
-    private String enName;
-
-    /**
      * 中文名称
      */
     private String chName;

@@ -26,6 +26,9 @@ public class AreaApi extends BaseApi {
      */
     @GetMapping("/changeArea/{parentId}")
     public Object getAreaList(@PathVariable String parentId) {
+        if (parentId == null) {
+            System.out.println(parentId);
+        }
         return areaService.findByParentId(parentId);
     }
 }
