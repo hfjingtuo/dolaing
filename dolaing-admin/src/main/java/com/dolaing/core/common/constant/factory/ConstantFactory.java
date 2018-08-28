@@ -209,10 +209,10 @@ public class ConstantFactory implements IConstantFactory {
      */
     @Override
     public String getPaymentName(String payment) {
-        if (payment.equals("1")){
+        if (payment.equals("0")){
             return "证联支付";
         }else {
-            return "--";
+            return "-";
         }
     }
 

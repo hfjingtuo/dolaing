@@ -22,24 +22,28 @@ public class Global {
     /**
      * 证联开户接口地址
      */
-    public static final String PAY_ZLIAN_MARGIN_REGISTER_URL = PAY_ZLIAN_BASE_URL+"marginRegister";
+    public static final String PAY_ZLIAN_MARGIN_REGISTER_URL = PAY_ZLIAN_BASE_URL + "marginRegister";
+    /**
+     * 证联解绑银行卡接口地址
+     */
+    public static final String PAY_ZLIAN_DELETE_CARD_URL = PAY_ZLIAN_BASE_URL + "deleteCard";
     /**
      * 证联短信接口地址
      */
-    public static final String PAY_ZLIAN_MARGIN_SMS_URL = PAY_ZLIAN_BASE_URL+"marginSms";
+    public static final String PAY_ZLIAN_MARGIN_SMS_URL = PAY_ZLIAN_BASE_URL + "marginSms";
 
     /**
      * 证联线上入金接口地址
      */
-    public static final String PAY_ZLIAN_ONLINE_DEPOSIT_SHORT_URL = PAY_ZLIAN_BASE_URL+"onlineDepositShort";
+    public static final String PAY_ZLIAN_ONLINE_DEPOSIT_SHORT_URL = PAY_ZLIAN_BASE_URL + "onlineDepositShort";
     /**
      * 证联资金转出接口地址
      */
-    public static final String PAY_ZLIAN_WITH_DRAW_NOTICE_URL = PAY_ZLIAN_BASE_URL+"withdrawNotice";
+    public static final String PAY_ZLIAN_WITH_DRAW_NOTICE_URL = PAY_ZLIAN_BASE_URL + "withdrawNotice";
     /**
      * 证联状态查询接口地址
      */
-    public static final String PAY_ZLIAN_TRANS_STATUS_URL = PAY_ZLIAN_BASE_URL+"tranStatusQuery";
+    public static final String PAY_ZLIAN_TRANS_STATUS_URL = PAY_ZLIAN_BASE_URL + "tranStatusQuery";
 
 
 //    public static final Map PAY_ZLIAN_RESPCODE_MAP = new HashMap<String, String>() {

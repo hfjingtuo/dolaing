@@ -2,6 +2,7 @@ package com.dolaing.modular.member.service;
 
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.baomidou.mybatisplus.service.IService;
+import com.dolaing.pay.client.entity.zlian.DeleteCardDTO;
 import com.dolaing.pay.client.entity.zlian.MarginRegisterDTO;
 import com.dolaing.pay.client.entity.zlian.MarginSmsDTO;
 import org.apache.ibatis.annotations.Param;
@@ -11,7 +12,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zhanglihua
@@ -20,13 +21,19 @@ import java.util.Map;
 public interface IPayAccountService extends IService<UserPayAccount> {
     //查询开户信息
     UserPayAccount getUserPayAccountByUserId(UserPayAccount userPayAccount);
-    Map marginRegister(String account ,MarginRegisterDTO marginRegisterDTO);
+
+    Map marginRegister(String account, MarginRegisterDTO marginRegisterDTO);
+
     Map marginRegisterSms(MarginSmsDTO marginSmsDTO);
 
     List<Map<String, Object>> selectPayAccountList(String condition);
 
     /**
-     * 修改银行卡状态
+     * 解绑银行卡
+     *
+     * @param deleteCardDTO
+     * @return
      */
-    int setStatus(@Param("bankCardId") Integer bankCardId, @Param("delFlag") String status);
+    Map deleteCard(@Param("bankCardId") Integer bankCardId, @Param("delFlag") String status, DeleteCardDTO deleteCardDTO);
+
 }

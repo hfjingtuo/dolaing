@@ -1,19 +1,11 @@
 package com.dolaing.modular.member.model;
 
-import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.dolaing.core.base.model.BaseModel;
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
- * <p>
- * 
- * </p>
- *
  * @author zhanglihua
  * @since 2018-07-29
  */
@@ -29,7 +21,7 @@ public class UserPayAccount extends BaseModel<UserPayAccount> {
     @TableField("user_id")
     private String userId;
     /**
-     * 支付平台  1 为证联 暂时默认为 1
+     * 支付平台  0为证联 暂时默认为 0
      */
     private String payment;
     /**
