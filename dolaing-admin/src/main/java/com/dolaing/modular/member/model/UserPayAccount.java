@@ -23,7 +23,6 @@ public class UserPayAccount extends BaseModel<UserPayAccount> {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
     /**
      * 用户account
      */

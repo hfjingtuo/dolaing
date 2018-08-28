@@ -13,14 +13,22 @@ var BankCard = {
  */
 BankCard.initColumn = function () {
     return [
-        {field: 'selectItem', radio: true},
+        {title: 'id', field: 'id', visible: false, align: 'center', valign: 'middle'},
         {title: '用户账号', field: 'userId', align: 'center', valign: 'middle'},
-        {title: '支付平台', field: 'payment', align: 'center', valign: 'middle'},
-        {title: '用户姓名', field: 'userNameText', align: 'center', valign: 'middle', sortable: true},
-        {title: '客户类型', field: 'custType', align: 'center', valign: 'middle', sortable: true},
-        {title: '银行代码', field: 'bankCode', align: 'center', valign: 'middle', sortable: true},
-        {title: '银行卡号', field: 'cardNoLastFour', align: 'center', valign: 'middle', sortable: true},
-        {title: '创建时间', field: 'createtime', align: 'center', valign: 'middle', sortable: true}
+        {title: '支付平台', field: 'paymentName', align: 'center', valign: 'middle'},
+        {title: '用户姓名', field: 'userNameText', align: 'center', valign: 'middle'},
+        {title: '手机号', field: 'mobile', align: 'center', valign: 'middle'},
+        {title: '客户类型', field: 'custTypeName', align: 'center', valign: 'middle'},
+        {title: '银行代码', field: 'bankCode', align: 'center', valign: 'middle'},
+        {title: '银行卡号', field: 'cardNoLastFour', align: 'center', valign: 'middle'},
+        {title: '创建时间', field: 'createTime', align: 'center', valign: 'middle'},
+        {
+            title: '操作', align: 'center', valign: 'middle',
+            formatter: function (value, row, index) {
+                var html = '<a title="解除绑定" style="color: #1ab394;cursor:pointer" onclick="BankCard.delete(\'' + row.id + '\',\'' + row.cardNoLastFour + '\')">解除绑定</a>';
+                return html;
+            }
+        }
     ];
 };
 
@@ -41,36 +49,63 @@ BankCard.check = function () {
 /**
  * 解绑银行卡
  */
-BankCard.delete = function () {
-    if (this.check()) {
+BankCard.delete = function (id, cardNoLastFour) {
 
-        var operation = function () {
-            var ajax = new $ax(Feng.ctxPath + "/bankCard/delete", function (data) {
-                Feng.success("删除成功!");
-                BankCard.table.refresh();
-            }, function (data) {
-                Feng.error("删除失败!" + data.responseJSON.message + "!");
-            });
-            ajax.set("bankCardId", BankCard.seItem.id);
-            ajax.start();
-        };
+    var operation = function () {
+        var ajax = new $ax(Feng.ctxPath + "/bankCard/delete", function (data) {
+            Feng.success("解除绑定成功!");
+            BankCard.noSearch();
+        }, function (data) {
+            Feng.error("解除绑定失败!" + data.responseJSON.message + "!");
+        });
+        ajax.set("bankCardId", id);
+        ajax.start();
+    };
 
-        Feng.confirm("是否解绑银行卡 " + BankCard.seItem.title + "?", operation);
-    }
+    Feng.confirm("是否解绑银行卡 " + cardNoLastFour + " ?", operation);
+
 };
 
 /**
  * 查询解绑银行卡列表
  */
 BankCard.search = function () {
-    var queryData = {};
-    queryData['condition'] = $("#condition").val();
-    BankCard.table.refresh({query: queryData});
+    $("#BankCardTable").parent().parent().show();
+    if ($.trim($("#condition").val()) == null || $.trim($("#condition").val()) == "") {
+        BankCard.noSearch();
+    } else {
+        BankCard.initInfo();
+        var queryData = {};
+        queryData['condition'] = $.trim($("#condition").val());
+        BankCard.table.refresh({query: queryData});
+    }
 };
 
-$(function () {
+/**
+ * 重置
+ */
+BankCard.resetSearch = function () {
+    $("#condition").val("");
+    BankCard.noSearch();
+};
+
+BankCard.noSearch = function () {
+    var queryData = {};
+    queryData['condition'] = "*";
+    BankCard.table.refresh({query: queryData});
+    $("#BankCardTable").parent().parent().hide();
+};
+
+BankCard.initInfo = function () {
     var defaultColunms = BankCard.initColumn();
     var table = new BSTable(BankCard.id, "/bankCard/list", defaultColunms);
     table.setPaginationType("client");
+    table.setShowRefresh(false);
+    table.setShowColumns(false);
     BankCard.table = table.init();
+};
+
+$(function () {
+
+    // BankCard.noSearch();
 });

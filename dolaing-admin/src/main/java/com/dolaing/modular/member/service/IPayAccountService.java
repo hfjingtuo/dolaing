@@ -4,6 +4,7 @@ import com.dolaing.modular.member.model.UserPayAccount;
 import com.baomidou.mybatisplus.service.IService;
 import com.dolaing.pay.client.entity.zlian.MarginRegisterDTO;
 import com.dolaing.pay.client.entity.zlian.MarginSmsDTO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -22,5 +23,10 @@ public interface IPayAccountService extends IService<UserPayAccount> {
     Map marginRegister(String account ,MarginRegisterDTO marginRegisterDTO);
     Map marginRegisterSms(MarginSmsDTO marginSmsDTO);
 
-    List<Map<String, Object>> payAccountList(String condition);
+    List<Map<String, Object>> selectPayAccountList(String condition);
+
+    /**
+     * 修改银行卡状态
+     */
+    int setStatus(@Param("bankCardId") Integer bankCardId, @Param("delFlag") String status);
 }

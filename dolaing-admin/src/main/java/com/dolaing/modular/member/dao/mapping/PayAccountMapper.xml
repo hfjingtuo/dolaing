@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dolaing.modular.system.dao.PayAccountMapper">
+<mapper namespace="com.dolaing.modular.member.dao.PayAccountMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.dolaing.modular.member.model.UserPayAccount">
@@ -32,11 +32,20 @@
         id, user_id, payment, pay_user_Id, user_name_text, cust_type, cert_type, cert_id, org_id, bank_code, bank_province_code, bank_region_code, card_No, mobile, remarks, account_psw, create_by, create_date, update_by, update_date, del_flag
     </sql>
 
-    <select id="payAccountList" resultType="map">
-        select id, user_id, payment, user_name_text, cust_type, cert_type, bank_code, card_No, mobile, create_by, create_date, del_flag from user_pay_account
-        <if test="condition != null and condition != ''">
-            where user_id = #{condition} or mobile = #{condition}
-        </if>
+    <select id="selectPayAccountList" resultType="map">
+        select id, user_id as userId, payment, user_name_text as userNameText, cust_type as custType, cert_type as certType, bank_code as bankCode, card_No as cardNo, mobile, create_by as createBy, create_time as createTime, del_flag as delFlag
+        from user_pay_account
+        <where>
+            del_flag = '0'
+            <if test="condition != null and condition != ''">
+                and user_id = #{condition} or mobile = #{condition}
+            </if>
+        </where>
     </select>
+
+    <update id="setStatus">
+		update user_pay_account set del_flag = #{delFlag} where id =
+		#{bankCardId}
+	</update>
 
 </mapper>

@@ -12,11 +12,13 @@ public class BankCardMap extends AbstractDictMap {
 
     @Override
     public void init() {
+        put("bankCardId", "银行卡号");
         put("title", "标题");
         put("content", "内容");
     }
 
     @Override
     protected void initBeWrapped() {
+        putFieldWrapperMethodName("bankCardId","getBankCardNoById");
     }
 }

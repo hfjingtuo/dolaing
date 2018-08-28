@@ -63,4 +63,19 @@ public interface IConstantFactory {
      */
     String getMenuStatusName(Integer status);
 
+    /**
+     * 根据id获取银行卡号（去除后四位）
+     */
+    String getBankCardNoById(Integer bankCardId);
+
+    /**
+     * 获取客户类型名称
+     */
+    String getCustTypeName(String custType);
+
+    /**
+     * 获取支付平台名称
+     */
+    String getPaymentName(String payment);
+
 }

@@ -9,6 +9,8 @@ import com.dolaing.core.support.StrKit;
 import com.dolaing.core.util.Convert;
 import com.dolaing.core.util.SpringContextHolder;
 import com.dolaing.core.util.ToolUtil;
+import com.dolaing.modular.member.dao.PayAccountMapper;
+import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.system.dao.MenuMapper;
 import com.dolaing.modular.system.dao.NoticeMapper;
 import com.dolaing.modular.system.dao.RoleMapper;
@@ -35,6 +37,7 @@ public class ConstantFactory implements IConstantFactory {
     private UserMapper userMapper = SpringContextHolder.getBean(UserMapper.class);
     private MenuMapper menuMapper = SpringContextHolder.getBean(MenuMapper.class);
     private NoticeMapper noticeMapper = SpringContextHolder.getBean(NoticeMapper.class);
+    private PayAccountMapper payAccountMapper = SpringContextHolder.getBean(PayAccountMapper.class);
 
     public static IConstantFactory me() {
         return SpringContextHolder.getBean("constantFactory");
@@ -171,6 +174,46 @@ public class ConstantFactory implements IConstantFactory {
     @Override
     public String getMenuStatusName(Integer status) {
         return MenuStatus.valueOf(status);
+    }
+
+    /**
+     * 根据id获取银行卡号（去除后四位）
+     */
+    @Override
+    public String getBankCardNoById(Integer bankCardId) {
+        UserPayAccount userPayAccount = payAccountMapper.selectById(bankCardId);
+        if (userPayAccount != null) {
+            String cardNo = userPayAccount.getCardNo();
+            return cardNo.substring(0, cardNo.length() - 4) + "****";
+        } else {
+            return "--";
+        }
+    }
+
+    /**
+     * 获取客户类型名称
+     */
+    @Override
+    public String getCustTypeName(String custType) {
+        if (custType.equals("0")){
+            return "个人";
+        }else if (custType.equals("1")){
+            return "企业";
+        }else {
+            return "--";
+        }
+    }
+
+    /**
+     * 获取支付平台名称
+     */
+    @Override
+    public String getPaymentName(String payment) {
+        if (payment.equals("1")){
+            return "证联支付";
+        }else {
+            return "--";
+        }
     }
 
     @Override

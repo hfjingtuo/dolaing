@@ -2,7 +2,12 @@ package com.dolaing.modular.system.controller;
 
 import com.dolaing.core.base.controller.BaseController;
 import com.dolaing.core.common.annotion.BussinessLog;
+import com.dolaing.core.common.annotion.Permission;
 import com.dolaing.core.common.constant.dictmap.BankCardMap;
+import com.dolaing.core.common.constant.state.BankCardStatus;
+import com.dolaing.core.common.exception.BizExceptionEnum;
+import com.dolaing.core.exception.DolaingException;
+import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.member.service.IPayAccountService;
 import com.dolaing.modular.system.warpper.BankCardWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +47,9 @@ public class BankCardController extends BaseController {
      */
     @RequestMapping(value = "/list")
     @ResponseBody
+    @Permission
     public Object list(String condition) {
-        List<Map<String, Object>>  payAccountList = payAccountService.payAccountList(condition);
+        List<Map<String, Object>>  payAccountList = payAccountService.selectPayAccountList(condition);
         return super.warpObject(new BankCardWrapper(payAccountList));
     }
 
@@ -52,9 +58,14 @@ public class BankCardController extends BaseController {
      */
     @RequestMapping(value = "/delete")
     @ResponseBody
-    @BussinessLog(value = "解绑银行卡", key = "payAccountId", dict = BankCardMap.class)
-    public Object delete(@RequestParam Integer payAccountId) {
-        this.payAccountService.deleteById(payAccountId);
+    @Permission
+    @BussinessLog(value = "解绑银行卡", key = "bankCardId", dict = BankCardMap.class)
+    public Object delete(@RequestParam Integer bankCardId) {
+        if (ToolUtil.isEmpty(bankCardId)) {
+            throw new DolaingException(BizExceptionEnum.REQUEST_NULL);
+        }
+        //todo...
+        payAccountService.setStatus(bankCardId, BankCardStatus.DELETED.getCode());
         return SUCCESS_TIP;
     }
 }

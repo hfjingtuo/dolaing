@@ -68,8 +68,13 @@ public class PayAccountServiceImpl extends ServiceImpl<PayAccountMapper, UserPay
     }
 
     @Override
-    public List<Map<String, Object>> payAccountList(String condition) {
-        return this.baseMapper.payAccountList(condition);
+    public List<Map<String, Object>> selectPayAccountList(String condition) {
+        return this.baseMapper.selectPayAccountList(condition);
+    }
+
+    @Override
+    public int setStatus(Integer bankCardId, String status) {
+        return this.baseMapper.setStatus(bankCardId,status);
     }
 
     /**

@@ -19,8 +19,10 @@ public class BankCardWrapper extends BaseControllerWarpper {
 
     @Override
     public void warpTheMap(Map<String, Object> map) {
-        Integer creater = (Integer) map.get("creater");
-        map.put("createrName", ConstantFactory.me().getUserNameById(creater));
+        String cardNo = (String) map.get("cardNo");
+        map.put("cardNoLastFour", cardNo.substring(0, cardNo.length() - 4) + "****");
+        map.put("custTypeName", ConstantFactory.me().getCustTypeName((String) map.get("custType")));
+        map.put("paymentName", ConstantFactory.me().getPaymentName((String) map.get("payment")));
     }
 
 }
