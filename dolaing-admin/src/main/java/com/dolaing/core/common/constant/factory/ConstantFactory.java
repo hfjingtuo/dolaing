@@ -184,7 +184,7 @@ public class ConstantFactory implements IConstantFactory {
         UserPayAccount userPayAccount = payAccountMapper.selectById(bankCardId);
         if (userPayAccount != null) {
             String cardNo = userPayAccount.getCardNo();
-            return cardNo.substring(0, cardNo.length() - 4) + "****";
+            return cardNo.substring(cardNo.length() - 4, cardNo.length());
         } else {
             return "--";
         }
@@ -195,11 +195,11 @@ public class ConstantFactory implements IConstantFactory {
      */
     @Override
     public String getCustTypeName(String custType) {
-        if (custType.equals("0")){
+        if (custType.equals("0")) {
             return "个人";
-        }else if (custType.equals("1")){
+        } else if (custType.equals("1")) {
             return "企业";
-        }else {
+        } else {
             return "--";
         }
     }
@@ -209,11 +209,64 @@ public class ConstantFactory implements IConstantFactory {
      */
     @Override
     public String getPaymentName(String payment) {
-        if (payment.equals("0")){
+        if (payment.equals("0")) {
             return "证联支付";
-        }else {
+        } else {
             return "-";
         }
+    }
+
+    /**
+     * 获取银行名称根据银行代码
+     */
+    @Override
+    public String getBankNameByCode(String bankCode) {
+        String bank = "--";
+        switch (bankCode) {
+            case "0102":
+                bank = "中国工商银行";
+                break;
+            case "0103":
+                bank = "中国农业银行";
+                break;
+            case "0104":
+                bank = "中国银行";
+                break;
+            case "0105":
+                bank = "中国建设银行";
+                break;
+            case "0301":
+                bank = "交通银行";
+                break;
+            case "0302":
+                bank = "中信银行";
+                break;
+            case "0303":
+                bank = "中国光大银行";
+                break;
+            case "0304":
+                bank = "华夏银行";
+                break;
+            case "0305":
+                bank = "中国民生银行";
+                break;
+            case "0306":
+                bank = "广东发展银行";
+                break;
+            case "0307":
+                bank = "深圳发展银行";
+                break;
+            case "0308":
+                bank = "招商银行";
+                break;
+            case "0309":
+                bank = "兴业银行";
+                break;
+            case "0310":
+                bank = "上海浦东发展银行";
+                break;
+        }
+        return bank;
     }
 
     @Override

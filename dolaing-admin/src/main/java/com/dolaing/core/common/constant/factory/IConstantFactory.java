@@ -78,4 +78,8 @@ public interface IConstantFactory {
      */
     String getPaymentName(String payment);
 
+    /**
+     * 获取银行名称根据银行代码
+     */
+    String getBankNameByCode(String bankCode);
 }

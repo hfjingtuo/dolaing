@@ -19,8 +19,8 @@ BankCard.initColumn = function () {
         {title: '用户姓名', field: 'userNameText', align: 'center', valign: 'middle'},
         {title: '手机号', field: 'mobile', align: 'center', valign: 'middle'},
         {title: '客户类型', field: 'custTypeName', align: 'center', valign: 'middle'},
-        {title: '银行代码', field: 'bankCode', align: 'center', valign: 'middle'},
-        {title: '银行卡号', field: 'cardNoLastFour', align: 'center', valign: 'middle'},
+        {title: '银行名称', field: 'bankCodeName', align: 'center', valign: 'middle'},
+        {title: '银行卡尾号', field: 'cardNoLastFour', align: 'center', valign: 'middle'},
         {title: '创建时间', field: 'createTime', align: 'center', valign: 'middle'},
         {
             title: '操作', align: 'center', valign: 'middle',
@@ -53,7 +53,11 @@ BankCard.delete = function (id, cardNoLastFour) {
 
     var operation = function () {
         var ajax = new $ax(Feng.ctxPath + "/bankCard/delete", function (data) {
-            Feng.success("解除绑定成功!");
+            if (data.code == 200){
+                Feng.success("解除绑定成功!");
+            } else if (data.code == 500) {
+                Feng.error("解除绑定失败!");
+            }
             BankCard.noSearch();
         }, function (data) {
             Feng.error("解除绑定失败!" + data.responseJSON.message + "!");
@@ -62,7 +66,7 @@ BankCard.delete = function (id, cardNoLastFour) {
         ajax.start();
     };
 
-    Feng.confirm("是否解绑银行卡 " + cardNoLastFour + " ?", operation);
+    Feng.confirm("是否解绑尾号为 " + cardNoLastFour + " 的银行卡?", operation);
 
 };
 
