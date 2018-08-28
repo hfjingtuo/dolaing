@@ -84,10 +84,12 @@ public class BankCardController extends BaseController {
             deleteCardDTO.setCardNo(userPayAccount.getCardNo());
             deleteCardDTO.setResv("");
             Map map = payAccountService.deleteCard(bankCardId, BankCardStatus.DELETED.getCode(), deleteCardDTO);
-            if (!map.get("code").toString().equals("1000")) {
-                return new ErrorTip(500, "解绑银行卡失败");
+            if (map.get("code").toString().equals("1000")) {
+                return SUCCESS_TIP;
+            }else {
+                return new ErrorTip(500, map.get("msg").toString());
             }
         }
-        return SUCCESS_TIP;
+        return new ErrorTip(500, "解绑银行卡失败");
     }
 }
