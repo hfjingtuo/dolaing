@@ -6,6 +6,7 @@ import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.beans.Transient;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -193,5 +194,10 @@ public class OrderInfo extends BaseModel<OrderInfo> {
 
     public OrderInfo(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
     }
 }

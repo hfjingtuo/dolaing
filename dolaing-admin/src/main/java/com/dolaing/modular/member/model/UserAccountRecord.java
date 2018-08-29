@@ -78,4 +78,9 @@ public class UserAccountRecord  extends BaseModel<UserAccountRecord> {
     @TableField("error_code")
     private String errorCode;
 
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
+
 }
