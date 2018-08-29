@@ -56,7 +56,7 @@ BankCard.delete = function (id, cardNoLastFour) {
             if (data.code == 200){
                 Feng.success("解除绑定成功!");
             } else if (data.code == 500) {
-                Feng.error("解除绑定失败!");
+                Feng.error(data.message);
             }
             BankCard.noSearch();
         }, function (data) {
