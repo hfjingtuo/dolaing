@@ -55,10 +55,10 @@ BankCard.delete = function (id, cardNoLastFour) {
         var ajax = new $ax(Feng.ctxPath + "/bankCard/delete", function (data) {
             if (data.code == 200){
                 Feng.success("解除绑定成功!");
+                BankCard.noSearch();
             } else if (data.code == 500) {
                 Feng.error(data.message);
             }
-            BankCard.noSearch();
         }, function (data) {
             Feng.error("解除绑定失败!" + data.responseJSON.message + "!");
         });
