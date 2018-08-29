@@ -71,8 +71,7 @@ BankCard.delete = function (id, account, cardNoLastFour) {
             }
         });
     };
-    Feng.confirm("是否解绑" + account + "的尾号为 " + cardNoLastFour + " 的银行卡(仅针对无法正常使用的开户情况，有效的开户必须谨慎操作)?", operation);
-
+    Feng.confirm("是否解除" + account + "的开户信息(仅针对无法正常使用的开户情况，有效的开户必须谨慎操作)?", operation);
 };
 
 /**
