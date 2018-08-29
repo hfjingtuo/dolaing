@@ -25,7 +25,7 @@ BankCard.initColumn = function () {
         {
             title: '操作', align: 'center', valign: 'middle',
             formatter: function (value, row, index) {
-                var html = '<a title="解除绑定" style="color: #1ab394;cursor:pointer" onclick="BankCard.delete(\'' + row.id + '\',\'' + row.cardNoLastFour + '\')">解除绑定</a>';
+                var html = '<a title="解除绑定" style="color: #1ab394;cursor:pointer" onclick="BankCard.delete(\'' + row.id + '\',\'' + row.userId + '\',\'' + row.cardNoLastFour + '\')">解除绑定</a>';
                 return html;
             }
         }
@@ -49,11 +49,11 @@ BankCard.check = function () {
 /**
  * 解绑银行卡
  */
-BankCard.delete = function (id, cardNoLastFour) {
+BankCard.delete = function (id, account, cardNoLastFour) {
 
     var operation = function () {
         var ajax = new $ax(Feng.ctxPath + "/bankCard/delete", function (data) {
-            if (data.code == 200){
+            if (data.code == 200) {
                 Feng.success("解除绑定成功");
                 BankCard.noSearch();
             } else if (data.code == 500) {
@@ -62,11 +62,13 @@ BankCard.delete = function (id, cardNoLastFour) {
         }, function (data) {
             Feng.error("解除绑定失败!" + data.responseJSON.message + "!");
         });
+        ajax.set("account", account);
+        ajax.set("cardNoLastFour", cardNoLastFour);
         ajax.set("bankCardId", id);
         ajax.start();
     };
 
-    Feng.confirm("是否解绑尾号为 " + cardNoLastFour + " 的银行卡(仅针对无法正常使用的开户情况，有效的开户必须谨慎操作)?", operation);
+    Feng.confirm("是否解绑" + account + "的尾号为 " + cardNoLastFour + " 的银行卡(仅针对无法正常使用的开户情况，有效的开户必须谨慎操作)?", operation);
 
 };
 

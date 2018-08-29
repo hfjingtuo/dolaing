@@ -12,7 +12,9 @@ public class BankCardMap extends AbstractDictMap {
 
     @Override
     public void init() {
-        put("bankCardId", "银行卡号");
+        put("account", "账号");
+        put("cardNoLastFour", "银行卡尾号");
+        put("bankCardId", "银行卡尾号");
         put("title", "标题");
         put("content", "内容");
     }

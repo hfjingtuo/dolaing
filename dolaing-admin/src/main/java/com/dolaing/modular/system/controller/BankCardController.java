@@ -5,9 +5,11 @@ import com.dolaing.core.base.tips.ErrorTip;
 import com.dolaing.core.common.annotion.BussinessLog;
 import com.dolaing.core.common.annotion.Permission;
 import com.dolaing.core.common.constant.dictmap.BankCardMap;
+import com.dolaing.core.common.constant.factory.ConstantFactory;
 import com.dolaing.core.common.constant.state.BankCardStatus;
 import com.dolaing.core.common.exception.BizExceptionEnum;
 import com.dolaing.core.exception.DolaingException;
+import com.dolaing.core.log.LogObjectHolder;
 import com.dolaing.core.util.ToolUtil;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.member.service.IPayAccountService;
@@ -65,8 +67,8 @@ public class BankCardController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     @Permission
-    @BussinessLog(value = "解绑银行卡", key = "bankCardId", dict = BankCardMap.class)
-    public Object delete(@RequestParam Integer bankCardId) {
+    @BussinessLog(value = "解绑银行卡", key = "account,cardNoLastFour", dict = BankCardMap.class)
+    public Object delete(@RequestParam String account,@RequestParam String cardNoLastFour,@RequestParam Integer bankCardId) {
         if (ToolUtil.isEmpty(bankCardId)) {
             throw new DolaingException(BizExceptionEnum.REQUEST_NULL);
         }

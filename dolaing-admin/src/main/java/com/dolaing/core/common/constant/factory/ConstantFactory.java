@@ -177,7 +177,7 @@ public class ConstantFactory implements IConstantFactory {
     }
 
     /**
-     * 根据id获取银行卡号（去除后四位）
+     * 根据id获取银行卡尾号
      */
     @Override
     public String getBankCardNoById(Integer bankCardId) {
