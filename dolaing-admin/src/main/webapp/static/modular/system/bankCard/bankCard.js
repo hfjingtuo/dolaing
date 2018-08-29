@@ -54,7 +54,7 @@ BankCard.delete = function (id, cardNoLastFour) {
     var operation = function () {
         var ajax = new $ax(Feng.ctxPath + "/bankCard/delete", function (data) {
             if (data.code == 200){
-                Feng.success("解除绑定成功!");
+                Feng.success("解除绑定成功");
                 BankCard.noSearch();
             } else if (data.code == 500) {
                 Feng.error(data.message);
@@ -66,7 +66,7 @@ BankCard.delete = function (id, cardNoLastFour) {
         ajax.start();
     };
 
-    Feng.confirm("是否解绑尾号为 " + cardNoLastFour + " 的银行卡?", operation);
+    Feng.confirm("是否解绑尾号为 " + cardNoLastFour + " 的银行卡(仅针对无法正常使用的开户情况，有效的开户必须谨慎操作)?", operation);
 
 };
 
