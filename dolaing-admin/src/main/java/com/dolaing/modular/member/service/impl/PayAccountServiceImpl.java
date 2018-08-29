@@ -77,7 +77,8 @@ public class PayAccountServiceImpl extends ServiceImpl<PayAccountMapper, UserPay
         if (common203Result != null && common203Result.getRespCode().equals("RC00")) {
             System.out.println(common203Result.toString());
             //解绑银行卡成功，将开户数据从数据库中删除
-            payAccountMapper.setStatus(bankCardId, status);
+//            payAccountMapper.setStatus(bankCardId, status);
+            payAccountMapper.deleteById(bankCardId);
         } else if (common203Result != null && !common203Result.getRespCode().equals("RC00")) {
             map.put("code", "1001");
             map.put("msg", common203Result.getRespDesc());
