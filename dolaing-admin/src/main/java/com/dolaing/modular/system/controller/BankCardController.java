@@ -76,13 +76,13 @@ public class BankCardController extends BaseController {
         if (userPayAccount != null) {
             DeleteCardDTO deleteCardDTO = new DeleteCardDTO();
             deleteCardDTO.setFundSeqId(IdUtil.randomBase62(32));
-            deleteCardDTO.setUserId(userPayAccount.getUserId());
+            deleteCardDTO.setUserId(userPayAccount.getPayUserId());
             deleteCardDTO.setUserNameText(userPayAccount.getUserNameText());
-            deleteCardDTO.setCertType(CertTypeEnum.NATIONAL_IDENTITY_CARD.getCode());
+            deleteCardDTO.setCertType(userPayAccount.getCertType());
             deleteCardDTO.setCertId(userPayAccount.getCertId());
-            deleteCardDTO.setBankCode(BankCodeEnum.CHINA_EVERBRIGHT_BANK.getCode());
-            deleteCardDTO.setBankProvinceCode("");
-            deleteCardDTO.setBankRegionCode("");
+            deleteCardDTO.setBankCode(userPayAccount.getBankCode());
+            deleteCardDTO.setBankProvinceCode(userPayAccount.getBankProvinceCode());
+            deleteCardDTO.setBankRegionCode(userPayAccount.getBankRegionCode());
             deleteCardDTO.setCardNo(userPayAccount.getCardNo());
             deleteCardDTO.setResv("");
             Map map = payAccountService.deleteCard(bankCardId, BankCardStatus.DELETED.getCode(), deleteCardDTO);
