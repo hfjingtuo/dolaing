@@ -7,6 +7,7 @@ import com.dolaing.modular.api.base.BaseApi;
 import com.dolaing.modular.api.base.Result;
 import com.dolaing.modular.member.model.UserPayAccount;
 import com.dolaing.modular.member.service.IPayAccountService;
+import com.dolaing.modular.member.vo.UserPayAccountVo;
 import com.dolaing.modular.redis.service.RedisTokenService;
 import com.dolaing.pay.client.entity.zlian.MarginRegisterDTO;
 import com.dolaing.pay.client.entity.zlian.MarginSmsDTO;
@@ -47,7 +48,7 @@ public class PayAccountApi extends BaseApi {
         Map map = payAccountService.marginRegister(account,marginRegisterDTO);
         if(map.get("code").toString().equals("1000")){
             userPayAccount = new UserPayAccount().selectOne("user_id = {0}", account);
-            return render(userPayAccount);
+            return render(new UserPayAccountVo(userPayAccount));
         }else{
             return render(null,map.get("code").toString(),map.get("msg").toString());
         }
