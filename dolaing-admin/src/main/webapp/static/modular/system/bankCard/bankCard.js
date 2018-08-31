@@ -50,26 +50,28 @@ BankCard.check = function () {
  * 解绑银行卡
  */
 BankCard.delete = function (id, account, cardNoLastFour) {
-
     var operation = function () {
-        var ajax = new $ax(Feng.ctxPath + "/bankCard/delete", function (data) {
-            if (data.code == 200) {
-                Feng.success("解除绑定成功");
-                BankCard.noSearch();
-            } else if (data.code == 500) {
-                Feng.error(data.message);
+        var loadIndex = layer.load(0, {shade: [0.1, '#f5f5f5']}); //0代表加载的风格，支持0-2;
+        $.ajax({
+            url: Feng.ctxPath + "/bankCard/delete",
+            type: "POST",
+            data: "account=" + account + "&cardNoLastFour=" + cardNoLastFour + "&bankCardId=" + id,
+            success: function (data) {
+                if (data.code == 200) {
+                    Feng.success("解除绑定成功");
+                    BankCard.noSearch();
+                } else if (data.code == 500) {
+                    Feng.error(data.message);
+                }
+                layer.close(loadIndex);
+            },
+            error: function (data) {
+                Feng.error("解除绑定失败!" + data.responseJSON.message + "!");
+                layer.close(loadIndex);
             }
-        }, function (data) {
-            Feng.error("解除绑定失败!" + data.responseJSON.message + "!");
         });
-        ajax.set("account", account);
-        ajax.set("cardNoLastFour", cardNoLastFour);
-        ajax.set("bankCardId", id);
-        ajax.start();
     };
-
     Feng.confirm("是否解除" + account + "的开户信息(仅针对无法正常使用的开户情况，有效的开户必须谨慎操作)?", operation);
-
 };
 
 /**
