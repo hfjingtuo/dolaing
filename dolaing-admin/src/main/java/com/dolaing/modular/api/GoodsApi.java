@@ -26,7 +26,10 @@ import com.dolaing.modular.system.service.IUserService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -102,7 +105,7 @@ public class GoodsApi extends BaseApi {
     }
 
     /**
-     * 发布商品
+     * 发布、编辑商品
      */
     @AuthAccess
     @PostMapping("/publishGoods")
@@ -144,50 +147,55 @@ public class GoodsApi extends BaseApi {
             }
 
             MallGoods mallGoods;
-            if (StringUtils.isNotBlank(goodsId)) {
+            if (StringUtils.isNotBlank(goodsId)) {//修改商品
                 mallGoods = mallGoodsService.selectById(goodsId);
-                if (!account.equals(mallGoods.getCreateBy())){
+                if (!account.equals(mallGoods.getCreateBy())) {
                     return new ErrorTip(500, "商品发布异常，您无权限编辑此商品");
                 }
-            } else {
+                mallGoods.setGoodsNumber(Integer.valueOf(goodsNumber));
+                mallGoods.setGoodsDesc(goodsDesc);
+                mallGoods.setUpdateBy(account);
+                mallGoods.setUpdateTime(new Date());
+            } else {//新增商品
                 mallGoods = new MallGoods();
-            }
-            Wrapper<MallShop> wrapper = new EntityWrapper<>();
-            wrapper.eq("user_id", account);
-            MallShop mallShop = mallShopService.selectOne(wrapper);
-            mallGoods.setGoodsName(goodsName);
-            mallGoods.setShopPrice(new BigDecimal(shopPrice));
-            mallGoods.setDepositRatio(new BigDecimal(depositRatio).divide(BigDecimal.valueOf(100)));
-            mallGoods.setIsFreeShipping(Integer.valueOf(isFreeShipping));
-            mallGoods.setCatId(Integer.valueOf(catId));
-            mallGoods.setBreeds(breeds);
-            mallGoods.setPlantime(plantime);
-            mallGoods.setPlantingCycle(Integer.valueOf(plantingCycle));
-            mallGoods.setExpectPartOutput(new BigDecimal(expectPartOutput));
-            mallGoods.setLandSn(landSn);
-            mallGoods.setLandAddress(landAddress);
-            mallGoods.setLandPartArea(new BigDecimal(landPartArea));
-            mallGoods.setGoodsNumber(Integer.valueOf(goodsNumber));
-            mallGoods.setGoodsDesc(goodsDesc);
-            mallGoods.setFarmerId(farmerId);
-            mallGoods.setStartSubscribeTime(format.parse(startSubscribeTime));
-            mallGoods.setEndSubscribeTime(format.parse(endSubscribeTime));
-            mallGoods.setGoodsSn("SN" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + new Random().nextInt(99));
-            mallGoods.setShopId(mallShop.getId());
-            mallGoods.setBrandId(mallShop.getBrandId());
-            mallGoods.setBrandName(mallShop.getBrandName());
-            //预计发货时间
-            mallGoods.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));
-            mallGoods.setCreateBy(account);
-            mallGoods.setCreateTime(new Date());
-
-            //验证定金比例是否异常 0.1 ,0.8
-
-            if(!checkAmount(mallGoods)){
-                BigDecimal dp = mallGoods.getDepositRatio().multiply(mallGoods.getShopPrice()).multiply(new BigDecimal("0.1"));
-                return new ErrorTip(500, "卖家每单位获得定金比例分成为"+dp.toString()+"元，超过2位小数，无法完成交易，请调整单价或定金比例");
+                Wrapper<MallShop> wrapper = new EntityWrapper<>();
+                wrapper.eq("user_id", account);
+                MallShop mallShop = mallShopService.selectOne(wrapper);
+                mallGoods.setGoodsName(goodsName);
+                mallGoods.setShopPrice(new BigDecimal(shopPrice));
+                mallGoods.setDepositRatio(new BigDecimal(depositRatio).divide(BigDecimal.valueOf(100)));
+                mallGoods.setIsFreeShipping(Integer.valueOf(isFreeShipping));
+                mallGoods.setCatId(Integer.valueOf(catId));
+                mallGoods.setBreeds(breeds);
+                mallGoods.setPlantime(plantime);
+                mallGoods.setPlantingCycle(Integer.valueOf(plantingCycle));
+                mallGoods.setExpectPartOutput(new BigDecimal(expectPartOutput));
+                mallGoods.setLandSn(landSn);
+                mallGoods.setLandAddress(landAddress);
+                mallGoods.setLandPartArea(new BigDecimal(landPartArea));
+                mallGoods.setGoodsNumber(Integer.valueOf(goodsNumber));
+                mallGoods.setGoodsDesc(goodsDesc);
+                mallGoods.setFarmerId(farmerId);
+                mallGoods.setStartSubscribeTime(format.parse(startSubscribeTime));
+                mallGoods.setEndSubscribeTime(format.parse(endSubscribeTime));
+                mallGoods.setGoodsSn("SN" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + new Random().nextInt(99));
+                mallGoods.setShopId(mallShop.getId());
+                mallGoods.setBrandId(mallShop.getBrandId());
+                mallGoods.setBrandName(mallShop.getBrandName());
+                //预计发货时间
+                mallGoods.setExpectDeliverTime(DateUtil.plusDay(mallGoods.getPlantingCycle(), mallGoods.getEndSubscribeTime()));
+                mallGoods.setCreateBy(account);
+                mallGoods.setCreateTime(new Date());
+                //验证定金比例是否异常 0.1 ,0.8
+                if (!checkAmount(mallGoods)) {
+                    BigDecimal dp = mallGoods.getDepositRatio().multiply(mallGoods.getShopPrice()).multiply(new BigDecimal("0.1"));
+                    return new ErrorTip(500, "卖家每单位获得定金比例分成为" + dp.toString() + "元，超过2位小数，无法完成交易，请调整单价或定金比例");
+                }
             }
 
+            /**
+             * 图片上传
+             */
             String masterImgsPath = saveGoodsImg(masterImgs);
             String landImgsPath = saveGoodsImg(landImgs);
             String descImgsPath = saveGoodsImg(descImgs);
@@ -250,23 +258,24 @@ public class GoodsApi extends BaseApi {
 
     /**
      * 验证金额是否超过一位小数（产品单价剩以定金比例不得含有分）
+     *
      * @param mallGoods
      * @return true 为正常 false为异常
      */
-    public Boolean checkAmount(MallGoods mallGoods){
+    public Boolean checkAmount(MallGoods mallGoods) {
         BigDecimal dp = mallGoods.getDepositRatio().multiply(mallGoods.getShopPrice());
         String[] aa = dp.toString().split("[.]");
-        Boolean flag = true ;
-        if(aa.length > 1 ){
+        Boolean flag = true;
+        if (aa.length > 1) {
             String ws = aa[1];
-            for(int i=1 ;i < ws.length() ;i++){
-                if(ws.charAt(i) - '0' > 0 ){
-                    flag = false ;
-                    break ;
+            for (int i = 1; i < ws.length(); i++) {
+                if (ws.charAt(i) - '0' > 0) {
+                    flag = false;
+                    break;
                 }
             }
         }
-        return flag ;
+        return flag;
     }
 
     /**
