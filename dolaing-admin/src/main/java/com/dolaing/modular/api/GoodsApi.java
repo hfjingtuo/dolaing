@@ -181,6 +181,13 @@ public class GoodsApi extends BaseApi {
             mallGoods.setCreateBy(account);
             mallGoods.setCreateTime(new Date());
 
+            //验证定金比例是否异常 0.1 ,0.8
+
+            if(!checkAmount(mallGoods)){
+                BigDecimal dp = mallGoods.getDepositRatio().multiply(mallGoods.getShopPrice()).multiply(new BigDecimal("0.1"));
+                return new ErrorTip(500, "卖家每单位获得定金比例分成为"+dp.toString()+"元，超过2位小数，无法完成交易，请调整单价或定金比例");
+            }
+
             String masterImgsPath = saveGoodsImg(masterImgs);
             String landImgsPath = saveGoodsImg(landImgs);
             String descImgsPath = saveGoodsImg(descImgs);
@@ -239,6 +246,27 @@ public class GoodsApi extends BaseApi {
             System.out.println(e.getMessage());
         }
         return new ErrorTip(500, "系统异常");
+    }
+
+    /**
+     * 验证金额是否超过一位小数（产品单价剩以定金比例不得含有分）
+     * @param mallGoods
+     * @return true 为正常 false为异常
+     */
+    public Boolean checkAmount(MallGoods mallGoods){
+        BigDecimal dp = mallGoods.getDepositRatio().multiply(mallGoods.getShopPrice());
+        String[] aa = dp.toString().split("[.]");
+        Boolean flag = true ;
+        if(aa.length > 1 ){
+            String ws = aa[1];
+            for(int i=1 ;i < ws.length() ;i++){
+                if(ws.charAt(i) - '0' > 0 ){
+                    flag = false ;
+                    break ;
+                }
+            }
+        }
+        return flag ;
     }
 
     /**

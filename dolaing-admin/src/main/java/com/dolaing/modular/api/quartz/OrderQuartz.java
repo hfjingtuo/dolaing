@@ -33,7 +33,7 @@ public class OrderQuartz {
     /**
      * 查询所有确认订单超过30分钟未付款订单 置为失效
      */
-    @Scheduled(cron = "0 */1 * * * ?") //每分钟执行一次
+    @Scheduled(cron = "*/10 * * * * ?") //每分钟执行一次
     public void setOrderStatus() {
         Calendar nowTime = Calendar.getInstance();
         nowTime.add(Calendar.MINUTE, -30);
@@ -69,11 +69,11 @@ public class OrderQuartz {
 
 
     /**
-     * 检查订单但是未支付给农户和卖家尾款的订单，执行支付尾款操作
+     * 检查订单未支付给农户和卖家尾款的订单，执行支付尾款操作
      */
     @Scheduled(cron = "0 */5 * * * ?") //每十分钟执行一次
     public void payOrderDepositOrBalanceTask() {
-        System.out.println(new Date() + "执行定时任务........");
+        logger.debug(new Date() + "执行定时任务[查询未支付给农户和卖家尾款的订单，执行支付操作]........");
         //查询尚未支付定金给卖家订单
         List<OrderInfo> sellerDepositOrders = new OrderInfo().selectList("order_status = 1 " +
                 " and pay_status = 1 and seller_receive_status = 0 and seller_money_received = 0 ", null);
@@ -112,7 +112,7 @@ public class OrderQuartz {
      */
     @Scheduled(cron = "0 */7 * * * ?") //每五分钟执行一次
     public void queryOrderTransStatusTask() {
-        System.out.println(new Date() + " --------查询转出中的订单状态--------- ");
+        logger.debug(new Date() + "执行定时任务[查询转出中的订单状态]........");
         //查询尚未转出完成的订单
         List<UserAccountRecord> list = new UserAccountRecord().selectList("status = {0} and ( process_type = {1} or process_type = {2} )", 0, 1, 2);
         for (UserAccountRecord userAccountRecord : list) {
