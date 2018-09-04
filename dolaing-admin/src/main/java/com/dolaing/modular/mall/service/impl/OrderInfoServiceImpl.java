@@ -197,6 +197,9 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 UserAccountRecord userAccountRecord = new UserAccountRecord().selectOne("source_id = {0} and user_id = {1} and process_type = {2} " ,
                         orderInfo.getOrderSn(),sellerId,opType == 1 ? 1 :2);
                 if(userAccountRecord == null || userAccountRecord.getStatus() == null || !userAccountRecord.getStatus().equals("1")){
+                    if(userAccountRecord == null){
+                        userAccountRecord = new UserAccountRecord();
+                    }
                     userAccountRecord.setUserId(sellerId) ;
                     userAccountRecord.setAmount(amount);
                     userAccountRecord.setPaymentId(PaymentEnum.PAY_ZLIAN.getCode());
@@ -232,6 +235,9 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 userAccountRecord.setSourceId(orderInfo.getOrderSn());
                 userAccountRecord.setSeqId(merchantSeqId);
                 userAccountRecord.insert();
+            }else{
+                //增加错误日志
+                logger.error("订单号["+orderInfo.getOrderSn()+"],卖家["+sellerId+"]收款金额异常("+sellerMap.get("msg")+")");
             }
         }else if(roleType == 2){
             //查询商品归属农户，因一个订单对应一种商品，所以取任意一条记录
@@ -255,6 +261,9 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 UserAccountRecord userAccountRecord = new UserAccountRecord().selectOne("source_id = {0} and user_id = {1} and process_type = {2} " ,
                         orderInfo.getOrderSn(),farmerId,opType == 1 ? 1 :2);
                 if(userAccountRecord == null || userAccountRecord.getStatus() == null || !userAccountRecord.getStatus().equals("1")){
+                    if(userAccountRecord == null){
+                        userAccountRecord = new UserAccountRecord();
+                    }
                     //增加定金打给农户流水
                     userAccountRecord.setUserId(farmerId) ;
                     userAccountRecord.setAmount(amount);
@@ -290,6 +299,9 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 userAccountRecord.setSourceId(orderInfo.getOrderSn());
                 userAccountRecord.setSeqId(merchantSeqId);
                 userAccountRecord.insert();
+            }else{
+                //增加错误日志
+                logger.error("订单号："+orderInfo.getOrderSn()+"农户["+farmerId+"]收款金额异常("+farmerMap.get("msg")+")");
             }
         }
 
