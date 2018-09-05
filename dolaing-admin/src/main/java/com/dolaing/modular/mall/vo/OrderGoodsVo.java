@@ -99,17 +99,17 @@ public class OrderGoodsVo {
     private BigDecimal balancePayment ;// 尾款
 
     public BigDecimal getBuyLandArea() {
-        this.buyLandArea = this.landPartArea.multiply(new BigDecimal(this.goodsNumber));
+        this.buyLandArea = this.landPartArea.multiply(new BigDecimal(String.valueOf(this.goodsNumber)));
         return buyLandArea;
     }
 
     public BigDecimal getExpectPartOutputOrder() {
-        this.expectPartOutputOrder = this.expectPartOutput.multiply(new BigDecimal(this.goodsNumber));
+        this.expectPartOutputOrder = this.expectPartOutput.multiply(new BigDecimal(String.valueOf(this.goodsNumber)));
         return expectPartOutputOrder;
     }
 
     public BigDecimal getGoodsAmount() {
-        this.goodsAmount = this.goodsPrice.multiply(new BigDecimal(this.goodsNumber));
+        this.goodsAmount = this.goodsPrice.multiply(new BigDecimal(String.valueOf(this.goodsNumber)));
         return goodsAmount;
     }
 
@@ -133,12 +133,12 @@ public class OrderGoodsVo {
     }
 
     public BigDecimal getDepositPayment() {
-        this.depositPayment  = this.goodsPrice.multiply(new BigDecimal(this.goodsNumber)).multiply(this.depositRatio);
+        this.depositPayment  = this.goodsPrice.multiply(new BigDecimal(String.valueOf(this.goodsNumber))).multiply(this.depositRatio);
         return depositPayment;
     }
 
     public BigDecimal getBalancePayment() {
-        this.balancePayment  = this.goodsPrice.multiply(new BigDecimal(this.goodsNumber)).multiply(new BigDecimal("1").subtract(this.depositRatio));
+        this.balancePayment  = this.goodsPrice.multiply(new BigDecimal(String.valueOf(this.goodsNumber))).multiply(new BigDecimal("1").subtract(this.depositRatio));
         return balancePayment;
     }
 }
